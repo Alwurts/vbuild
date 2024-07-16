@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 import { Slider } from "@/components/ui/slider";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { CodeDisplay } from "@/components/CodeDisplay";
 
 import {
 	textColorsOptions,
@@ -50,10 +51,6 @@ export default function Home() {
 	const [shadow, setShadow] = useState("shadow-none");
 	const [opacity, setOpacity] = useState("opacity-100");
 
-	// Hover Styles
-	const [hoverTextColor, setHoverTextColor] = useState("hover:text-white");
-	const [hoverBgColor, setHoverBgColor] = useState("hover:bg-black");
-
 	// Group Visibility
 	const [visibleGroups, setVisibleGroups] = useState({
 		text: true,
@@ -77,13 +74,69 @@ export default function Home() {
 		shadow,
 		opacity,
 		height,
-		hoverTextColor,
-		hoverBgColor,
 	);
 
-	const buttonCode = `<Button className="${buttonClasses.trim()}">
-  ${buttonText}
-</Button>`;
+	const buttonCode = `import * as React from "react"
+import { Slot } from "@radix-ui/react-slot"
+import { cva, type VariantProps } from "class-variance-authority"
+
+import { cn } from "@/lib/utils"
+
+const buttonVariants = cva(
+  "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+  {
+    variants: {
+      variant: {
+        default: "bg-primary text-primary-foreground hover:bg-primary/90",
+        destructive:
+          "bg-destructive text-destructive-foreground hover:bg-destructive/90",
+        outline:
+          "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
+        secondary:
+          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+        ghost: "hover:bg-accent hover:text-accent-foreground",
+        link: "text-primary underline-offset-4 hover:underline",
+        custom: "${textColor} ${fontSize} ${fontWeight} ${bgColor} ${borderColor} ${borderWidth} ${borderStyle} ${rounded} ${shadow} ${opacity}",
+      },
+      size: {
+        default: "h-10 px-4 py-2",
+        sm: "h-9 rounded-md px-3",
+        lg: "h-11 rounded-md px-8",
+        icon: "h-10 w-10",
+        custom: "${paddingX} ${height}",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+      size: "default",
+    },
+  }
+)
+
+export interface ButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+    VariantProps<typeof buttonVariants> {
+  asChild?: boolean
+}
+
+const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ className, variant, size, asChild = false, ...props }, ref) => {
+    const Comp = asChild ? Slot : "button"
+    return (
+      <Comp
+        className={cn(buttonVariants({ variant, size, className }))}
+        ref={ref}
+        {...props}
+      />
+    )
+  }
+)
+Button.displayName = "Button"
+
+export { Button, buttonVariants }
+
+// Usage:
+<Button variant="custom" size="custom">${buttonText}</Button>`;
 
 	const toggleGroup = (group: keyof typeof visibleGroups) => {
 		setVisibleGroups((prev) => ({ ...prev, [group]: !prev[group] }));
@@ -95,10 +148,10 @@ export default function Home() {
 				<div className="p-6 flex-1 flex items-center justify-center">
 					<Button className={buttonClasses}>{buttonText}</Button>
 				</div>
-				<div className="p-6 border-l border-border w-5/12 space-y-6 overflow-y-auto">
+				<div className="p-6 border-l border-border w-7/12 space-y-6 overflow-y-auto">
 					<Tabs defaultValue="toggles">
 						<TabsList className="grid w-full grid-cols-2">
-							<TabsTrigger value="toggles">Toggles</TabsTrigger>
+							<TabsTrigger value="toggles">Editor</TabsTrigger>
 							<TabsTrigger value="code">Code</TabsTrigger>
 						</TabsList>
 						<TabsContent value="toggles">
@@ -226,12 +279,7 @@ export default function Home() {
 							</ToggleableGroup>
 						</TabsContent>
 						<TabsContent value="code">
-							<div>
-								<Label>Generated Button Code:</Label>
-								<pre className="mt-2 bg-gray-100 p-4 rounded-md overflow-x-auto text-sm">
-									<code>{buttonCode}</code>
-								</pre>
-							</div>
+							<CodeDisplay code={buttonCode} />
 						</TabsContent>
 					</Tabs>
 				</div>
