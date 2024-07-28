@@ -6,26 +6,24 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
-import { Slider } from "@/components/ui/slider";
-import { ChevronDown, ChevronUp } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CodeDisplay } from "@/components/CodeDisplay";
 
 import {
-	textColorsOptions,
 	fontSizesOptions,
-	fontWeightsOptions,
-	bgColorsOptions,
-	borderColorsOptions,
-	borderWidthsOptions,
-	borderStylesOptions,
 	roundedOptions,
 	paddingXOptions,
-	shadowOptions,
 	opacityOptions,
 	heightOptions,
-	textToBgColor,
 } from "@/lib/tailwindClasses";
+import ColorPicker from "@/components/ColorPicker";
+import { BorderType } from "@/components/BorderType";
+import { BorderWidth } from "@/components/BorderWidth";
+import { GenericSliderSelector } from "@/components/GenericSliderSelector";
+import { Shadow } from "@/components/Shadow";
+import { FontWeight as FontWeightComponent } from "@/components/FontWeight";
+import { CollapsibleGroup } from "@/components/CollapsibleGroup";
+import { InputTool } from "@/components/InputTool";
 
 export default function Home() {
 	// Text
@@ -54,11 +52,11 @@ export default function Home() {
 	// Group Visibility
 	const [visibleGroups, setVisibleGroups] = useState({
 		text: true,
+		size: true,
 		background: true,
 		border: true,
-		size: true,
-		effects: true,
-		hover: true,
+		effects: false,
+		hover: false,
 	});
 
 	const buttonClasses = cn(
@@ -154,129 +152,113 @@ export { Button, buttonVariants }
 							<TabsTrigger value="toggles">Editor</TabsTrigger>
 							<TabsTrigger value="code">Code</TabsTrigger>
 						</TabsList>
-						<TabsContent value="toggles">
+						<TabsContent value="toggles" className="space-y-3">
 							{/* Text Group */}
-							<ToggleableGroup
+							<CollapsibleGroup
 								title="Text"
 								isVisible={visibleGroups.text}
-								onToggle={() => toggleGroup("text")}
+								className="grid grid-cols-2 gap-6"
 							>
-								<div className="space-y-4">
-									<Label htmlFor="buttonText">Button Text</Label>
-									<Input
-										id="buttonText"
-										value={buttonText}
-										onChange={(e) => setButtonText(e.target.value)}
-									/>
-								</div>
-								<SliderSelector
+								<InputTool
+									label="Button Text"
+									value={buttonText}
+									onChange={setButtonText}
+								/>
+								<ColorPicker
 									label="Text Color"
-									options={textColorsOptions}
 									value={textColor}
 									onChange={setTextColor}
-									showColor
 								/>
-								<SliderSelector
+								<GenericSliderSelector
 									label="Font Size"
 									options={fontSizesOptions}
 									value={fontSize}
 									onChange={setFontSize}
+									width="w-20"
 								/>
-								<SliderSelector
+								<FontWeightComponent
 									label="Font Weight"
-									options={fontWeightsOptions}
-									value={fontWeight}
-									onChange={setFontWeight}
+									fontWeight={fontWeight}
+									setFontWeight={setFontWeight}
 								/>
-							</ToggleableGroup>
-
-							{/* Background Group */}
-							<ToggleableGroup
-								title="Background"
-								isVisible={visibleGroups.background}
-								onToggle={() => toggleGroup("background")}
-							>
-								<SliderSelector
-									label="Background Color"
-									options={bgColorsOptions}
-									value={bgColor}
-									onChange={setBgColor}
-									showColor
-								/>
-							</ToggleableGroup>
-
-							{/* Border Group */}
-							<ToggleableGroup
-								title="Border"
-								isVisible={visibleGroups.border}
-								onToggle={() => toggleGroup("border")}
-							>
-								<SliderSelector
-									label="Border Color"
-									options={borderColorsOptions}
-									value={borderColor}
-									onChange={setBorderColor}
-									showColor
-								/>
-								<SliderSelector
-									label="Border Width"
-									options={borderWidthsOptions}
-									value={borderWidth}
-									onChange={setBorderWidth}
-								/>
-								<SliderSelector
-									label="Border Style"
-									options={borderStylesOptions}
-									value={borderStyle}
-									onChange={setBorderStyle}
-								/>
-								<SliderSelector
-									label="Rounded"
-									options={roundedOptions}
-									value={rounded}
-									onChange={setRounded}
-								/>
-							</ToggleableGroup>
+							</CollapsibleGroup>
 
 							{/* Size Group */}
-							<ToggleableGroup
+							<CollapsibleGroup
 								title="Size"
 								isVisible={visibleGroups.size}
-								onToggle={() => toggleGroup("size")}
+								className="grid grid-cols-2 gap-6"
 							>
-								<SliderSelector
+								<GenericSliderSelector
 									label="Padding (X)"
 									options={paddingXOptions}
 									value={paddingX}
 									onChange={setPaddingX}
 								/>
-								<SliderSelector
+								<GenericSliderSelector
 									label="Height"
 									options={heightOptions}
 									value={height}
 									onChange={setHeight}
 								/>
-							</ToggleableGroup>
+							</CollapsibleGroup>
+
+							{/* Background Group */}
+							<CollapsibleGroup
+								title="Background"
+								isVisible={visibleGroups.background}
+							>
+								<ColorPicker
+									label="Background Color"
+									value={bgColor}
+									onChange={setBgColor}
+								/>
+							</CollapsibleGroup>
+
+							{/* Border Group */}
+							<CollapsibleGroup
+								title="Border"
+								isVisible={visibleGroups.border}
+								className="grid grid-cols-2 gap-6"
+							>
+								<BorderWidth
+									label="Border Width"
+									borderWidth={borderWidth}
+									setBorderWidth={setBorderWidth}
+								/>
+								<BorderType
+									label="Border Style"
+									borderStyle={borderStyle}
+									setBorderStyle={setBorderStyle}
+								/>
+								<ColorPicker
+									label="Border Color"
+									value={borderColor}
+									onChange={setBorderColor}
+								/>
+								<GenericSliderSelector
+									label="Rounded"
+									options={roundedOptions}
+									value={rounded}
+									onChange={setRounded}
+									width="w-24"
+								/>
+							</CollapsibleGroup>
 
 							{/* Effects Group */}
-							<ToggleableGroup
+							<CollapsibleGroup
 								title="Effects"
 								isVisible={visibleGroups.effects}
-								onToggle={() => toggleGroup("effects")}
 							>
-								<SliderSelector
-									label="Shadow"
-									options={shadowOptions}
-									value={shadow}
-									onChange={setShadow}
-								/>
-								<SliderSelector
+								<Shadow label="Shadow" shadow={shadow} setShadow={setShadow} />
+								<GenericSliderSelector
 									label="Opacity"
 									options={opacityOptions}
 									value={opacity}
 									onChange={setOpacity}
+									width="w-24"
 								/>
-							</ToggleableGroup>
+							</CollapsibleGroup>
 						</TabsContent>
 						<TabsContent value="code">
 							<CodeDisplay code={buttonCode} />
@@ -287,68 +269,3 @@ export { Button, buttonVariants }
 		</div>
 	);
 }
-
-const ToggleableGroup = ({
-	title,
-	isVisible,
-	onToggle,
-	children,
-}: {
-	title: string;
-	isVisible: boolean;
-	onToggle: () => void;
-	children: React.ReactNode;
-}) => {
-	return (
-		<div className="space-y-4">
-			{/* biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
-			<div
-				className="flex items-center justify-between cursor-pointer"
-				onClick={onToggle}
-			>
-				<h3 className="text-lg font-semibold">{title}</h3>
-				{isVisible ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
-			</div>
-			{isVisible && children}
-		</div>
-	);
-};
-
-const SliderSelector = ({
-	label,
-	options,
-	value,
-	onChange,
-	showColor = false,
-}: {
-	label: string;
-	options: string[];
-	value: string;
-	onChange: (value: string) => void;
-	showColor?: boolean;
-}) => {
-	const handleChange = (value: number[]) => {
-		onChange(options[value[0]]);
-	};
-
-	return (
-		<div className="space-y-4">
-			<div className="flex items-center justify-between">
-				<Label>{label}</Label>
-				<div className="flex items-center space-x-2">
-					{showColor && (
-						<div className={cn("w-6 h-6 rounded", textToBgColor(value))} />
-					)}
-					<span className="text-sm font-medium">{value}</span>
-				</div>
-			</div>
-			<Slider
-				min={0}
-				max={options.length - 1}
-				step={1}
-				value={[options.indexOf(value)]}
-				onValueChange={handleChange}
-			/>
-		</div>
-	);
-};
