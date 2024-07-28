@@ -8,6 +8,14 @@ import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CodeDisplay } from "@/components/CodeDisplay";
+import { create } from "zustand";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+	Accordion,
+	AccordionContent,
+	AccordionItem,
+	AccordionTrigger,
+} from "@/components/ui/accordion";
 
 import {
 	fontSizesOptions,
@@ -24,14 +32,6 @@ import { Shadow } from "@/components/Shadow";
 import { FontWeight as FontWeightComponent } from "@/components/FontWeight";
 import { CollapsibleGroup } from "@/components/CollapsibleGroup";
 import { InputTool } from "@/components/InputTool";
-import { create } from "zustand";
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "@/components/ui/select";
 
 interface ButtonStore {
 	styles: {
@@ -275,10 +275,41 @@ export { Button, buttonVariants }
 	return (
 		<div className="w-full h-screen flex justify-center items-center p-6 bg-stone-300">
 			<Card className="w-full max-w-7xl h-full flex gap-6">
-				<div className="p-6 flex-1 flex items-center justify-center">
-					<Button className={buttonClasses}>{buttonText}</Button>
+				<div
+					className="p-6 w-[500px] overflow-y-auto"
+				>
+					<Accordion defaultValue={[currentStyle]} type="multiple" className="w-full">
+						{Object.entries(styles).map(([styleName, styleProps]) => {
+							const buttonClasses = cn(
+								styleProps.textColor,
+								styleProps.fontSize,
+								styleProps.fontWeight,
+								styleProps.bgColor,
+								styleProps.borderColor,
+								styleProps.borderWidth,
+								styleProps.borderStyle,
+								styleProps.rounded,
+								styleProps.paddingX,
+								styleProps.shadow,
+								styleProps.opacity,
+								styleProps.height,
+							);
+
+							return (
+								<AccordionItem value={styleName} key={styleName}>
+									<AccordionTrigger>{styleName}</AccordionTrigger>
+									<AccordionContent>
+										<div className="flex items-center space-x-2 pt-2">
+											<Button className={buttonClasses}>{buttonText}</Button>
+											<span className="text-sm text-gray-500">{styleName}</span>
+										</div>
+									</AccordionContent>
+								</AccordionItem>
+							);
+						})}
+					</Accordion>
 				</div>
-				<div className="p-6 border-l border-border w-7/12 space-y-6 overflow-y-auto">
+				<div className="p-6 border-l border-border flex-1 space-y-6 overflow-y-auto">
 					<Tabs defaultValue="toggles">
 						<TabsList className="grid w-full grid-cols-2">
 							<TabsTrigger value="toggles">Editor</TabsTrigger>
@@ -287,18 +318,17 @@ export { Button, buttonVariants }
 						<TabsContent value="toggles" className="space-y-3">
 							<div className="mb-4">
 								<Label>Current Style</Label>
-								<Select value={currentStyle} onValueChange={setCurrentStyle}>
-									<SelectTrigger className="w-[180px]">
-										<SelectValue placeholder="Theme" />
-									</SelectTrigger>
-									<SelectContent>
-										{Object.keys(styles).map((style) => (
-											<SelectItem key={style} value={style}>
-												{style}
-											</SelectItem>
-										))}
-									</SelectContent>
-								</Select>
+								<select
+									value={currentStyle}
+									onChange={(e) => setCurrentStyle(e.target.value)}
+									className="w-full p-2 border rounded"
+								>
+									{Object.keys(styles).map((style) => (
+										<option key={style} value={style}>
+											{style}
+										</option>
+									))}
+								</select>
 							</div>
 							{/* Text Group */}
 							<CollapsibleGroup
