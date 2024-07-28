@@ -24,30 +24,160 @@ import { Shadow } from "@/components/Shadow";
 import { FontWeight as FontWeightComponent } from "@/components/FontWeight";
 import { CollapsibleGroup } from "@/components/CollapsibleGroup";
 import { InputTool } from "@/components/InputTool";
+import { create } from "zustand";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select";
+
+interface ButtonStore {
+	styles: {
+		[key: string]: {
+			bgColor: string;
+			textColor: string;
+			fontSize: string;
+			fontWeight: string;
+			borderColor: string;
+			borderWidth: string;
+			borderStyle: string;
+			rounded: string;
+			paddingX: string;
+			height: string;
+			shadow: string;
+			opacity: string;
+		};
+	};
+	currentStyle: string;
+	setStyle: (styleName: string, property: string, value: string) => void;
+	setCurrentStyle: (styleName: string) => void;
+}
+
+const useButtonStore = create<ButtonStore>((set) => ({
+	styles: {
+		default: {
+			bgColor: "bg-primary",
+			textColor: "text-primary-foreground",
+			fontSize: "text-sm",
+			fontWeight: "font-medium",
+			borderColor: "border-transparent",
+			borderWidth: "border",
+			borderStyle: "border-solid",
+			rounded: "rounded-md",
+			paddingX: "px-4",
+			height: "h-10",
+			shadow: "shadow-none",
+			opacity: "opacity-100",
+		},
+		destructive: {
+			bgColor: "bg-destructive",
+			textColor: "text-destructive-foreground",
+			fontSize: "text-sm",
+			fontWeight: "font-medium",
+			borderColor: "border-transparent",
+			borderWidth: "border",
+			borderStyle: "border-solid",
+			rounded: "rounded-md",
+			paddingX: "px-4",
+			height: "h-10",
+			shadow: "shadow-none",
+			opacity: "opacity-100",
+			// ... (fill in other properties)
+		},
+		outline: {
+			bgColor: "bg-background",
+			textColor: "text-foreground",
+			borderColor: "border-input",
+			borderWidth: "border",
+			borderStyle: "border-solid",
+			rounded: "rounded-md",
+			paddingX: "px-4",
+			height: "h-10",
+			shadow: "shadow-none",
+			opacity: "opacity-100",
+			fontSize: "text-sm",
+			fontWeight: "font-medium",
+			// ... (fill in other properties)
+		},
+		secondary: {
+			bgColor: "bg-secondary",
+			textColor: "text-secondary-foreground",
+			fontSize: "text-sm",
+			fontWeight: "font-medium",
+			borderColor: "border-transparent",
+			borderWidth: "border",
+			borderStyle: "border-solid",
+			rounded: "rounded-md",
+			paddingX: "px-4",
+			height: "h-10",
+			shadow: "shadow-none",
+			opacity: "opacity-100",
+			// ... (fill in other properties)
+		},
+		ghost: {
+			bgColor: "bg-transparent",
+			textColor: "text-foreground",
+			fontSize: "text-sm",
+			fontWeight: "font-medium",
+			borderColor: "border-transparent",
+			borderWidth: "border",
+			borderStyle: "border-solid",
+			rounded: "rounded-md",
+			paddingX: "px-4",
+			height: "h-10",
+			shadow: "shadow-none",
+			opacity: "opacity-100",
+			// ... (fill in other properties)
+		},
+		link: {
+			bgColor: "bg-transparent",
+			textColor: "text-primary",
+			fontSize: "text-sm",
+			fontWeight: "font-medium",
+			borderColor: "border-transparent",
+			borderWidth: "border",
+			borderStyle: "border-solid",
+			rounded: "rounded-md",
+			paddingX: "px-4",
+			height: "h-10",
+			shadow: "shadow-none",
+			opacity: "opacity-100",
+			// ... (fill in other properties)
+		},
+		custom: {
+			bgColor: "bg-black",
+			textColor: "text-white",
+			fontSize: "text-sm",
+			fontWeight: "font-medium",
+			borderColor: "border-transparent",
+			borderWidth: "border",
+			borderStyle: "border-solid",
+			rounded: "rounded-md",
+			paddingX: "px-4",
+			height: "h-10",
+			shadow: "shadow-none",
+			opacity: "opacity-100",
+		},
+	},
+	currentStyle: "default",
+	setStyle: (styleName, property, value) =>
+		set((state) => ({
+			styles: {
+				...state.styles,
+				[styleName]: {
+					...state.styles[styleName],
+					[property]: value,
+				},
+			},
+		})),
+	setCurrentStyle: (styleName) => set({ currentStyle: styleName }),
+}));
 
 export default function Home() {
-	// Text
+	const { styles, currentStyle, setStyle, setCurrentStyle } = useButtonStore();
 	const [buttonText, setButtonText] = useState("Hello world");
-	const [textColor, setTextColor] = useState("text-white");
-	const [fontSize, setFontSize] = useState("text-base");
-	const [fontWeight, setFontWeight] = useState("font-normal");
-
-	// Background
-	const [bgColor, setBgColor] = useState("bg-black");
-
-	// Border
-	const [borderColor, setBorderColor] = useState("border-transparent");
-	const [borderWidth, setBorderWidth] = useState("border");
-	const [borderStyle, setBorderStyle] = useState("border-solid");
-	const [rounded, setRounded] = useState("rounded");
-
-	// Size
-	const [paddingX, setPaddingX] = useState("px-4");
-	const [height, setHeight] = useState("h-10");
-
-	// Effects
-	const [shadow, setShadow] = useState("shadow-none");
-	const [opacity, setOpacity] = useState("opacity-100");
 
 	// Group Visibility
 	const [visibleGroups, setVisibleGroups] = useState({
@@ -59,19 +189,21 @@ export default function Home() {
 		hover: false,
 	});
 
+	const currentStyleFull = styles[currentStyle];
+
 	const buttonClasses = cn(
-		textColor,
-		fontSize,
-		fontWeight,
-		bgColor,
-		borderColor,
-		borderWidth,
-		borderStyle,
-		rounded,
-		paddingX,
-		shadow,
-		opacity,
-		height,
+		currentStyleFull.textColor,
+		currentStyleFull.fontSize,
+		currentStyleFull.fontWeight,
+		currentStyleFull.bgColor,
+		currentStyleFull.borderColor,
+		currentStyleFull.borderWidth,
+		currentStyleFull.borderStyle,
+		currentStyleFull.rounded,
+		currentStyleFull.paddingX,
+		currentStyleFull.shadow,
+		currentStyleFull.opacity,
+		currentStyleFull.height,
 	);
 
 	const buttonCode = `import * as React from "react"
@@ -94,14 +226,14 @@ const buttonVariants = cva(
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
-        custom: "${textColor} ${fontSize} ${fontWeight} ${bgColor} ${borderColor} ${borderWidth} ${borderStyle} ${rounded} ${shadow} ${opacity}",
+        custom: "${currentStyleFull.textColor} ${currentStyleFull.fontSize} ${currentStyleFull.fontWeight} ${currentStyleFull.bgColor} ${currentStyleFull.borderColor} ${currentStyleFull.borderWidth} ${currentStyleFull.borderStyle} ${currentStyleFull.rounded} ${currentStyleFull.shadow} ${currentStyleFull.opacity}",
       },
       size: {
         default: "h-10 px-4 py-2",
         sm: "h-9 rounded-md px-3",
         lg: "h-11 rounded-md px-8",
         icon: "h-10 w-10",
-        custom: "${paddingX} ${height}",
+        custom: "${currentStyleFull.paddingX} ${currentStyleFull.height}",
       },
     },
     defaultVariants: {
@@ -153,6 +285,21 @@ export { Button, buttonVariants }
 							<TabsTrigger value="code">Code</TabsTrigger>
 						</TabsList>
 						<TabsContent value="toggles" className="space-y-3">
+							<div className="mb-4">
+								<Label>Current Style</Label>
+								<Select value={currentStyle} onValueChange={setCurrentStyle}>
+									<SelectTrigger className="w-[180px]">
+										<SelectValue placeholder="Theme" />
+									</SelectTrigger>
+									<SelectContent>
+										{Object.keys(styles).map((style) => (
+											<SelectItem key={style} value={style}>
+												{style}
+											</SelectItem>
+										))}
+									</SelectContent>
+								</Select>
+							</div>
 							{/* Text Group */}
 							<CollapsibleGroup
 								title="Text"
@@ -166,20 +313,26 @@ export { Button, buttonVariants }
 								/>
 								<ColorPicker
 									label="Text Color"
-									value={textColor}
-									onChange={setTextColor}
+									value={currentStyleFull.textColor}
+									onChange={(value) =>
+										setStyle(currentStyle, "textColor", value)
+									}
 								/>
 								<GenericSliderSelector
 									label="Font Size"
 									options={fontSizesOptions}
-									value={fontSize}
-									onChange={setFontSize}
+									value={currentStyleFull.fontSize}
+									onChange={(value) =>
+										setStyle(currentStyle, "fontSize", value)
+									}
 									width="w-20"
 								/>
 								<FontWeightComponent
 									label="Font Weight"
-									fontWeight={fontWeight}
-									setFontWeight={setFontWeight}
+									fontWeight={currentStyleFull.fontWeight}
+									setFontWeight={(value) =>
+										setStyle(currentStyle, "fontWeight", value)
+									}
 								/>
 							</CollapsibleGroup>
 
@@ -192,14 +345,16 @@ export { Button, buttonVariants }
 								<GenericSliderSelector
 									label="Padding (X)"
 									options={paddingXOptions}
-									value={paddingX}
-									onChange={setPaddingX}
+									value={currentStyleFull.paddingX}
+									onChange={(value) =>
+										setStyle(currentStyle, "paddingX", value)
+									}
 								/>
 								<GenericSliderSelector
 									label="Height"
 									options={heightOptions}
-									value={height}
-									onChange={setHeight}
+									value={currentStyleFull.height}
+									onChange={(value) => setStyle(currentStyle, "height", value)}
 								/>
 							</CollapsibleGroup>
 
@@ -210,8 +365,8 @@ export { Button, buttonVariants }
 							>
 								<ColorPicker
 									label="Background Color"
-									value={bgColor}
-									onChange={setBgColor}
+									value={currentStyleFull.bgColor}
+									onChange={(value) => setStyle(currentStyle, "bgColor", value)}
 								/>
 							</CollapsibleGroup>
 
@@ -223,24 +378,30 @@ export { Button, buttonVariants }
 							>
 								<BorderWidth
 									label="Border Width"
-									borderWidth={borderWidth}
-									setBorderWidth={setBorderWidth}
+									borderWidth={currentStyleFull.borderWidth}
+									setBorderWidth={(value) =>
+										setStyle(currentStyle, "borderWidth", value)
+									}
 								/>
 								<BorderType
 									label="Border Style"
-									borderStyle={borderStyle}
-									setBorderStyle={setBorderStyle}
+									borderStyle={currentStyleFull.borderStyle}
+									setBorderStyle={(value) =>
+										setStyle(currentStyle, "borderStyle", value)
+									}
 								/>
 								<ColorPicker
 									label="Border Color"
-									value={borderColor}
-									onChange={setBorderColor}
+									value={currentStyleFull.borderColor}
+									onChange={(value) =>
+										setStyle(currentStyle, "borderColor", value)
+									}
 								/>
 								<GenericSliderSelector
 									label="Rounded"
 									options={roundedOptions}
-									value={rounded}
-									onChange={setRounded}
+									value={currentStyleFull.rounded}
+									onChange={(value) => setStyle(currentStyle, "rounded", value)}
 									width="w-24"
 								/>
 							</CollapsibleGroup>
@@ -250,12 +411,16 @@ export { Button, buttonVariants }
 								title="Effects"
 								isVisible={visibleGroups.effects}
 							>
-								<Shadow label="Shadow" shadow={shadow} setShadow={setShadow} />
+								<Shadow
+									label="Shadow"
+									shadow={currentStyleFull.shadow}
+									setShadow={(value) => setStyle(currentStyle, "shadow", value)}
+								/>
 								<GenericSliderSelector
 									label="Opacity"
 									options={opacityOptions}
-									value={opacity}
-									onChange={setOpacity}
+									value={currentStyleFull.opacity}
+									onChange={(value) => setStyle(currentStyle, "opacity", value)}
 									width="w-24"
 								/>
 							</CollapsibleGroup>
