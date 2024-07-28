@@ -875,6 +875,7 @@ export const borderWidthsOptions = [
 	"border-l", */
 ];
 export const borderStylesOptions = [
+	"border-none",
 	"border-solid",
 	"border-dashed",
 	"border-dotted",

@@ -32,6 +32,13 @@ import { Shadow } from "@/components/Shadow";
 import { FontWeight as FontWeightComponent } from "@/components/FontWeight";
 import { CollapsibleGroup } from "@/components/CollapsibleGroup";
 import { InputTool } from "@/components/InputTool";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select";
 
 interface ButtonStore {
 	styles: {
@@ -63,8 +70,8 @@ const useButtonStore = create<ButtonStore>((set) => ({
 			fontSize: "text-sm",
 			fontWeight: "font-medium",
 			borderColor: "border-transparent",
-			borderWidth: "border",
-			borderStyle: "border-solid",
+			borderWidth: "border-none",
+			borderStyle: "border-none",
 			rounded: "rounded-md",
 			paddingX: "px-4",
 			height: "h-10",
@@ -78,7 +85,7 @@ const useButtonStore = create<ButtonStore>((set) => ({
 			fontWeight: "font-medium",
 			borderColor: "border-transparent",
 			borderWidth: "border",
-			borderStyle: "border-solid",
+			borderStyle: "border-none",
 			rounded: "rounded-md",
 			paddingX: "px-4",
 			height: "h-10",
@@ -108,7 +115,7 @@ const useButtonStore = create<ButtonStore>((set) => ({
 			fontWeight: "font-medium",
 			borderColor: "border-transparent",
 			borderWidth: "border",
-			borderStyle: "border-solid",
+			borderStyle: "border-none",
 			rounded: "rounded-md",
 			paddingX: "px-4",
 			height: "h-10",
@@ -123,7 +130,7 @@ const useButtonStore = create<ButtonStore>((set) => ({
 			fontWeight: "font-medium",
 			borderColor: "border-transparent",
 			borderWidth: "border",
-			borderStyle: "border-solid",
+			borderStyle: "border-none",
 			rounded: "rounded-md",
 			paddingX: "px-4",
 			height: "h-10",
@@ -138,27 +145,13 @@ const useButtonStore = create<ButtonStore>((set) => ({
 			fontWeight: "font-medium",
 			borderColor: "border-transparent",
 			borderWidth: "border",
-			borderStyle: "border-solid",
+			borderStyle: "border-none",
 			rounded: "rounded-md",
 			paddingX: "px-4",
 			height: "h-10",
 			shadow: "shadow-none",
 			opacity: "opacity-100",
 			// ... (fill in other properties)
-		},
-		custom: {
-			bgColor: "bg-black",
-			textColor: "text-white",
-			fontSize: "text-sm",
-			fontWeight: "font-medium",
-			borderColor: "border-transparent",
-			borderWidth: "border",
-			borderStyle: "border-solid",
-			rounded: "rounded-md",
-			paddingX: "px-4",
-			height: "h-10",
-			shadow: "shadow-none",
-			opacity: "opacity-100",
 		},
 	},
 	currentStyle: "default",
@@ -217,16 +210,12 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/90",
-        destructive:
-          "bg-destructive text-destructive-foreground hover:bg-destructive/90",
-        outline:
-          "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
-        secondary:
-          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        ghost: "hover:bg-accent hover:text-accent-foreground",
-        link: "text-primary underline-offset-4 hover:underline",
-        custom: "${currentStyleFull.textColor} ${currentStyleFull.fontSize} ${currentStyleFull.fontWeight} ${currentStyleFull.bgColor} ${currentStyleFull.borderColor} ${currentStyleFull.borderWidth} ${currentStyleFull.borderStyle} ${currentStyleFull.rounded} ${currentStyleFull.shadow} ${currentStyleFull.opacity}",
+        default: "${styles.default.textColor} ${styles.default.fontSize} ${styles.default.fontWeight} ${styles.default.bgColor} ${styles.default.borderColor} ${styles.default.borderWidth} ${styles.default.borderStyle} ${styles.default.rounded} ${styles.default.shadow} ${styles.default.opacity}",
+        destructive: "${styles.destructive.textColor} ${styles.destructive.fontSize} ${styles.destructive.fontWeight} ${styles.destructive.bgColor} ${styles.destructive.borderColor} ${styles.destructive.borderWidth} ${styles.destructive.borderStyle} ${styles.destructive.rounded} ${styles.destructive.shadow} ${styles.destructive.opacity}",
+        outline: "${styles.outline.textColor} ${styles.outline.fontSize} ${styles.outline.fontWeight} ${styles.outline.bgColor} ${styles.outline.borderColor} ${styles.outline.borderWidth} ${styles.outline.borderStyle} ${styles.outline.rounded} ${styles.outline.shadow} ${styles.outline.opacity}",
+        secondary: "${styles.secondary.textColor} ${styles.secondary.fontSize} ${styles.secondary.fontWeight} ${styles.secondary.bgColor} ${styles.secondary.borderColor} ${styles.secondary.borderWidth} ${styles.secondary.borderStyle} ${styles.secondary.rounded} ${styles.secondary.shadow} ${styles.secondary.opacity}",
+        ghost: "${styles.ghost.textColor} ${styles.ghost.fontSize} ${styles.ghost.fontWeight} ${styles.ghost.bgColor} ${styles.ghost.borderColor} ${styles.ghost.borderWidth} ${styles.ghost.borderStyle} ${styles.ghost.rounded} ${styles.ghost.shadow} ${styles.ghost.opacity}",
+        link: "${styles.link.textColor} ${styles.link.fontSize} ${styles.link.fontWeight} ${styles.link.bgColor} ${styles.link.borderColor} ${styles.link.borderWidth} ${styles.link.borderStyle} ${styles.link.rounded} ${styles.link.shadow} ${styles.link.opacity}",
       },
       size: {
         default: "h-10 px-4 py-2",
@@ -268,6 +257,8 @@ export { Button, buttonVariants }
 // Usage:
 <Button variant="custom" size="custom">${buttonText}</Button>`;
 
+	const [openStyles, setOpenStyles] = useState<string[]>([currentStyle]);
+
 	const toggleGroup = (group: keyof typeof visibleGroups) => {
 		setVisibleGroups((prev) => ({ ...prev, [group]: !prev[group] }));
 	};
@@ -275,10 +266,13 @@ export { Button, buttonVariants }
 	return (
 		<div className="w-full h-screen flex justify-center items-center p-6 bg-stone-300">
 			<Card className="w-full max-w-7xl h-full flex gap-6">
-				<div
-					className="p-6 w-[500px] overflow-y-auto"
-				>
-					<Accordion defaultValue={[currentStyle]} type="multiple" className="w-full">
+				<div className="p-6 w-[500px] overflow-y-auto">
+					<Accordion
+						value={openStyles}
+						onValueChange={setOpenStyles}
+						type="multiple"
+						className="w-full"
+					>
 						{Object.entries(styles).map(([styleName, styleProps]) => {
 							const buttonClasses = cn(
 								styleProps.textColor,
@@ -300,7 +294,12 @@ export { Button, buttonVariants }
 									<AccordionTrigger>{styleName}</AccordionTrigger>
 									<AccordionContent>
 										<div className="flex items-center space-x-2 pt-2">
-											<Button className={buttonClasses}>{buttonText}</Button>
+											<Button
+												variant={styleName as any}
+												className={buttonClasses}
+											>
+												{buttonText}
+											</Button>
 											<span className="text-sm text-gray-500">{styleName}</span>
 										</div>
 									</AccordionContent>
@@ -318,17 +317,24 @@ export { Button, buttonVariants }
 						<TabsContent value="toggles" className="space-y-3">
 							<div className="mb-4">
 								<Label>Current Style</Label>
-								<select
+								<Select
 									value={currentStyle}
-									onChange={(e) => setCurrentStyle(e.target.value)}
-									className="w-full p-2 border rounded"
+									onValueChange={(value) => {
+										setCurrentStyle(value);
+										setOpenStyles(openStyles ? [...openStyles, value] : [value]);
+									}}
 								>
-									{Object.keys(styles).map((style) => (
-										<option key={style} value={style}>
-											{style}
-										</option>
-									))}
-								</select>
+									<SelectTrigger>
+										<SelectValue placeholder="Theme" />
+									</SelectTrigger>
+									<SelectContent>
+										{Object.keys(styles).map((style) => (
+											<SelectItem key={style} value={style}>
+												{style}
+											</SelectItem>
+										))}
+									</SelectContent>
+								</Select>
 							</div>
 							{/* Text Group */}
 							<CollapsibleGroup
@@ -406,18 +412,18 @@ export { Button, buttonVariants }
 								isVisible={visibleGroups.border}
 								className="grid grid-cols-2 gap-6"
 							>
-								<BorderWidth
-									label="Border Width"
-									borderWidth={currentStyleFull.borderWidth}
-									setBorderWidth={(value) =>
-										setStyle(currentStyle, "borderWidth", value)
-									}
-								/>
 								<BorderType
 									label="Border Style"
 									borderStyle={currentStyleFull.borderStyle}
 									setBorderStyle={(value) =>
 										setStyle(currentStyle, "borderStyle", value)
+									}
+								/>
+								<BorderWidth
+									label="Border Width"
+									borderWidth={currentStyleFull.borderWidth}
+									setBorderWidth={(value) =>
+										setStyle(currentStyle, "borderWidth", value)
 									}
 								/>
 								<ColorPicker
