@@ -1,6 +1,7 @@
-export type StyleGroup = "background" | "text" | "border" | "size" | "effects";
+export type VariantStyleGroup = "background" | "text" | "border" | "effects";
+export type SizeStyleGroup = "size";
 
-export type StyleProperty =
+export type VariantStyleProperty =
 	| "bgColor"
 	| "textColor"
 	| "fontSize"
@@ -9,12 +10,12 @@ export type StyleProperty =
 	| "borderWidth"
 	| "borderStyle"
 	| "rounded"
-	| "paddingX"
-	| "height"
 	| "shadow"
 	| "opacity";
 
-export type ButtonStyleName =
+export type SizeStyleProperty = "height" | "paddingX";
+
+export type ButtonVariantName =
 	| "default"
 	| "destructive"
 	| "outline"
@@ -22,8 +23,10 @@ export type ButtonStyleName =
 	| "ghost"
 	| "link";
 
-export type ButtonStyle = {
-	styleName: ButtonStyleName;
+export type ButtonSizeName = "default" | "sm" | "lg" | "icon";
+
+export type ButtonVariant = {
+	styleName: ButtonVariantName;
 	background: {
 		isApplied: boolean;
 		properties: {
@@ -47,18 +50,22 @@ export type ButtonStyle = {
 			rounded: string;
 		};
 	};
-	size: {
-		isApplied: boolean;
-		properties: {
-			paddingX: string;
-			height: string;
-		};
-	};
 	effects: {
 		isApplied: boolean;
 		properties: {
 			shadow: string;
 			opacity: string;
+		};
+	};
+};
+
+export type ButtonSize = {
+	styleName: ButtonSizeName;
+	size: {
+		isApplied: boolean;
+		properties: {
+			paddingX: string;
+			height: string;
 		};
 	};
 };

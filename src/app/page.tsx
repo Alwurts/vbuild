@@ -37,114 +37,43 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import { useStyleManagerStore } from "@/store/useStyleManagerStore";
-import type { ButtonStyleName, StyleGroup, StyleProperty } from "@/types/style";
+import type { ButtonVariantName } from "@/types/style";
+import ComponentRender from "@/components/display/ComponentRender";
 
 export default function Home() {
-	const { styles, currentStyle, setGroupStyleProperty, setCurrentStyle } =
-		useStyleManagerStore();
+	const {
+		variants,
+		currentVariant,
+		setGroupStyleProperty,
+		toggleGroupIsApplied,
+		setCurrentVariant: setCurrentStyle,
+	} = useStyleManagerStore();
 	const [buttonText, setButtonText] = useState("Hello world");
 
-	const currentStyleFull = styles.find(
-		(style) => style.styleName === currentStyle,
+	const currentVariantStyle = variants.variant.find(
+		(style) => style.styleName === currentVariant.variant,
 	);
 
-	const [openStyles, setOpenStyles] = useState<string[]>([currentStyle]);
+	const currentSizeStyle = variants.size.find(
+		(style) => style.styleName === currentVariant.size,
+	);
 
-	if (!currentStyleFull) {
+	const [openStyles, setOpenStyles] = useState<string[]>([
+		currentVariant.variant,
+		currentVariant.size,
+	]);
+
+	if (!currentVariantStyle || !currentSizeStyle) {
 		return null;
 	}
 
 	return (
 		<div className="w-full h-screen flex justify-center items-center p-6 bg-stone-300">
 			<Card className="w-full max-w-7xl h-full flex gap-6">
-				<div className="p-6 w-[500px] overflow-y-auto">
-					<Accordion
-						value={openStyles}
-						onValueChange={setOpenStyles}
-						type="multiple"
-						className="w-full"
-					>
-						{styles.map((styleProps) => {
-							const styleNameTyped = styleProps.styleName as ButtonStyleName;
-
-							const applyProperty = (
-								isApplied: boolean,
-								propertyValue: string,
-							) => {
-								return isApplied ? propertyValue : undefined;
-							};
-							const buttonClassesForStyle = cn(
-								applyProperty(
-									styleProps.text.isApplied,
-									styleProps.text.properties.textColor,
-								),
-								applyProperty(
-									styleProps.text.isApplied,
-									styleProps.text.properties.fontSize,
-								),
-								applyProperty(
-									styleProps.text.isApplied,
-									styleProps.text.properties.fontWeight,
-								),
-								applyProperty(
-									styleProps.background.isApplied,
-									styleProps.background.properties.bgColor,
-								),
-								applyProperty(
-									styleProps.border.isApplied,
-									styleProps.border.properties.borderColor,
-								),
-								applyProperty(
-									styleProps.border.isApplied,
-									styleProps.border.properties.borderWidth,
-								),
-								applyProperty(
-									styleProps.border.isApplied,
-									styleProps.border.properties.borderStyle,
-								),
-								applyProperty(
-									styleProps.border.isApplied,
-									styleProps.border.properties.rounded,
-								),
-								applyProperty(
-									styleProps.size.isApplied,
-									styleProps.size.properties.height,
-								),
-								applyProperty(
-									styleProps.size.isApplied,
-									styleProps.size.properties.paddingX,
-								),
-								applyProperty(
-									styleProps.effects.isApplied,
-									styleProps.effects.properties.shadow,
-								),
-								applyProperty(
-									styleProps.effects.isApplied,
-									styleProps.effects.properties.opacity,
-								),
-							);
-
-							return (
-								<AccordionItem value={styleNameTyped} key={styleNameTyped}>
-									<AccordionTrigger>{styleNameTyped}</AccordionTrigger>
-									<AccordionContent>
-										<div className="flex items-center space-x-2 pt-2">
-											<Button
-												variant={styleNameTyped}
-												className={buttonClassesForStyle}
-											>
-												{buttonText}
-											</Button>
-											<span className="text-sm text-gray-500">
-												{styleNameTyped}
-											</span>
-										</div>
-									</AccordionContent>
-								</AccordionItem>
-							);
-						})}
-					</Accordion>
-				</div>
+				<ComponentRender
+					openStyles={openStyles}
+					setOpenStyles={setOpenStyles}
+				/>
 				<div className="p-6 border-l border-border flex-1 space-y-6 overflow-y-auto">
 					<Tabs defaultValue="toggles">
 						<TabsList className="grid w-full grid-cols-2">
@@ -155,9 +84,12 @@ export default function Home() {
 							<div className="mb-4">
 								<Label>Current Style</Label>
 								<Select
-									value={currentStyle}
+									value={currentVariant.variant}
 									onValueChange={(value) => {
-										setCurrentStyle(value as ButtonStyleName);
+										setCurrentStyle({
+											variantType: "variant",
+											name: value as ButtonVariantName,
+										});
 										setOpenStyles(
 											openStyles ? [...openStyles, value] : [value],
 										);
@@ -167,7 +99,7 @@ export default function Home() {
 										<SelectValue placeholder="Theme" />
 									</SelectTrigger>
 									<SelectContent>
-										{styles.map((style) => (
+										{variants.variant.map((style) => (
 											<SelectItem key={style.styleName} value={style.styleName}>
 												{style.styleName}
 											</SelectItem>
@@ -177,6 +109,14 @@ export default function Home() {
 							</div>
 							{/* Text Group */}
 							<CollapsibleGroup
+								styleIsApplied={currentVariantStyle.text.isApplied}
+								toggleGroupIsApplied={() => {
+									toggleGroupIsApplied({
+										variantType: "variant",
+										styleName: currentVariant.variant,
+										group: "text",
+									});
+								}}
 								title="text"
 								className="grid grid-cols-2 gap-y-2 gap-x-4"
 							>
@@ -184,188 +124,246 @@ export default function Home() {
 									label="Button Text"
 									value={buttonText}
 									onChange={setButtonText}
-									isDisabled={!currentStyleFull.text.isApplied}
+									isDisabled={!currentVariantStyle.text.isApplied}
 								/>
 								<ColorPicker
 									label="Text Color"
-									isDisabled={!currentStyleFull.text.isApplied}
-									value={currentStyleFull.text.properties.textColor}
+									isDisabled={!currentVariantStyle.text.isApplied}
+									value={currentVariantStyle.text.properties.textColor}
 									onChange={(value) => {
 										console.log(value);
-										setGroupStyleProperty(
-											currentStyle,
-											"text",
-											"textColor",
-											value,
-										);
+										setGroupStyleProperty({
+											variantType: "variant",
+											variantName: currentVariant.variant,
+											groupStyleName: "text",
+											property: "textColor",
+											value: value,
+										});
 									}}
 								/>
 								<GenericSliderSelector
 									label="Font Size"
-									isDisabled={!currentStyleFull.text.isApplied}
+									isDisabled={!currentVariantStyle.text.isApplied}
 									options={fontSizesOptions}
-									value={currentStyleFull.text.properties.fontSize}
+									value={currentVariantStyle.text.properties.fontSize}
 									onChange={(value) =>
-										setGroupStyleProperty(
-											currentStyle,
-											"text",
-											"fontSize",
-											value,
-										)
+										setGroupStyleProperty({
+											variantType: "variant",
+											variantName: currentVariant.variant,
+											groupStyleName: "text",
+											property: "fontSize",
+											value: value,
+										})
 									}
 									width="w-20"
 								/>
 								<FontWeightComponent
 									label="Font Weight"
-									isDisabled={!currentStyleFull.text.isApplied}
-									fontWeight={currentStyleFull.text.properties.fontWeight}
+									isDisabled={!currentVariantStyle.text.isApplied}
+									fontWeight={currentVariantStyle.text.properties.fontWeight}
 									setFontWeight={(value) =>
-										setGroupStyleProperty(
-											currentStyle,
-											"text",
-											"fontWeight",
-											value,
-										)
+										setGroupStyleProperty({
+											variantType: "variant",
+											variantName: currentVariant.variant,
+											groupStyleName: "text",
+											property: "fontWeight",
+											value: value,
+										})
 									}
 								/>
 							</CollapsibleGroup>
 
 							{/* Size Group */}
 							<CollapsibleGroup
+								styleIsApplied={currentSizeStyle.size.isApplied}
+								toggleGroupIsApplied={() => {
+									toggleGroupIsApplied({
+										variantType: "size",
+										styleName: currentVariant.size,
+										group: "size",
+									});
+								}}
 								defaultOpen
 								title="size"
 								className="grid grid-cols-2 gap-6"
 							>
 								<GenericSliderSelector
-									isDisabled={!currentStyleFull.size.isApplied}
+									isDisabled={!currentSizeStyle.size.isApplied}
 									label="Padding (X)"
 									options={paddingXOptions}
-									value={currentStyleFull.size.properties.paddingX}
+									value={currentSizeStyle.size.properties.paddingX}
 									onChange={(value) =>
-										setGroupStyleProperty(
-											currentStyle,
-											"size",
-											"paddingX",
-											value,
-										)
+										setGroupStyleProperty({
+											variantType: "size",
+											variantName: currentVariant.size,
+											groupStyleName: "size",
+											property: "paddingX",
+											value: value,
+										})
 									}
 								/>
 								<GenericSliderSelector
-									isDisabled={!currentStyleFull.size.isApplied}
+									isDisabled={!currentSizeStyle.size.isApplied}
 									label="Height"
 									options={heightOptions}
-									value={currentStyleFull.size.properties.height}
+									value={currentSizeStyle.size.properties.height}
 									onChange={(value) =>
-										setGroupStyleProperty(currentStyle, "size", "height", value)
+										setGroupStyleProperty({
+											variantType: "size",
+											variantName: currentVariant.size,
+											groupStyleName: "size",
+											property: "height",
+											value: value,
+										})
 									}
 								/>
 							</CollapsibleGroup>
 
 							{/* Background Group */}
-							<CollapsibleGroup title="background" defaultOpen>
+							<CollapsibleGroup
+								styleIsApplied={currentVariantStyle.background.isApplied}
+								toggleGroupIsApplied={() => {
+									toggleGroupIsApplied({
+										variantType: "variant",
+										styleName: currentVariant.variant,
+										group: "background",
+									});
+								}}
+								title="background"
+								defaultOpen
+							>
 								<ColorPicker
-									isDisabled={!currentStyleFull.background.isApplied}
+									isDisabled={!currentVariantStyle.background.isApplied}
 									label="Background Color"
-									value={currentStyleFull.background.properties.bgColor}
+									value={currentVariantStyle.background.properties.bgColor}
 									onChange={(value) =>
-										setGroupStyleProperty(
-											currentStyle,
-											"background",
-											"bgColor",
-											value,
-										)
+										setGroupStyleProperty({
+											variantType: "variant",
+											variantName: currentVariant.variant,
+											groupStyleName: "background",
+											property: "bgColor",
+											value: value,
+										})
 									}
 								/>
 							</CollapsibleGroup>
 
 							{/* Border Group */}
 							<CollapsibleGroup
+								styleIsApplied={currentVariantStyle.border.isApplied}
+								toggleGroupIsApplied={() => {
+									toggleGroupIsApplied({
+										variantType: "variant",
+										styleName: currentVariant.variant,
+										group: "border",
+									});
+								}}
 								title="border"
 								className="grid grid-cols-2 gap-6"
 							>
 								<BorderType
 									label="Border Style"
-									isDisabled={!currentStyleFull.border.isApplied}
-									borderStyle={currentStyleFull.border.properties.borderStyle}
+									isDisabled={!currentVariantStyle.border.isApplied}
+									borderStyle={
+										currentVariantStyle.border.properties.borderStyle
+									}
 									setBorderStyle={(value) =>
-										setGroupStyleProperty(
-											currentStyle,
-											"border",
-											"borderStyle",
-											value,
-										)
+										setGroupStyleProperty({
+											variantType: "variant",
+											variantName: currentVariant.variant,
+											groupStyleName: "border",
+											property: "borderStyle",
+											value: value,
+										})
 									}
 								/>
 								<BorderWidth
-									isDisabled={!currentStyleFull.border.isApplied}
+									isDisabled={!currentVariantStyle.border.isApplied}
 									label="Border Width"
-									borderWidth={currentStyleFull.border.properties.borderWidth}
+									borderWidth={
+										currentVariantStyle.border.properties.borderWidth
+									}
 									setBorderWidth={(value) =>
-										setGroupStyleProperty(
-											currentStyle,
-											"border",
-											"borderWidth",
-											value,
-										)
+										setGroupStyleProperty({
+											variantType: "variant",
+											variantName: currentVariant.variant,
+											groupStyleName: "border",
+											property: "borderWidth",
+											value: value,
+										})
 									}
 								/>
 								<ColorPicker
-									isDisabled={!currentStyleFull.border.isApplied}
+									isDisabled={!currentVariantStyle.border.isApplied}
 									label="Border Color"
-									value={currentStyleFull.border.properties.borderColor}
+									value={currentVariantStyle.border.properties.borderColor}
 									onChange={(value) =>
-										setGroupStyleProperty(
-											currentStyle,
-											"border",
-											"borderColor",
-											value,
-										)
+										setGroupStyleProperty({
+											variantType: "variant",
+											variantName: currentVariant.variant,
+											groupStyleName: "border",
+											property: "borderColor",
+											value: value,
+										})
 									}
 								/>
 								<GenericSliderSelector
-									isDisabled={!currentStyleFull.border.isApplied}
+									isDisabled={!currentVariantStyle.border.isApplied}
 									label="Rounded"
 									options={roundedOptions}
-									value={currentStyleFull.border.properties.rounded}
+									value={currentVariantStyle.border.properties.rounded}
 									onChange={(value) =>
-										setGroupStyleProperty(
-											currentStyle,
-											"border",
-											"rounded",
-											value,
-										)
+										setGroupStyleProperty({
+											variantType: "variant",
+											variantName: currentVariant.variant,
+											groupStyleName: "border",
+											property: "rounded",
+											value: value,
+										})
 									}
 									width="w-24"
 								/>
 							</CollapsibleGroup>
 
 							{/* Effects Group */}
-							<CollapsibleGroup title="effects">
+							<CollapsibleGroup
+								styleIsApplied={currentVariantStyle.effects.isApplied}
+								toggleGroupIsApplied={() => {
+									toggleGroupIsApplied({
+										variantType: "variant",
+										styleName: currentVariant.variant,
+										group: "effects",
+									});
+								}}
+								title="effects"
+							>
 								<Shadow
 									label="Shadow"
-									isDisabled={!currentStyleFull.effects.isApplied}
-									shadow={currentStyleFull.effects.properties.shadow}
+									isDisabled={!currentVariantStyle.effects.isApplied}
+									shadow={currentVariantStyle.effects.properties.shadow}
 									setShadow={(value) =>
-										setGroupStyleProperty(
-											currentStyle,
-											"effects",
-											"shadow",
-											value,
-										)
+										setGroupStyleProperty({
+											variantType: "variant",
+											variantName: currentVariant.variant,
+											groupStyleName: "effects",
+											property: "shadow",
+											value: value,
+										})
 									}
 								/>
 								<GenericSliderSelector
 									label="Opacity"
-									isDisabled={!currentStyleFull.effects.isApplied}
+									isDisabled={!currentVariantStyle.effects.isApplied}
 									options={opacityOptions}
-									value={currentStyleFull.effects.properties.opacity}
+									value={currentVariantStyle.effects.properties.opacity}
 									onChange={(value) =>
-										setGroupStyleProperty(
-											currentStyle,
-											"effects",
-											"opacity",
-											value,
-										)
+										setGroupStyleProperty({
+											variantType: "variant",
+											variantName: currentVariant.variant,
+											groupStyleName: "effects",
+											property: "opacity",
+											value: value,
+										})
 									}
 									width="w-24"
 								/>

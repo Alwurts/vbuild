@@ -1,8 +1,15 @@
 import type { ButtonStore } from "@/types/store";
-import type { ButtonStyle, StyleGroup, StyleProperty } from "@/types/style";
+import type {
+	ButtonSize,
+	ButtonVariant,
+	SizeStyleGroup,
+	SizeStyleProperty,
+	VariantStyleGroup,
+	VariantStyleProperty,
+} from "@/types/style";
 import { create } from "zustand";
 
-const DEFAULT_BUTTON_STYLE: Omit<ButtonStyle, "styleName"> = {
+const DEFAULT_BUTTON_VARIANT: Omit<ButtonVariant, "styleName"> = {
 	background: {
 		isApplied: true,
 		properties: {
@@ -26,13 +33,7 @@ const DEFAULT_BUTTON_STYLE: Omit<ButtonStyle, "styleName"> = {
 			rounded: "rounded-md",
 		},
 	},
-	size: {
-		isApplied: false,
-		properties: {
-			paddingX: "px-4",
-			height: "h-10",
-		},
-	},
+
 	effects: {
 		isApplied: false,
 		properties: {
@@ -42,154 +43,270 @@ const DEFAULT_BUTTON_STYLE: Omit<ButtonStyle, "styleName"> = {
 	},
 };
 
+export const DEFAULT_BUTTON_SIZE: Omit<ButtonSize, "styleName"> = {
+	size: {
+		isApplied: true,
+		properties: {
+			paddingX: "px-4",
+			height: "h-10",
+		},
+	},
+};
+
 export const useStyleManagerStore = create<ButtonStore>((set) => ({
-	styles: [
-		{
-			styleName: "default",
-			...DEFAULT_BUTTON_STYLE,
-		},
-		{
-			styleName: "destructive",
-			...DEFAULT_BUTTON_STYLE,
-			background: {
-				...DEFAULT_BUTTON_STYLE.background,
-				properties: {
-					bgColor: "bg-destructive",
+	variants: {
+		size: [
+			{
+				styleName: "default",
+				...DEFAULT_BUTTON_SIZE,
+			},
+			{
+				styleName: "sm",
+				...DEFAULT_BUTTON_SIZE,
+				size: {
+					...DEFAULT_BUTTON_SIZE.size,
+					properties: {
+						...DEFAULT_BUTTON_SIZE.size.properties,
+						height: "h-9",
+						paddingX: "px-3",
+					},
 				},
 			},
-			text: {
-				...DEFAULT_BUTTON_STYLE.text,
-				properties: {
-					...DEFAULT_BUTTON_STYLE.text.properties,
-					textColor: "text-destructive-foreground",
+			{
+				styleName: "lg",
+				...DEFAULT_BUTTON_SIZE,
+				size: {
+					...DEFAULT_BUTTON_SIZE.size,
+					properties: {
+						...DEFAULT_BUTTON_SIZE.size.properties,
+						height: "h-11",
+						paddingX: "px-8",
+					},
 				},
 			},
-		},
-		{
-			styleName: "outline",
-			...DEFAULT_BUTTON_STYLE,
-			background: {
-				...DEFAULT_BUTTON_STYLE.background,
-				properties: {
-					bgColor: "bg-background",
+			{
+				styleName: "icon",
+				...DEFAULT_BUTTON_SIZE,
+				size: {
+					...DEFAULT_BUTTON_SIZE.size,
+					properties: {
+						...DEFAULT_BUTTON_SIZE.size.properties,
+						height: "h-10",
+						paddingX: "px-10",
+					},
 				},
 			},
-			text: {
-				...DEFAULT_BUTTON_STYLE.text,
-				properties: {
-					...DEFAULT_BUTTON_STYLE.text.properties,
-					textColor: "text-foreground",
+		],
+		variant: [
+			{
+				styleName: "default",
+				...DEFAULT_BUTTON_VARIANT,
+			},
+			{
+				styleName: "destructive",
+				...DEFAULT_BUTTON_VARIANT,
+				background: {
+					...DEFAULT_BUTTON_VARIANT.background,
+					properties: {
+						bgColor: "bg-destructive",
+					},
+				},
+				text: {
+					...DEFAULT_BUTTON_VARIANT.text,
+					properties: {
+						...DEFAULT_BUTTON_VARIANT.text.properties,
+						textColor: "text-destructive-foreground",
+					},
 				},
 			},
-			border: {
-				isApplied: true,
-				properties: {
-					borderColor: "border-input",
-					borderWidth: "border",
-					borderStyle: "border-solid",
-					rounded: "rounded-md",
+			{
+				styleName: "outline",
+				...DEFAULT_BUTTON_VARIANT,
+				background: {
+					...DEFAULT_BUTTON_VARIANT.background,
+					properties: {
+						bgColor: "bg-background",
+					},
+				},
+				text: {
+					...DEFAULT_BUTTON_VARIANT.text,
+					properties: {
+						...DEFAULT_BUTTON_VARIANT.text.properties,
+						textColor: "text-foreground",
+					},
+				},
+				border: {
+					isApplied: true,
+					properties: {
+						borderColor: "border-input",
+						borderWidth: "border",
+						borderStyle: "border-solid",
+						rounded: "rounded-md",
+					},
 				},
 			},
-		},
-		{
-			styleName: "secondary",
-			...DEFAULT_BUTTON_STYLE,
-			background: {
-				...DEFAULT_BUTTON_STYLE.background,
-				properties: {
-					bgColor: "bg-secondary",
+			{
+				styleName: "secondary",
+				...DEFAULT_BUTTON_VARIANT,
+				background: {
+					...DEFAULT_BUTTON_VARIANT.background,
+					properties: {
+						bgColor: "bg-secondary",
+					},
+				},
+				text: {
+					...DEFAULT_BUTTON_VARIANT.text,
+					properties: {
+						...DEFAULT_BUTTON_VARIANT.text.properties,
+						textColor: "text-secondary-foreground",
+					},
 				},
 			},
-			text: {
-				...DEFAULT_BUTTON_STYLE.text,
-				properties: {
-					...DEFAULT_BUTTON_STYLE.text.properties,
-					textColor: "text-secondary-foreground",
+			{
+				styleName: "ghost",
+				...DEFAULT_BUTTON_VARIANT,
+				background: {
+					...DEFAULT_BUTTON_VARIANT.background,
+					properties: {
+						bgColor: "bg-transparent",
+					},
+				},
+				text: {
+					...DEFAULT_BUTTON_VARIANT.text,
+					properties: {
+						...DEFAULT_BUTTON_VARIANT.text.properties,
+						textColor: "text-foreground",
+					},
 				},
 			},
-		},
-		{
-			styleName: "ghost",
-			...DEFAULT_BUTTON_STYLE,
-			background: {
-				...DEFAULT_BUTTON_STYLE.background,
-				properties: {
-					bgColor: "bg-transparent",
+			{
+				styleName: "link",
+				...DEFAULT_BUTTON_VARIANT,
+				background: {
+					...DEFAULT_BUTTON_VARIANT.background,
+					properties: {
+						bgColor: "bg-transparent",
+					},
+				},
+				text: {
+					...DEFAULT_BUTTON_VARIANT.text,
+					properties: {
+						...DEFAULT_BUTTON_VARIANT.text.properties,
+						textColor: "text-primary",
+					},
 				},
 			},
-			text: {
-				...DEFAULT_BUTTON_STYLE.text,
-				properties: {
-					...DEFAULT_BUTTON_STYLE.text.properties,
-					textColor: "text-foreground",
-				},
-			},
-		},
-		{
-			styleName: "link",
-			...DEFAULT_BUTTON_STYLE,
-			background: {
-				...DEFAULT_BUTTON_STYLE.background,
-				properties: {
-					bgColor: "bg-transparent",
-				},
-			},
-			text: {
-				...DEFAULT_BUTTON_STYLE.text,
-				properties: {
-					...DEFAULT_BUTTON_STYLE.text.properties,
-					textColor: "text-primary",
-				},
-			},
-		},
-	],
-	currentStyle: "default",
-	text: "Edit me",
-	setGroupStyleProperty: (styleName, group, property, value) => {
-		console.log(`Setting style: ${styleName}, ${group}, ${property}, ${value}`);
+		],
+	},
+	currentVariant: {
+		variant: "default",
+		size: "default",
+	},
+	buttonText: "Edit me",
+	setGroupStyleProperty: ({
+		variantType,
+		variantName,
+		groupStyleName,
+		property,
+		value,
+	}) => {
 		set((state) => {
-			const updatedStyles = state.styles.map((style) =>
-				style.styleName === styleName
-					? updateNestedProperty(style, group, property, value)
-					: style,
+			if (variantType === "variant") {
+				const variantStyles = state.variants[variantType];
+				const currentVariantStyleIndex = variantStyles.findIndex(
+					(style) => style.styleName === variantName,
+				);
+				const currentVariantStyle = variantStyles[currentVariantStyleIndex];
+				const groupStyle = currentVariantStyle[groupStyleName];
+				const updatedGroupStyle = {
+					...groupStyle,
+					properties: {
+						...groupStyle.properties,
+						[property]: value,
+					},
+				};
+				variantStyles[currentVariantStyleIndex] = {
+					...currentVariantStyle,
+					[groupStyleName]: updatedGroupStyle,
+				};
+				return {
+					variants: {
+						...state.variants,
+						variant: variantStyles,
+					},
+				};
+			}
+			const sizeStyles = state.variants[variantType];
+			const currentSizeStyleIndex = sizeStyles.findIndex(
+				(style) => style.styleName === variantName,
 			);
-			console.log("Updated styles:", updatedStyles);
-			return { styles: updatedStyles };
+
+			const currentSizeStyle = sizeStyles[currentSizeStyleIndex];
+			const groupStyle = currentSizeStyle[groupStyleName];
+			const updatedGroupStyle = {
+				...groupStyle,
+				properties: {
+					...groupStyle.properties,
+					[property]: value,
+				},
+			};
+
+			sizeStyles[currentSizeStyleIndex] = {
+				...currentSizeStyle,
+				[groupStyleName]: updatedGroupStyle,
+			};
+
+			return {
+				variants: {
+					...state.variants,
+					size: sizeStyles,
+				},
+			};
 		});
 	},
-	toggleGroupIsApplied: (styleName, group) => {
+	toggleGroupIsApplied: ({ variantType, styleName, group }) => {
 		set((state) => {
-			const updatedStyles = state.styles.map((style) =>
+			if (variantType === "variant") {
+				const updatedVariant = state.variants[variantType].map((style) =>
+					style.styleName === styleName
+						? {
+								...style,
+								[group]: {
+									...style[group],
+									isApplied: !style[group].isApplied,
+								},
+							}
+						: style,
+				);
+				return {
+					variants: {
+						...state.variants,
+						variant: updatedVariant,
+					},
+				};
+			}
+			const updatedSize = state.variants[variantType].map((style) =>
 				style.styleName === styleName
 					? {
 							...style,
-							[group]: { ...style[group], isApplied: !style[group].isApplied },
+							[group]: {
+								...style[group],
+								isApplied: !style[group].isApplied,
+							},
 						}
 					: style,
 			);
-			return { styles: updatedStyles };
+			return {
+				variants: {
+					...state.variants,
+					size: updatedSize,
+				},
+			};
 		});
 	},
-	setCurrentStyle: (styleName) => set({ currentStyle: styleName }),
+	setCurrentVariant: ({ variantType, name }) =>
+		set((state) => ({
+			...state,
+			currentVariant: { ...state.currentVariant, [variantType]: name },
+		})),
 }));
-
-function updateNestedProperty(
-	style: ButtonStyle,
-	styleGroup: StyleGroup,
-	property: StyleProperty,
-	value: string,
-): ButtonStyle {
-	const updatedStyle = {
-		...style,
-		[styleGroup]: {
-			...style[styleGroup],
-			properties: {
-				...style[styleGroup].properties,
-				[property]: value,
-			},
-		},
-	};
-
-	console.log("Updated style:", updatedStyle);
-	return updatedStyle;
-}

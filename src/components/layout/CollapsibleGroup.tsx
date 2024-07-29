@@ -7,30 +7,35 @@ import {
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Checkbox } from "../ui/checkbox";
-import type { StyleGroup } from "@/types/style";
+import type {
+	ButtonSize,
+	ButtonVariant,
+	SizeStyleGroup,
+	VariantStyleGroup,
+} from "@/types/style";
 import { useStyleManagerStore } from "@/store/useStyleManagerStore";
 
 export const CollapsibleGroup = ({
+	styleIsApplied,
+	toggleGroupIsApplied,
 	title,
 	children,
 	className,
 	defaultOpen,
 }: {
-	title: StyleGroup;
+	styleIsApplied: boolean;
+	toggleGroupIsApplied: () => void;
+	title: VariantStyleGroup | SizeStyleGroup;
 	children: React.ReactNode;
 	className?: string;
 	defaultOpen?: boolean;
 }) => {
-	const { styles, currentStyle, toggleGroupIsApplied } = useStyleManagerStore();
-	const buttonStyle = styles.find((style) => style.styleName === currentStyle);
-	const buttonStyleGroup = buttonStyle?.[title];
-	const groupIsApplied = buttonStyleGroup?.isApplied;
-	const [isOpen, setIsOpen] = useState(defaultOpen ?? !!groupIsApplied);
+	const [isOpen, setIsOpen] = useState(defaultOpen ?? !!styleIsApplied);
 	return (
 		<Collapsible open={isOpen} onOpenChange={setIsOpen}>
 			<div className="flex items-center justify-start gap-3">
 				<CollapsibleTrigger
-					className={cn("opacity-80", groupIsApplied && "opacity-100")}
+					className={cn("opacity-80", styleIsApplied && "opacity-100")}
 				>
 					<div className="flex items-center justify-between gap-2">
 						<h3 className="text-lg font-semibold">{title}</h3>
@@ -39,8 +44,8 @@ export const CollapsibleGroup = ({
 				</CollapsibleTrigger>
 				<div className="flex items-center justify-start gap-2 border-l border-input pl-4">
 					<Checkbox
-						checked={groupIsApplied}
-						onCheckedChange={(e) => toggleGroupIsApplied(currentStyle, title)}
+						checked={styleIsApplied}
+						onCheckedChange={toggleGroupIsApplied}
 					/>
 					<span className="text-sm font-medium">Apply group</span>
 				</div>
