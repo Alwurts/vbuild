@@ -1,5 +1,5 @@
 import { Label } from "@/components/ui/label";
-import { Input } from "./ui/input";
+import { Input } from "../ui/input";
 
 export function InputTool({
 	label,

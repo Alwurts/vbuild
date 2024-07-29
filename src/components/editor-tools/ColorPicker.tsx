@@ -9,7 +9,7 @@ import { bgColorsOptions } from "@/lib/tailwindClasses";
 import { Separator } from "@/components/ui/separator";
 import { Label } from "@/components/ui/label";
 
-const ColorPicker = ({
+export const ColorPicker = ({
 	label,
 	value, // Can be bg- or text- or border-
 	onChange,
@@ -78,5 +78,3 @@ const ColorPicker = ({
 		</Popover>
 	);
 };
-
-export default ColorPicker;

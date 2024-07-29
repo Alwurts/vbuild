@@ -1,6 +1,6 @@
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
-import { Separator } from "./ui/separator";
+import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 
 export function GenericSliderSelector({

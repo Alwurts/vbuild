@@ -1,6 +1,6 @@
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Label } from "@/components/ui/label";
-import { borderStylesOptions, shadowOptions } from "@/lib/tailwindClasses";
+import { shadowOptions } from "@/lib/tailwindClasses";
 
 export function Shadow({
 	label,

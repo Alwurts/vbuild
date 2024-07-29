@@ -1,7 +1,7 @@
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
-import { Separator } from "./ui/separator";
+import { Separator } from "@/components/ui/separator";
 
 const borderWidthsOptions = [
 	["border-0", "h-0"],
