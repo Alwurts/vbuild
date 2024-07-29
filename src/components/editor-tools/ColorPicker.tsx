@@ -8,12 +8,19 @@ import { Button } from "@/components/ui/button";
 import { bgColorsOptions } from "@/lib/tailwindClasses";
 import { Separator } from "@/components/ui/separator";
 import { Label } from "@/components/ui/label";
+import { cn } from "@/lib/utils";
 
 export const ColorPicker = ({
 	label,
 	value, // Can be bg- or text- or border-
 	onChange,
-}: { label: string; value: string; onChange: (color: string) => void }) => {
+	isDisabled,
+}: {
+	label: string;
+	value: string;
+	onChange: (color: string) => void;
+	isDisabled: boolean;
+}) => {
 	const [isOpen, setIsOpen] = useState(false);
 
 	const type = value.startsWith("border-")
@@ -45,15 +52,22 @@ export const ColorPicker = ({
 
 	return (
 		<Popover open={isOpen} onOpenChange={setIsOpen}>
-			<PopoverTrigger asChild>
-				<div className="flex flex-col items-start w-fit py-2 gap-3">
-					<Label className="font-semibold">{label}</Label>
-					<Button variant="outline" size="sm" className="space-x-2 px-1.5">
+			<div className="flex flex-col items-start w-fit py-2 gap-3">
+				<Label className={cn("font-semibold", isDisabled && "opacity-50")}>
+					{label}
+				</Label>
+				<PopoverTrigger asChild>
+					<Button
+						variant="outline"
+						size="sm"
+						className="space-x-2 px-1.5"
+						disabled={isDisabled}
+					>
 						<span className="text-sm ml-1">{value}</span>
 						<div className={`w-6 h-6 rounded-md border ${bgParsedValue}`} />
 					</Button>
-				</div>
-			</PopoverTrigger>
+				</PopoverTrigger>
+			</div>
 			<PopoverContent className="w-64 h-96 p-2 space-y-2 overflow-y-auto">
 				<p className="text-sm text-stone-500">Background Colors</p>
 				<Separator />

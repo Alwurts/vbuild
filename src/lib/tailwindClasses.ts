@@ -1058,15 +1058,15 @@ export const paddingXOptions = [
 ];
 export const heightOptions = [
 	"h-auto",
-	"h-full",
+	/* "h-full",
 	"h-screen",
-	/* 
+	
 	"h-svh",
 	"h-lvh",
 	"h-dvh",
 	"h-min",
-	"h-max", */
-	"h-fit",
+	"h-max", 
+	"h-fit",*/
 	"h-0",
 	"h-px",
 	"h-0.5",
@@ -1103,7 +1103,7 @@ export const heightOptions = [
 	"h-80",
 	"h-96",
 
-	"h-1/2",
+	/* "h-1/2",
 	"h-1/3",
 	"h-2/3",
 	"h-1/4",
@@ -1117,7 +1117,7 @@ export const heightOptions = [
 	"h-2/6",
 	"h-3/6",
 	"h-4/6",
-	"h-5/6",
+	"h-5/6", */
 ];
 
 // Effects

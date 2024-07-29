@@ -3,7 +3,7 @@ import hljs from "highlight.js";
 import "highlight.js/styles/vs2015.css"; // Import a highlight.js theme
 import { Button } from "@/components/ui/button";
 import { CheckIcon, CopyIcon } from "lucide-react";
-import type { ButtonStyleName, ButtonStyle } from "@/types/style";
+import type { ButtonStyleName, ButtonStyle, StyleGroup } from "@/types/style";
 import { useStyleManagerStore } from "@/store/useStyleManagerStore";
 
 interface CodeDisplayProps {
@@ -13,6 +13,25 @@ interface CodeDisplayProps {
 export function CodeDisplay() {
 	const { styles, text } = useStyleManagerStore();
 	const [copied, setCopied] = useState(false);
+
+	const getStyleClasses = (styleName: ButtonStyleName) => {
+		const style = styles.find((s) => s.styleName === styleName);
+		if (!style) return "";
+		const groupNames: StyleGroup[] = [
+			"text",
+			"size",
+			"background",
+			"border",
+			"effects",
+		];
+		const groupsToBeApplied = [];
+		for (const groupName of groupNames) {
+			if (style[groupName].isApplied) {
+				groupsToBeApplied.push(style[groupName].properties);
+			}
+		}
+		return groupsToBeApplied.map((group) => Object.values(group).join(" ")).join(" ");
+	};
 
 	const buttonCode = `import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
@@ -25,60 +44,12 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "${Object.entries(styles.default)
-					.flatMap(([key, value]) =>
-						value
-							? Object.entries(value)
-									.map(([subKey, subValue]) => subValue)
-									.filter(Boolean)
-							: [],
-					)
-					.join(" ")}",
-        destructive: "${Object.entries(styles.destructive)
-					.flatMap(([key, value]) =>
-						value
-							? Object.entries(value)
-									.map(([subKey, subValue]) => subValue)
-									.filter(Boolean)
-							: [],
-					)
-					.join(" ")}",
-        outline: "${Object.entries(styles.outline)
-					.flatMap(([key, value]) =>
-						value
-							? Object.entries(value)
-									.map(([subKey, subValue]) => subValue)
-									.filter(Boolean)
-							: [],
-					)
-					.join(" ")}",
-        secondary: "${Object.entries(styles.secondary)
-					.flatMap(([key, value]) =>
-						value
-							? Object.entries(value)
-									.map(([subKey, subValue]) => subValue)
-									.filter(Boolean)
-							: [],
-					)
-					.join(" ")}",
-        ghost: "${Object.entries(styles.ghost)
-					.flatMap(([key, value]) =>
-						value
-							? Object.entries(value)
-									.map(([subKey, subValue]) => subValue)
-									.filter(Boolean)
-							: [],
-					)
-					.join(" ")}",
-        link: "${Object.entries(styles.link)
-					.flatMap(([key, value]) =>
-						value
-							? Object.entries(value)
-									.map(([subKey, subValue]) => subValue)
-									.filter(Boolean)
-							: [],
-					)
-					.join(" ")}",
+        default: "${getStyleClasses("default")}",
+        destructive: "${getStyleClasses("destructive")}",
+        outline: "${getStyleClasses("outline")}",
+        secondary: "${getStyleClasses("secondary")}",
+        ghost: "${getStyleClasses("ghost")}",
+        link: "${getStyleClasses("link")}",
       },
       size: {
         default: "h-10 px-4 py-2",

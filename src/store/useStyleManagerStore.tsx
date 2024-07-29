@@ -2,124 +2,194 @@ import type { ButtonStore } from "@/types/store";
 import type { ButtonStyle, StyleGroup, StyleProperty } from "@/types/style";
 import { create } from "zustand";
 
-const DEFAULT_BUTTON_STYLE = {
+const DEFAULT_BUTTON_STYLE: Omit<ButtonStyle, "styleName"> = {
 	background: {
-		bgColor: "bg-primary",
+		isApplied: true,
+		properties: {
+			bgColor: "bg-primary",
+		},
 	},
 	text: {
-		textColor: "text-primary-foreground",
-		fontSize: "text-sm",
-		fontWeight: "font-medium",
+		isApplied: true,
+		properties: {
+			textColor: "text-primary-foreground",
+			fontSize: "text-sm",
+			fontWeight: "font-medium",
+		},
 	},
 	border: {
-		borderColor: "border-transparent",
-		borderWidth: "border-none",
-		borderStyle: "border-none",
-		rounded: "rounded-md",
+		isApplied: false,
+		properties: {
+			borderColor: "border-transparent",
+			borderWidth: "border-none",
+			borderStyle: "border-none",
+			rounded: "rounded-md",
+		},
 	},
 	size: {
-		paddingX: "px-4",
-		height: "h-10",
+		isApplied: false,
+		properties: {
+			paddingX: "px-4",
+			height: "h-10",
+		},
 	},
 	effects: {
-		shadow: "shadow-none",
-		opacity: "opacity-100",
+		isApplied: false,
+		properties: {
+			shadow: "shadow-none",
+			opacity: "opacity-100",
+		},
 	},
 };
 
 export const useStyleManagerStore = create<ButtonStore>((set) => ({
-	styles: {
-		default: {
+	styles: [
+		{
+			styleName: "default",
+			...DEFAULT_BUTTON_STYLE,
+		},
+		{
+			styleName: "destructive",
+			...DEFAULT_BUTTON_STYLE,
 			background: {
 				...DEFAULT_BUTTON_STYLE.background,
+				properties: {
+					bgColor: "bg-destructive",
+				},
 			},
 			text: {
 				...DEFAULT_BUTTON_STYLE.text,
+				properties: {
+					...DEFAULT_BUTTON_STYLE.text.properties,
+					textColor: "text-destructive-foreground",
+				},
 			},
 		},
-		destructive: {
-			background: { bgColor: "bg-destructive" },
-			text: {
-				...DEFAULT_BUTTON_STYLE.text,
-				textColor: "text-destructive-foreground",
+		{
+			styleName: "outline",
+			...DEFAULT_BUTTON_STYLE,
+			background: {
+				...DEFAULT_BUTTON_STYLE.background,
+				properties: {
+					bgColor: "bg-background",
+				},
 			},
-		},
-		outline: {
-			background: { bgColor: "bg-background" },
 			text: {
 				...DEFAULT_BUTTON_STYLE.text,
-				textColor: "text-foreground",
+				properties: {
+					...DEFAULT_BUTTON_STYLE.text.properties,
+					textColor: "text-foreground",
+				},
 			},
 			border: {
-				borderColor: "border-input",
-				borderWidth: "border",
-				borderStyle: "border-solid",
-				rounded: "rounded-md",
+				isApplied: true,
+				properties: {
+					borderColor: "border-input",
+					borderWidth: "border",
+					borderStyle: "border-solid",
+					rounded: "rounded-md",
+				},
 			},
 		},
-		secondary: {
-			background: { bgColor: "bg-secondary" },
+		{
+			styleName: "secondary",
+			...DEFAULT_BUTTON_STYLE,
+			background: {
+				...DEFAULT_BUTTON_STYLE.background,
+				properties: {
+					bgColor: "bg-secondary",
+				},
+			},
 			text: {
 				...DEFAULT_BUTTON_STYLE.text,
-				textColor: "text-secondary-foreground",
+				properties: {
+					...DEFAULT_BUTTON_STYLE.text.properties,
+					textColor: "text-secondary-foreground",
+				},
 			},
 		},
-		ghost: {
-			background: { bgColor: "bg-transparent" },
+		{
+			styleName: "ghost",
+			...DEFAULT_BUTTON_STYLE,
+			background: {
+				...DEFAULT_BUTTON_STYLE.background,
+				properties: {
+					bgColor: "bg-transparent",
+				},
+			},
 			text: {
 				...DEFAULT_BUTTON_STYLE.text,
-				textColor: "text-foreground",
+				properties: {
+					...DEFAULT_BUTTON_STYLE.text.properties,
+					textColor: "text-foreground",
+				},
 			},
 		},
-		link: {
-			background: { bgColor: "bg-transparent" },
+		{
+			styleName: "link",
+			...DEFAULT_BUTTON_STYLE,
+			background: {
+				...DEFAULT_BUTTON_STYLE.background,
+				properties: {
+					bgColor: "bg-transparent",
+				},
+			},
 			text: {
 				...DEFAULT_BUTTON_STYLE.text,
-				textColor: "text-primary",
+				properties: {
+					...DEFAULT_BUTTON_STYLE.text.properties,
+					textColor: "text-primary",
+				},
 			},
 		},
-	},
+	],
 	currentStyle: "default",
 	text: "Edit me",
-	setStyle: (styleName, group, property, value) => {
+	setGroupStyleProperty: (styleName, group, property, value) => {
 		console.log(`Setting style: ${styleName}, ${group}, ${property}, ${value}`);
 		set((state) => {
-			const updatedStyle = updateNestedProperty(
-				state.styles[styleName],
-				group,
-				property,
-				value,
+			const updatedStyles = state.styles.map((style) =>
+				style.styleName === styleName
+					? updateNestedProperty(style, group, property, value)
+					: style,
 			);
-			console.log("Updated style:", updatedStyle);
-			return {
-				styles: {
-					...state.styles,
-					[styleName]: updatedStyle,
-				},
-			};
+			console.log("Updated styles:", updatedStyles);
+			return { styles: updatedStyles };
+		});
+	},
+	toggleGroupIsApplied: (styleName, group) => {
+		set((state) => {
+			const updatedStyles = state.styles.map((style) =>
+				style.styleName === styleName
+					? {
+							...style,
+							[group]: { ...style[group], isApplied: !style[group].isApplied },
+						}
+					: style,
+			);
+			return { styles: updatedStyles };
 		});
 	},
 	setCurrentStyle: (styleName) => set({ currentStyle: styleName }),
 }));
 
 function updateNestedProperty(
-  style: ButtonStyle,
-  group: StyleGroup,
-  property: StyleProperty,
-  value: string,
+	style: ButtonStyle,
+	styleGroup: StyleGroup,
+	property: StyleProperty,
+	value: string,
 ): ButtonStyle {
-  console.log('Updating nested property:');
-  console.log('Current style:', style);
-  console.log(`Group: ${group}, Property: ${property}, New value: ${value}`);
+	const updatedStyle = {
+		...style,
+		[styleGroup]: {
+			...style[styleGroup],
+			properties: {
+				...style[styleGroup].properties,
+				[property]: value,
+			},
+		},
+	};
 
-  const updatedStyle = {
-    ...style,
-    [group]: {
-      ...style[group],
-      [property]: value,
-    },
-  };
-
-  console.log('Updated style:', updatedStyle);
-  return updatedStyle;
+	console.log("Updated style:", updatedStyle);
+	return updatedStyle;
 }

@@ -12,37 +12,42 @@ import { useStyleManagerStore } from "@/store/useStyleManagerStore";
 
 export const CollapsibleGroup = ({
 	title,
-	isVisible,
 	children,
 	className,
+	defaultOpen,
 }: {
 	title: StyleGroup;
-	isVisible: boolean;
 	children: React.ReactNode;
 	className?: string;
+	defaultOpen?: boolean;
 }) => {
-	/* const { styles, currentStyle } = useStyleManagerStore(); */
-	/* const groupStyle = styles[currentStyle][title]; */
-	const [isOpen, setIsOpen] = useState(isVisible);
-	/* const [isApplied, setIsApplied] = useState(!!groupStyle); */
+	const { styles, currentStyle, toggleGroupIsApplied } = useStyleManagerStore();
+	const buttonStyle = styles.find((style) => style.styleName === currentStyle);
+	const buttonStyleGroup = buttonStyle?.[title];
+	const groupIsApplied = buttonStyleGroup?.isApplied;
+	const [isOpen, setIsOpen] = useState(defaultOpen ?? !!groupIsApplied);
 	return (
 		<Collapsible open={isOpen} onOpenChange={setIsOpen}>
-			{/* <div> */}
-			<CollapsibleTrigger
-			/* className={cn("opacity-80", isApplied && "opacity-100")} */
-			>
-				<div className="flex items-center justify-between gap-2">
-					<h3 className="text-lg font-semibold">{title}</h3>
-					{isOpen ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+			<div className="flex items-center justify-start gap-3">
+				<CollapsibleTrigger
+					className={cn("opacity-80", groupIsApplied && "opacity-100")}
+				>
+					<div className="flex items-center justify-between gap-2">
+						<h3 className="text-lg font-semibold">{title}</h3>
+						{isOpen ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+					</div>
+				</CollapsibleTrigger>
+				<div className="flex items-center justify-start gap-2 border-l border-input pl-4">
+					<Checkbox
+						checked={groupIsApplied}
+						onCheckedChange={(e) => toggleGroupIsApplied(currentStyle, title)}
+					/>
+					<span className="text-sm font-medium">Apply group</span>
 				</div>
-			</CollapsibleTrigger>
-			{/* <Checkbox
-					checked={isApplied}
-					onCheckedChange={(e) => setIsApplied((prev) => !prev)}
-				/>
-			</div> */}
-			<CollapsibleContent className={cn(className ?? "grid gap-4 py-4")}>
-				{children}
+			</div>
+
+			<CollapsibleContent className="flex flex-col">
+				<div className={cn("py-4", className)}>{children}</div>
 			</CollapsibleContent>
 		</Collapsible>
 	);

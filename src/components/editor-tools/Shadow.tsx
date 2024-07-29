@@ -1,21 +1,27 @@
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Label } from "@/components/ui/label";
 import { shadowOptions } from "@/lib/tailwindClasses";
+import { cn } from "@/lib/utils";
 
 export function Shadow({
 	label,
 	shadow,
 	setShadow,
+	isDisabled,
 }: {
 	label: string;
 	shadow: string;
 	setShadow: (value: string) => void;
+	isDisabled: boolean;
 }) {
 	return (
 		<div className="flex flex-col items-start w-fit py-2 gap-3">
-			<Label className="font-semibold">{label}</Label>
+			<Label className={cn("font-semibold", isDisabled && "opacity-50")}>
+				{label}
+			</Label>
 			<ToggleGroup
 				type="single"
+				disabled={isDisabled}
 				size="sm"
 				variant="outline"
 				className="flex justify-start flex-wrap gap-2"

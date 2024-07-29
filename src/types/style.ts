@@ -23,26 +23,42 @@ export type ButtonStyleName =
 	| "link";
 
 export type ButtonStyle = {
+	styleName: ButtonStyleName;
 	background: {
-		bgColor: string;
+		isApplied: boolean;
+		properties: {
+			bgColor: string;
+		};
 	};
 	text: {
-		textColor: string;
-		fontSize: string;
-		fontWeight: string;
+		isApplied: boolean;
+		properties: {
+			textColor: string;
+			fontSize: string;
+			fontWeight: string;
+		};
 	};
-	border?: {
-		borderColor: string;
-		borderWidth: string;
-		borderStyle: string;
-		rounded: string;
+	border: {
+		isApplied: boolean;
+		properties: {
+			borderColor: string;
+			borderWidth: string;
+			borderStyle: string;
+			rounded: string;
+		};
 	};
-	size?: {
-		paddingX: string;
-		height: string;
+	size: {
+		isApplied: boolean;
+		properties: {
+			paddingX: string;
+			height: string;
+		};
 	};
-	effects?: {
-		shadow: string;
-		opacity: string;
+	effects: {
+		isApplied: boolean;
+		properties: {
+			shadow: string;
+			opacity: string;
+		};
 	};
 };

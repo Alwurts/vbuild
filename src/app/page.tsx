@@ -37,26 +37,22 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import { useStyleManagerStore } from "@/store/useStyleManagerStore";
-import type { ButtonStyleName } from "@/types/style";
+import type { ButtonStyleName, StyleGroup, StyleProperty } from "@/types/style";
 
 export default function Home() {
-	const { styles, currentStyle, setStyle, setCurrentStyle } =
+	const { styles, currentStyle, setGroupStyleProperty, setCurrentStyle } =
 		useStyleManagerStore();
 	const [buttonText, setButtonText] = useState("Hello world");
 
-	// Group Visibility
-	const [visibleGroups, setVisibleGroups] = useState({
-		text: true,
-		size: true,
-		background: true,
-		border: true,
-		effects: false,
-		hover: false,
-	});
-
-	const currentStyleFull = styles[currentStyle];
+	const currentStyleFull = styles.find(
+		(style) => style.styleName === currentStyle,
+	);
 
 	const [openStyles, setOpenStyles] = useState<string[]>([currentStyle]);
+
+	if (!currentStyleFull) {
+		return null;
+	}
 
 	return (
 		<div className="w-full h-screen flex justify-center items-center p-6 bg-stone-300">
@@ -68,21 +64,64 @@ export default function Home() {
 						type="multiple"
 						className="w-full"
 					>
-						{Object.entries(styles).map(([styleName, styleProps]) => {
-							const styleNameTyped = styleName as ButtonStyleName;
+						{styles.map((styleProps) => {
+							const styleNameTyped = styleProps.styleName as ButtonStyleName;
+
+							const applyProperty = (
+								isApplied: boolean,
+								propertyValue: string,
+							) => {
+								return isApplied ? propertyValue : undefined;
+							};
 							const buttonClassesForStyle = cn(
-								styleProps.text.textColor,
-								styleProps.text.fontSize,
-								styleProps.text.fontWeight,
-								styleProps.background.bgColor,
-								styleProps.border?.borderColor,
-								styleProps.border?.borderWidth,
-								styleProps.border?.borderStyle,
-								styleProps.border?.rounded,
-								styleProps.size?.height,
-								styleProps.size?.paddingX,
-								styleProps.effects?.shadow,
-								styleProps.effects?.opacity,
+								applyProperty(
+									styleProps.text.isApplied,
+									styleProps.text.properties.textColor,
+								),
+								applyProperty(
+									styleProps.text.isApplied,
+									styleProps.text.properties.fontSize,
+								),
+								applyProperty(
+									styleProps.text.isApplied,
+									styleProps.text.properties.fontWeight,
+								),
+								applyProperty(
+									styleProps.background.isApplied,
+									styleProps.background.properties.bgColor,
+								),
+								applyProperty(
+									styleProps.border.isApplied,
+									styleProps.border.properties.borderColor,
+								),
+								applyProperty(
+									styleProps.border.isApplied,
+									styleProps.border.properties.borderWidth,
+								),
+								applyProperty(
+									styleProps.border.isApplied,
+									styleProps.border.properties.borderStyle,
+								),
+								applyProperty(
+									styleProps.border.isApplied,
+									styleProps.border.properties.rounded,
+								),
+								applyProperty(
+									styleProps.size.isApplied,
+									styleProps.size.properties.height,
+								),
+								applyProperty(
+									styleProps.size.isApplied,
+									styleProps.size.properties.paddingX,
+								),
+								applyProperty(
+									styleProps.effects.isApplied,
+									styleProps.effects.properties.shadow,
+								),
+								applyProperty(
+									styleProps.effects.isApplied,
+									styleProps.effects.properties.opacity,
+								),
 							);
 
 							return (
@@ -128,9 +167,9 @@ export default function Home() {
 										<SelectValue placeholder="Theme" />
 									</SelectTrigger>
 									<SelectContent>
-										{Object.keys(styles).map((style) => (
-											<SelectItem key={style} value={style}>
-												{style}
+										{styles.map((style) => (
+											<SelectItem key={style.styleName} value={style.styleName}>
+												{style.styleName}
 											</SelectItem>
 										))}
 									</SelectContent>
@@ -139,78 +178,102 @@ export default function Home() {
 							{/* Text Group */}
 							<CollapsibleGroup
 								title="text"
-								isVisible={visibleGroups.text}
-								className="grid grid-cols-2 gap-6"
+								className="grid grid-cols-2 gap-y-2 gap-x-4"
 							>
 								<InputTool
 									label="Button Text"
 									value={buttonText}
 									onChange={setButtonText}
+									isDisabled={!currentStyleFull.text.isApplied}
 								/>
 								<ColorPicker
 									label="Text Color"
-									value={currentStyleFull.text.textColor}
+									isDisabled={!currentStyleFull.text.isApplied}
+									value={currentStyleFull.text.properties.textColor}
 									onChange={(value) => {
 										console.log(value);
-										setStyle(currentStyle, "text", "textColor", value);
+										setGroupStyleProperty(
+											currentStyle,
+											"text",
+											"textColor",
+											value,
+										);
 									}}
 								/>
 								<GenericSliderSelector
 									label="Font Size"
+									isDisabled={!currentStyleFull.text.isApplied}
 									options={fontSizesOptions}
-									value={currentStyleFull.text.fontSize}
+									value={currentStyleFull.text.properties.fontSize}
 									onChange={(value) =>
-										setStyle(currentStyle, "text", "fontSize", value)
+										setGroupStyleProperty(
+											currentStyle,
+											"text",
+											"fontSize",
+											value,
+										)
 									}
 									width="w-20"
 								/>
 								<FontWeightComponent
 									label="Font Weight"
-									fontWeight={currentStyleFull.text.fontWeight}
+									isDisabled={!currentStyleFull.text.isApplied}
+									fontWeight={currentStyleFull.text.properties.fontWeight}
 									setFontWeight={(value) =>
-										setStyle(currentStyle, "text", "fontWeight", value)
+										setGroupStyleProperty(
+											currentStyle,
+											"text",
+											"fontWeight",
+											value,
+										)
 									}
 								/>
 							</CollapsibleGroup>
 
 							{/* Size Group */}
 							<CollapsibleGroup
+								defaultOpen
 								title="size"
-								isVisible={visibleGroups.size}
 								className="grid grid-cols-2 gap-6"
 							>
-								{currentStyleFull.size?.paddingX && (
-									<>
-										<GenericSliderSelector
-											label="Padding (X)"
-											options={paddingXOptions}
-											value={currentStyleFull.size.paddingX}
-											onChange={(value) =>
-												setStyle(currentStyle, "size", "paddingX", value)
-											}
-										/>
-										<GenericSliderSelector
-											label="Height"
-											options={heightOptions}
-											value={currentStyleFull.size.height}
-											onChange={(value) =>
-												setStyle(currentStyle, "size", "height", value)
-											}
-										/>
-									</>
-								)}
+								<GenericSliderSelector
+									isDisabled={!currentStyleFull.size.isApplied}
+									label="Padding (X)"
+									options={paddingXOptions}
+									value={currentStyleFull.size.properties.paddingX}
+									onChange={(value) =>
+										setGroupStyleProperty(
+											currentStyle,
+											"size",
+											"paddingX",
+											value,
+										)
+									}
+								/>
+								<GenericSliderSelector
+									isDisabled={!currentStyleFull.size.isApplied}
+									label="Height"
+									options={heightOptions}
+									value={currentStyleFull.size.properties.height}
+									onChange={(value) =>
+										setGroupStyleProperty(currentStyle, "size", "height", value)
+									}
+								/>
 							</CollapsibleGroup>
 
 							{/* Background Group */}
-							<CollapsibleGroup
-								title="background"
-								isVisible={visibleGroups.background}
-							>
+							<CollapsibleGroup title="background" defaultOpen>
 								<ColorPicker
+									isDisabled={!currentStyleFull.background.isApplied}
 									label="Background Color"
-									value={currentStyleFull.background.bgColor}
+									value={currentStyleFull.background.properties.bgColor}
 									onChange={(value) =>
-										setStyle(currentStyle, "background", "bgColor", value)
+										setGroupStyleProperty(
+											currentStyle,
+											"background",
+											"bgColor",
+											value,
+										)
 									}
 								/>
 							</CollapsibleGroup>
@@ -218,70 +281,94 @@ export default function Home() {
 							{/* Border Group */}
 							<CollapsibleGroup
 								title="border"
-								isVisible={visibleGroups.border}
 								className="grid grid-cols-2 gap-6"
 							>
-								{currentStyleFull.border?.borderStyle && (
-									<>
-										<BorderType
-											label="Border Style"
-											borderStyle={currentStyleFull.border.borderStyle}
-											setBorderStyle={(value) =>
-												setStyle(currentStyle, "border", "borderStyle", value)
-											}
-										/>
-										<BorderWidth
-											label="Border Width"
-											borderWidth={currentStyleFull.border.borderWidth}
-											setBorderWidth={(value) =>
-												setStyle(currentStyle, "border", "borderWidth", value)
-											}
-										/>
-										<ColorPicker
-											label="Border Color"
-											value={currentStyleFull.border.borderColor}
-											onChange={(value) =>
-												setStyle(currentStyle, "border", "borderColor", value)
-											}
-										/>
-										<GenericSliderSelector
-											label="Rounded"
-											options={roundedOptions}
-											value={currentStyleFull.border.rounded}
-											onChange={(value) =>
-												setStyle(currentStyle, "border", "rounded", value)
-											}
-											width="w-24"
-										/>
-									</>
-								)}
+								<BorderType
+									label="Border Style"
+									isDisabled={!currentStyleFull.border.isApplied}
+									borderStyle={currentStyleFull.border.properties.borderStyle}
+									setBorderStyle={(value) =>
+										setGroupStyleProperty(
+											currentStyle,
+											"border",
+											"borderStyle",
+											value,
+										)
+									}
+								/>
+								<BorderWidth
+									isDisabled={!currentStyleFull.border.isApplied}
+									label="Border Width"
+									borderWidth={currentStyleFull.border.properties.borderWidth}
+									setBorderWidth={(value) =>
+										setGroupStyleProperty(
+											currentStyle,
+											"border",
+											"borderWidth",
+											value,
+										)
+									}
+								/>
+								<ColorPicker
+									isDisabled={!currentStyleFull.border.isApplied}
+									label="Border Color"
+									value={currentStyleFull.border.properties.borderColor}
+									onChange={(value) =>
+										setGroupStyleProperty(
+											currentStyle,
+											"border",
+											"borderColor",
+											value,
+										)
+									}
+								/>
+								<GenericSliderSelector
+									isDisabled={!currentStyleFull.border.isApplied}
+									label="Rounded"
+									options={roundedOptions}
+									value={currentStyleFull.border.properties.rounded}
+									onChange={(value) =>
+										setGroupStyleProperty(
+											currentStyle,
+											"border",
+											"rounded",
+											value,
+										)
+									}
+									width="w-24"
+								/>
 							</CollapsibleGroup>
 
 							{/* Effects Group */}
-							<CollapsibleGroup
-								title="effects"
-								isVisible={visibleGroups.effects}
-							>
-								{currentStyleFull.effects?.shadow && (
-									<>
-										<Shadow
-											label="Shadow"
-											shadow={currentStyleFull.effects.shadow}
-											setShadow={(value) =>
-												setStyle(currentStyle, "effects", "shadow", value)
-											}
-										/>
-										<GenericSliderSelector
-											label="Opacity"
-											options={opacityOptions}
-											value={currentStyleFull.effects.opacity}
-											onChange={(value) =>
-												setStyle(currentStyle, "effects", "opacity", value)
-											}
-											width="w-24"
-										/>
-									</>
-								)}
+							<CollapsibleGroup title="effects">
+								<Shadow
+									label="Shadow"
+									isDisabled={!currentStyleFull.effects.isApplied}
+									shadow={currentStyleFull.effects.properties.shadow}
+									setShadow={(value) =>
+										setGroupStyleProperty(
+											currentStyle,
+											"effects",
+											"shadow",
+											value,
+										)
+									}
+								/>
+								<GenericSliderSelector
+									label="Opacity"
+									isDisabled={!currentStyleFull.effects.isApplied}
+									options={opacityOptions}
+									value={currentStyleFull.effects.properties.opacity}
+									onChange={(value) =>
+										setGroupStyleProperty(
+											currentStyle,
+											"effects",
+											"opacity",
+											value,
+										)
+									}
+									width="w-24"
+								/>
 							</CollapsibleGroup>
 						</TabsContent>
 						<TabsContent value="code">
