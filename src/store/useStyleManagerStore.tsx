@@ -30,7 +30,6 @@ const DEFAULT_BUTTON_STYLE = {
 export const useStyleManagerStore = create<ButtonStore>((set) => ({
 	styles: {
 		default: {
-			styleName: "default",
 			background: {
 				...DEFAULT_BUTTON_STYLE.background,
 			},
@@ -39,7 +38,6 @@ export const useStyleManagerStore = create<ButtonStore>((set) => ({
 			},
 		},
 		destructive: {
-			styleName: "destructive",
 			background: { bgColor: "bg-destructive" },
 			text: {
 				...DEFAULT_BUTTON_STYLE.text,
@@ -47,7 +45,6 @@ export const useStyleManagerStore = create<ButtonStore>((set) => ({
 			},
 		},
 		outline: {
-			styleName: "outline",
 			background: { bgColor: "bg-background" },
 			text: {
 				...DEFAULT_BUTTON_STYLE.text,
@@ -61,7 +58,6 @@ export const useStyleManagerStore = create<ButtonStore>((set) => ({
 			},
 		},
 		secondary: {
-			styleName: "secondary",
 			background: { bgColor: "bg-secondary" },
 			text: {
 				...DEFAULT_BUTTON_STYLE.text,
@@ -69,7 +65,6 @@ export const useStyleManagerStore = create<ButtonStore>((set) => ({
 			},
 		},
 		ghost: {
-			styleName: "ghost",
 			background: { bgColor: "bg-transparent" },
 			text: {
 				...DEFAULT_BUTTON_STYLE.text,
@@ -77,7 +72,6 @@ export const useStyleManagerStore = create<ButtonStore>((set) => ({
 			},
 		},
 		link: {
-			styleName: "link",
 			background: { bgColor: "bg-transparent" },
 			text: {
 				...DEFAULT_BUTTON_STYLE.text,
@@ -87,40 +81,45 @@ export const useStyleManagerStore = create<ButtonStore>((set) => ({
 	},
 	currentStyle: "default",
 	text: "Edit me",
-	setStyle: (styleName, group, property, value) =>
-		set((state) => ({
-			styles: {
-				...state.styles,
-				[styleName]: {
-					...state.styles[styleName],
-					[styleName]: {
-						...state.styles[styleName],
-						...updateNestedProperty(
-							state.styles[styleName],
-							group,
-							property,
-							value,
-						),
-					},
+	setStyle: (styleName, group, property, value) => {
+		console.log(`Setting style: ${styleName}, ${group}, ${property}, ${value}`);
+		set((state) => {
+			const updatedStyle = updateNestedProperty(
+				state.styles[styleName],
+				group,
+				property,
+				value,
+			);
+			console.log("Updated style:", updatedStyle);
+			return {
+				styles: {
+					...state.styles,
+					[styleName]: updatedStyle,
 				},
-			},
-		})),
+			};
+		});
+	},
 	setCurrentStyle: (styleName) => set({ currentStyle: styleName }),
 }));
 
-// Helper function to update nested properties
 function updateNestedProperty(
-	style: ButtonStyle,
-	group: StyleGroup,
-	property: StyleProperty,
-	value: string,
+  style: ButtonStyle,
+  group: StyleGroup,
+  property: StyleProperty,
+  value: string,
 ): ButtonStyle {
-	const styleGroup = style[group];
-	return {
-		...style,
-		[group]: {
-			...styleGroup,
-			[property]: value,
-		},
-	};
+  console.log('Updating nested property:');
+  console.log('Current style:', style);
+  console.log(`Group: ${group}, Property: ${property}, New value: ${value}`);
+
+  const updatedStyle = {
+    ...style,
+    [group]: {
+      ...style[group],
+      [property]: value,
+    },
+  };
+
+  console.log('Updated style:', updatedStyle);
+  return updatedStyle;
 }

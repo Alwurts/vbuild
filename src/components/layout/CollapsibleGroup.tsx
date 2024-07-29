@@ -21,26 +21,26 @@ export const CollapsibleGroup = ({
 	children: React.ReactNode;
 	className?: string;
 }) => {
-	const { styles, currentStyle } = useStyleManagerStore();
-	const groupStyle = styles[currentStyle][title];
+	/* const { styles, currentStyle } = useStyleManagerStore(); */
+	/* const groupStyle = styles[currentStyle][title]; */
 	const [isOpen, setIsOpen] = useState(isVisible);
-	const [isApplied, setIsApplied] = useState(!!groupStyle);
+	/* const [isApplied, setIsApplied] = useState(!!groupStyle); */
 	return (
 		<Collapsible open={isOpen} onOpenChange={setIsOpen}>
-			<div>
-				<CollapsibleTrigger
-					className={cn("opacity-80", isApplied && "opacity-100")}
-				>
-					<div className="flex items-center justify-between gap-2">
-						<h3 className="text-lg font-semibold">{title}</h3>
-						{isOpen ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
-					</div>
-				</CollapsibleTrigger>
-				<Checkbox
+			{/* <div> */}
+			<CollapsibleTrigger
+			/* className={cn("opacity-80", isApplied && "opacity-100")} */
+			>
+				<div className="flex items-center justify-between gap-2">
+					<h3 className="text-lg font-semibold">{title}</h3>
+					{isOpen ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+				</div>
+			</CollapsibleTrigger>
+			{/* <Checkbox
 					checked={isApplied}
 					onCheckedChange={(e) => setIsApplied((prev) => !prev)}
 				/>
-			</div>
+			</div> */}
 			<CollapsibleContent className={cn(className ?? "grid gap-4 py-4")}>
 				{children}
 			</CollapsibleContent>

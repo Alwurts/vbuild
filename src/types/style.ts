@@ -23,7 +23,6 @@ export type ButtonStyleName =
 	| "link";
 
 export type ButtonStyle = {
-	styleName: ButtonStyleName;
 	background: {
 		bgColor: string;
 	};

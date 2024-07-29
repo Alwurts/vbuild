@@ -58,10 +58,6 @@ export default function Home() {
 
 	const [openStyles, setOpenStyles] = useState<string[]>([currentStyle]);
 
-	const toggleGroup = (group: keyof typeof visibleGroups) => {
-		setVisibleGroups((prev) => ({ ...prev, [group]: !prev[group] }));
-	};
-
 	return (
 		<div className="w-full h-screen flex justify-center items-center p-6 bg-stone-300">
 			<Card className="w-full max-w-7xl h-full flex gap-6">
@@ -154,9 +150,10 @@ export default function Home() {
 								<ColorPicker
 									label="Text Color"
 									value={currentStyleFull.text.textColor}
-									onChange={(value) =>
-										setStyle(currentStyle, "text", "textColor", value)
-									}
+									onChange={(value) => {
+										console.log(value);
+										setStyle(currentStyle, "text", "textColor", value);
+									}}
 								/>
 								<GenericSliderSelector
 									label="Font Size"
