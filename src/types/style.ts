@@ -8,7 +8,7 @@ export type StyleProperty = {
 	text: "textColor" | "fontSize" | "fontWeight";
 	border: "borderColor" | "borderWidth" | "borderStyle" | "rounded";
 	effects: "shadow" | "opacity";
-	size: "height" | "paddingX";
+	size: "height" | "paddingX" | "paddingY";
 };
 
 // Generic style type

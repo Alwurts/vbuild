@@ -4,6 +4,7 @@ import {
 	heightOptions,
 	roundedOptions,
 	opacityOptions,
+	paddingYOptions,
 } from "@/lib/tailwindClasses";
 import { CollapsibleGroup } from "@/components/layout/CollapsibleGroup";
 import { Label } from "@/components/ui/label";
@@ -369,16 +370,16 @@ export function Editor({
 								/>
 								<GenericSliderSelector
 									isDisabled={!currentVariantStyle.size.isApplied}
-									label="Height"
-									options={heightOptions}
-									value={currentVariantStyle.size.properties.height}
+									label="Padding (Y)"
+									options={paddingYOptions}
+									value={currentVariantStyle.size.properties.paddingY}
 									onChange={(value) =>
 										setStyleProperty({
 											component: currentComponent,
 											styleType: "variant",
 											styleName: currentVariant.variant,
 											group: "size",
-											property: "height",
+											property: "paddingY",
 											value: value,
 										})
 									}

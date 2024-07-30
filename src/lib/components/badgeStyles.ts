@@ -27,7 +27,7 @@ export const DEFAULT_BADGE_STYLE: BadgeComponentStyle = {
 			},
 			size: {
 				isApplied: true,
-				properties: { height: "h-4", paddingX: "px-2" },
+				properties: { paddingX: "px-2", paddingY: "py-0.5" },
 			},
 		},
 		secondary: {
@@ -55,7 +55,7 @@ export const DEFAULT_BADGE_STYLE: BadgeComponentStyle = {
 			},
 			size: {
 				isApplied: true,
-				properties: { height: "h-4", paddingX: "px-2" },
+				properties: { paddingX: "px-2", paddingY: "py-0.5" },
 			},
 		},
 		destructive: {
@@ -86,7 +86,7 @@ export const DEFAULT_BADGE_STYLE: BadgeComponentStyle = {
 			},
 			size: {
 				isApplied: true,
-				properties: { height: "h-4", paddingX: "px-2" },
+				properties: { paddingX: "px-2", paddingY: "py-0.5" },
 			},
 		},
 		outline: {
@@ -117,7 +117,7 @@ export const DEFAULT_BADGE_STYLE: BadgeComponentStyle = {
 			},
 			size: {
 				isApplied: true,
-				properties: { height: "h-4", paddingX: "px-2" },
+				properties: { paddingX: "px-2", paddingY: "py-0.5" },
 			},
 		},
 	},
