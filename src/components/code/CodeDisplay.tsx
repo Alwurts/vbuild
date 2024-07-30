@@ -1,11 +1,10 @@
 import { useState } from "react";
 import hljs from "highlight.js";
 import "highlight.js/styles/vs2015.css"; // Import a highlight.js theme
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui-editor/button";
 import { CheckIcon, CopyIcon } from "lucide-react";
 
 import { useStyleManagerStore } from "@/store/useStyleManagerStore";
-import { ButtonSizeName, ButtonVariantName } from "@/types/button";
 
 export function CodeDisplay() {
 	const { styles, componentText, currentComponent } = useStyleManagerStore();

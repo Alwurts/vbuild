@@ -1,18 +1,18 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import type { ComponentType } from "@/types/style";
-
-import { useStyleManagerStore } from "@/store/useStyleManagerStore";
-
+import { Button } from "@/components/ui-editor/button";
+import { Badge } from "@/components/ui-editor/badge";
 import {
 	Accordion,
 	AccordionContent,
 	AccordionItem,
 	AccordionTrigger,
-} from "@/components/ui/accordion";
+} from "@/components/ui-editor/accordion";
+
+import { useStyleManagerStore } from "@/store/useStyleManagerStore";
+
 import type { ButtonSizeName, ButtonVariantName } from "@/types/button";
+import type { ComponentType } from "@/types/style";
 import type { BadgeVariantName } from "@/types/badge";
 
 function ComponentWrapper({

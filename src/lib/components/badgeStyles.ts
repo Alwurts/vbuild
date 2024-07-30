@@ -12,6 +12,10 @@ export const DEFAULT_BADGE_STYLE: BadgeComponentStyle = {
 					fontWeight: "font-semibold",
 				},
 			},
+			size: {
+				isApplied: false,
+				properties: { paddingX: "px-2", paddingY: "py-0.5" },
+			},
 			border: {
 				isApplied: true,
 				properties: {
@@ -22,12 +26,8 @@ export const DEFAULT_BADGE_STYLE: BadgeComponentStyle = {
 				},
 			},
 			effects: {
-				isApplied: true,
+				isApplied: false,
 				properties: { shadow: "shadow-none", opacity: "opacity-100" },
-			},
-			size: {
-				isApplied: true,
-				properties: { paddingX: "px-2", paddingY: "py-0.5" },
 			},
 		},
 		secondary: {

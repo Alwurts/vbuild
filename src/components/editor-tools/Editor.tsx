@@ -6,15 +6,20 @@ import {
 	opacityOptions,
 	paddingYOptions,
 } from "@/lib/tailwindClasses";
-import { CollapsibleGroup } from "@/components/layout/CollapsibleGroup";
-import { Label } from "@/components/ui/label";
+import { Label } from "@/components/ui-editor/label";
 import {
 	Select,
 	SelectContent,
 	SelectItem,
 	SelectTrigger,
 	SelectValue,
-} from "@/components/ui/select";
+} from "@/components/ui-editor/select";
+import {
+	Accordion,
+	AccordionContent,
+	AccordionItem,
+	AccordionTrigger,
+} from "@/components/ui-editor/accordion";
 import { BorderType } from "@/components/editor-tools/BorderType";
 import { BorderWidth } from "@/components/editor-tools/BorderWidth";
 import { ColorPicker } from "@/components/editor-tools/ColorPicker";
@@ -22,13 +27,8 @@ import { GenericSliderSelector } from "@/components/editor-tools/GenericSliderSe
 import { FontWeight } from "@/components/editor-tools/FontWeight";
 import { InputTool } from "@/components/editor-tools/InputTool";
 import { Shadow } from "@/components/editor-tools/Shadow";
+import { CollapsibleGroup } from "@/components/layout/CollapsibleGroup";
 import { useStyleManagerStore } from "@/store/useStyleManagerStore";
-import {
-	Accordion,
-	AccordionContent,
-	AccordionItem,
-	AccordionTrigger,
-} from "../ui/accordion";
 import type { ButtonSizeName, ButtonVariantName } from "@/types/button";
 import type { ComponentType } from "@/types/style";
 import type { BadgeVariantName } from "@/types/badge";
@@ -210,6 +210,58 @@ export function Editor({
 							/>
 						</CollapsibleGroup>
 
+						{currentComponent === "badge" && (
+							<CollapsibleGroup
+								styleIsApplied={currentVariantStyle.size.isApplied}
+								toggleGroupIsApplied={() => {
+									toggleGroupIsApplied({
+										component: currentComponent,
+										styleType: "variant",
+										styleName: currentVariant.variant,
+										group: "size",
+									});
+								}}
+								defaultOpen
+								title="size"
+								className="grid grid-cols-2 gap-6"
+								isCollapsible={false}
+								showCheckbox={false}
+							>
+								<GenericSliderSelector
+									isDisabled={!currentVariantStyle.size.isApplied}
+									label="Padding (X)"
+									options={paddingXOptions}
+									value={currentVariantStyle.size.properties.paddingX}
+									onChange={(value) =>
+										setStyleProperty({
+											component: currentComponent,
+											styleType: "variant",
+											styleName: currentVariant.variant,
+											group: "size",
+											property: "paddingX",
+											value: value,
+										})
+									}
+								/>
+								<GenericSliderSelector
+									isDisabled={!currentVariantStyle.size.isApplied}
+									label="Padding (Y)"
+									options={paddingYOptions}
+									value={currentVariantStyle.size.properties.paddingY}
+									onChange={(value) =>
+										setStyleProperty({
+											component: currentComponent,
+											styleType: "variant",
+											styleName: currentVariant.variant,
+											group: "size",
+											property: "paddingY",
+											value: value,
+										})
+									}
+								/>
+							</CollapsibleGroup>
+						)}
+
 						{/* Border Group */}
 						<CollapsibleGroup
 							styleIsApplied={currentVariantStyle.border.isApplied}
@@ -334,58 +386,6 @@ export function Editor({
 								width="w-24"
 							/>
 						</CollapsibleGroup>
-
-						{currentComponent === "badge" && (
-							<CollapsibleGroup
-								styleIsApplied={currentVariantStyle.size.isApplied}
-								toggleGroupIsApplied={() => {
-									toggleGroupIsApplied({
-										component: currentComponent,
-										styleType: "variant",
-										styleName: currentVariant.variant,
-										group: "size",
-									});
-								}}
-								defaultOpen
-								title="size"
-								className="grid grid-cols-2 gap-6"
-								isCollapsible={false}
-								showCheckbox={false}
-							>
-								<GenericSliderSelector
-									isDisabled={!currentVariantStyle.size.isApplied}
-									label="Padding (X)"
-									options={paddingXOptions}
-									value={currentVariantStyle.size.properties.paddingX}
-									onChange={(value) =>
-										setStyleProperty({
-											component: currentComponent,
-											styleType: "variant",
-											styleName: currentVariant.variant,
-											group: "size",
-											property: "paddingX",
-											value: value,
-										})
-									}
-								/>
-								<GenericSliderSelector
-									isDisabled={!currentVariantStyle.size.isApplied}
-									label="Padding (Y)"
-									options={paddingYOptions}
-									value={currentVariantStyle.size.properties.paddingY}
-									onChange={(value) =>
-										setStyleProperty({
-											component: currentComponent,
-											styleType: "variant",
-											styleName: currentVariant.variant,
-											group: "size",
-											property: "paddingY",
-											value: value,
-										})
-									}
-								/>
-							</CollapsibleGroup>
-						)}
 					</AccordionContent>
 				</AccordionItem>
 

@@ -1,7 +1,6 @@
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { Label } from "@/components/ui/label";
-import { Slider } from "@/components/ui/slider";
-import { Separator } from "../ui/separator";
+import { Label } from "@/components/ui-editor/label";
+import { Slider } from "@/components/ui-editor/slider";
+import { Separator } from "@/components/ui-editor/separator";
 import { fontWeightsOptions } from "@/lib/tailwindClasses";
 import { cn } from "@/lib/utils";
 

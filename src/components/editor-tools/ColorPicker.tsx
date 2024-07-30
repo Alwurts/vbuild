@@ -3,11 +3,11 @@ import {
 	Popover,
 	PopoverContent,
 	PopoverTrigger,
-} from "@/components/ui/popover";
-import { Button } from "@/components/ui/button";
+} from "@/components/ui-editor/popover";
+import { Button } from "@/components/ui-editor/button";
 import { bgColorsOptions } from "@/lib/tailwindClasses";
-import { Separator } from "@/components/ui/separator";
-import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui-editor/separator";
+import { Label } from "@/components/ui-editor/label";
 import { cn } from "@/lib/utils";
 
 export const ColorPicker = ({

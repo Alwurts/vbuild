@@ -1,44 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { cn } from "@/lib/utils";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card } from "@/components/ui-editor/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui-editor/tabs";
 import { CodeDisplay } from "@/components/code/CodeDisplay";
-import {
-	Accordion,
-	AccordionContent,
-	AccordionItem,
-	AccordionTrigger,
-} from "@/components/ui/accordion";
-
-import {
-	fontSizesOptions,
-	roundedOptions,
-	paddingXOptions,
-	opacityOptions,
-	heightOptions,
-} from "@/lib/tailwindClasses";
-import { ColorPicker } from "@/components/editor-tools/ColorPicker";
-import { BorderType } from "@/components/editor-tools/BorderType";
-import { BorderWidth } from "@/components/editor-tools/BorderWidth";
-import { GenericSliderSelector } from "@/components/editor-tools/GenericSliderSelector";
-import { Shadow } from "@/components/editor-tools/Shadow";
-import { FontWeight as FontWeightComponent } from "@/components/editor-tools/FontWeight";
-import { CollapsibleGroup } from "@/components/layout/CollapsibleGroup";
-import { InputTool } from "@/components/editor-tools/InputTool";
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "@/components/ui/select";
-import { useStyleManagerStore } from "@/store/useStyleManagerStore";
-import ComponentRender from "@/components/display/ComponentRender";
 import { Editor } from "@/components/editor-tools/Editor";
+import ComponentRender from "@/components/display/ComponentRender";
+
+import { useStyleManagerStore } from "@/store/useStyleManagerStore";
 
 export default function Home() {
 	const { currentVariant } = useStyleManagerStore();

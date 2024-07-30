@@ -1,5 +1,8 @@
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { Label } from "@/components/ui/label";
+import {
+	ToggleGroup,
+	ToggleGroupItem,
+} from "@/components/ui-editor/toggle-group";
+import { Label } from "@/components/ui-editor/label";
 import { shadowOptions } from "@/lib/tailwindClasses";
 import { cn } from "@/lib/utils";
 
