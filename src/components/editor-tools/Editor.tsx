@@ -36,7 +36,10 @@ import type { BadgeVariantName } from "@/types/badge";
 export function Editor({
 	openVariants,
 	setOpenVariants,
-}: { openVariants: string[]; setOpenVariants: (value: string[]) => void }) {
+}: {
+	openVariants: (ButtonVariantName & BadgeVariantName)[];
+	setOpenVariants: (value: (ButtonVariantName & BadgeVariantName)[]) => void;
+}) {
 	const {
 		styles,
 		currentComponent,
@@ -62,20 +65,7 @@ export function Editor({
 	}
 
 	return (
-		<div className="space-y-3">
-			<Select
-				value={currentComponent}
-				onValueChange={(value) => setCurrentComponent(value as ComponentType)}
-			>
-				<SelectTrigger>
-					<SelectValue placeholder="Component" />
-				</SelectTrigger>
-				<SelectContent>
-					<SelectItem value="button">Button</SelectItem>
-					<SelectItem value="badge">Badge</SelectItem>
-				</SelectContent>
-			</Select>
-
+		<div>
 			<Accordion type="multiple" defaultValue={["variant", "size"]}>
 				<AccordionItem value="variant">
 					<AccordionTrigger className="font-bold text-xl">
@@ -91,8 +81,9 @@ export function Editor({
 										styleType: "variant",
 										name: value as ButtonVariantName | BadgeVariantName,
 									});
+									const valueTyped = value as ButtonVariantName & BadgeVariantName;
 									setOpenVariants(
-										openVariants ? [...openVariants, value] : [value],
+										openVariants ? [...openVariants, valueTyped] : [valueTyped],
 									);
 								}}
 							>

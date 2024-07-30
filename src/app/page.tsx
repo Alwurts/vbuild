@@ -14,13 +14,15 @@ import { CSSVariablesEditor } from "@/components/editor-tools/CSSVariablesEditor
 import ComponentRender from "@/components/display/ComponentRender";
 
 import { useStyleManagerStore } from "@/store/useStyleManagerStore";
+import type { ButtonVariantName } from "@/types/button";
+import type { BadgeVariantName } from "@/types/badge";
 
 export default function Home() {
 	const { currentVariant } = useStyleManagerStore();
 
-	const [openVariants, setOpenVariants] = useState<string[]>([
-		currentVariant.variant,
-	]);
+	const [openVariants, setOpenVariants] = useState<
+		(ButtonVariantName & BadgeVariantName)[]
+	>(["default", "destructive", "outline", "secondary"]);
 
 	return (
 		<div className="w-full h-screen flex justify-center items-center p-6 bg-stone-300">

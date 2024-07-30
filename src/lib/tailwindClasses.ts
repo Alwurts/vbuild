@@ -288,6 +288,7 @@ export const bgColorsOptions = [
 		"bg-transparent",
 		"bg-black",
 		"bg-white",
+		"bg-background",
 	],
 	[
 		"bg-slate-50",

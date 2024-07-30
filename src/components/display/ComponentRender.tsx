@@ -1,6 +1,7 @@
 "use client";
 
-import { Button } from "@/components/ui-editor/button";
+import { Button as ButtonRender } from "@/components/ui/button";
+import { Badge as BadgeRender } from "@/components/ui/badge";
 import { Badge } from "@/components/ui-editor/badge";
 import {
 	Accordion,
@@ -14,6 +15,14 @@ import { useStyleManagerStore } from "@/store/useStyleManagerStore";
 import type { ButtonSizeName, ButtonVariantName } from "@/types/button";
 import type { ComponentType } from "@/types/style";
 import type { BadgeVariantName } from "@/types/badge";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "../ui-editor/select";
+import { Label } from "../ui-editor/label";
 
 function ComponentWrapper({
 	component,
@@ -54,22 +63,22 @@ function ComponentWrapper({
 	switch (componentType) {
 		case "button":
 			return (
-				<Button
+				<ButtonRender
 					variant={component.variant as ButtonVariantName}
 					size={component.size as ButtonSizeName}
 					className={className}
 				>
 					{component.componentText}
-				</Button>
+				</ButtonRender>
 			);
 		case "badge":
 			return (
-				<Badge
+				<BadgeRender
 					variant={component.variant as BadgeVariantName}
 					className={className}
 				>
 					{component.componentText}
-				</Badge>
+				</BadgeRender>
 			);
 		default:
 			return null;
@@ -80,13 +89,29 @@ export default function ComponentRender({
 	openVariants,
 	setOpenVariants,
 }: {
-	openVariants: string[];
-	setOpenVariants: (value: string[]) => void;
+	openVariants: (ButtonVariantName & BadgeVariantName)[];
+	setOpenVariants: (value: (ButtonVariantName & BadgeVariantName)[]) => void;
 }) {
-	const { styles, componentText, currentComponent } = useStyleManagerStore();
+	const { styles, componentText, currentComponent, setCurrentComponent } =
+		useStyleManagerStore();
 
 	return (
 		<div className="p-6 w-full max-w-[600px] flex flex-col gap-2 items-stretch overflow-x-auto">
+			<div className="flex flex-col gap-4">
+				<Label className="font-semibold ml-1"> Selected Component</Label>
+				<Select
+					value={currentComponent}
+					onValueChange={(value) => setCurrentComponent(value as ComponentType)}
+				>
+					<SelectTrigger>
+						<SelectValue placeholder="Component" />
+					</SelectTrigger>
+					<SelectContent>
+						<SelectItem value="button">Button</SelectItem>
+						<SelectItem value="badge">Badge</SelectItem>
+					</SelectContent>
+				</Select>
+			</div>
 			<Accordion
 				type="multiple"
 				className="w-full min-w-fit"

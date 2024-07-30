@@ -1,32 +1,41 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useStyleManagerStore } from "@/store/useStyleManagerStore";
-import { ColorPicker } from "@/components/editor-tools/ColorPicker";
-import type { CSSVariableNames } from "@/types/style";
+import { HSLColorPicker } from "@/components/editor-tools/HSLColorPicker";
+import { CSSVariableNames } from "@/types/style";
 
 export const CSSVariablesEditor = () => {
-	const { cssVariables, setCSSVariable } = useStyleManagerStore();
+  const { cssVariables, setCSSVariable, setCSSVariables } =
+    useStyleManagerStore();
 
-	console.log(cssVariables);
+  useEffect(() => {
+    const object = {} as {
+      [K in CSSVariableNames]: string;
+    };
+    for (const key of Object.keys(CSSVariableNames)) {
+      const value = getComputedStyle(document.documentElement)
+        .getPropertyValue(`--${key}`)
+        .trim();
+      object[key as CSSVariableNames] = value;
+    }
+    setCSSVariables(object);
+  }, [setCSSVariables]);
 
-	return (
-		<div className="space-y-4">
-			{Object.entries(cssVariables).map(([name, value]) => (
-				<div key={name}>
-					{name === "radius" ? null : (
-						<ColorPicker
-							label={name}
-							value={`bg-[${value}]`}
-							onChange={(color) =>
-								setCSSVariable(
-									name as CSSVariableNames,
-									color.replace("bg-[", "").replace("]", ""),
-								)
-							}
-							isDisabled={false}
-						/>
-					)}
-				</div>
-			))}
-		</div>
-	);
+  return (
+    <div className="gap-x-4 gap-y-2 grid grid-cols-2">
+      {Object.entries(cssVariables ?? {}).map(([name, value]) => (
+        <div key={name}>
+          {name === "radius" ? null : (
+            <HSLColorPicker
+              label={name}
+              value={value}
+              onChange={(color) =>
+                setCSSVariable(name as CSSVariableNames, color)
+              }
+              isDisabled={false}
+            />
+          )}
+        </div>
+      ))}
+    </div>
+  );
 };
