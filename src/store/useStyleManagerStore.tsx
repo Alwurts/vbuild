@@ -1,12 +1,5 @@
 import type { ButtonStore } from "@/types/store";
-import type {
-	ButtonSize,
-	ButtonVariant,
-	SizeStyleGroup,
-	SizeStyleProperty,
-	VariantStyleGroup,
-	VariantStyleProperty,
-} from "@/types/style";
+import type { ButtonSize, ButtonVariant } from "@/types/style";
 import { create } from "zustand";
 
 const DEFAULT_BUTTON_VARIANT: Omit<ButtonVariant, "styleName"> = {
@@ -57,10 +50,6 @@ export const useStyleManagerStore = create<ButtonStore>((set) => ({
 	variants: {
 		size: [
 			{
-				styleName: "default",
-				...DEFAULT_BUTTON_SIZE,
-			},
-			{
 				styleName: "sm",
 				...DEFAULT_BUTTON_SIZE,
 				size: {
@@ -71,6 +60,10 @@ export const useStyleManagerStore = create<ButtonStore>((set) => ({
 						paddingX: "px-3",
 					},
 				},
+			},
+			{
+				styleName: "default",
+				...DEFAULT_BUTTON_SIZE,
 			},
 			{
 				styleName: "lg",

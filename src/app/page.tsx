@@ -58,9 +58,8 @@ export default function Home() {
 		(style) => style.styleName === currentVariant.size,
 	);
 
-	const [openStyles, setOpenStyles] = useState<string[]>([
+	const [openVariants, setOpenVariants] = useState<string[]>([
 		currentVariant.variant,
-		currentVariant.size,
 	]);
 
 	if (!currentVariantStyle || !currentSizeStyle) {
@@ -70,10 +69,7 @@ export default function Home() {
 	return (
 		<div className="w-full h-screen flex justify-center items-center p-6 bg-stone-300">
 			<Card className="w-full max-w-7xl h-full flex gap-6">
-				<ComponentRender
-					openStyles={openStyles}
-					setOpenStyles={setOpenStyles}
-				/>
+				<ComponentRender openVariants={openVariants} setOpenVariants={setOpenVariants} />
 				<div className="p-6 border-l border-border flex-1 space-y-6 overflow-y-auto">
 					<Tabs defaultValue="toggles">
 						<TabsList className="grid w-full grid-cols-2">
@@ -90,8 +86,8 @@ export default function Home() {
 											variantType: "variant",
 											name: value as ButtonVariantName,
 										});
-										setOpenStyles(
-											openStyles ? [...openStyles, value] : [value],
+										setOpenVariants(
+											openVariants ? [...openVariants, value] : [value],
 										);
 									}}
 								>
