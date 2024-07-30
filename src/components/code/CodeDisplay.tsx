@@ -267,7 +267,7 @@ export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent }
 							Copy
 						</Button>
 					</div>
-					<pre className="h-[70vh] w-[800px] p-4 overflow-auto bg-gray-900 text-white text-sm rounded-lg">
+					<pre className="h-[70vh] w-[80vw] lg:w-[800px] p-4 overflow-auto bg-gray-900 text-white text-sm rounded-lg">
 						<code
 							// biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
 							dangerouslySetInnerHTML={{

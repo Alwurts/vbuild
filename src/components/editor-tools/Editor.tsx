@@ -138,7 +138,7 @@ export function Editor({
 								});
 							}}
 							title="text"
-							className="grid grid-cols-2 gap-y-2 gap-x-4"
+							className="grid lg:grid-cols-2 gap-y-2 gap-x-4"
 						>
 							<InputTool
 								label="Button Text"
@@ -239,7 +239,7 @@ export function Editor({
 								}}
 								defaultOpen
 								title="size"
-								className="grid grid-cols-2 gap-6"
+								className="grid lg:grid-cols-2 gap-6"
 								isCollapsible={false}
 								showCheckbox={false}
 							>
@@ -291,7 +291,7 @@ export function Editor({
 									});
 								}}
 								title="padding"
-								className="grid grid-cols-2 gap-6"
+								className="grid lg:grid-cols-2 gap-6"
 							>
 								<GenericSliderSelector
 									isDisabled={!currentVariantStyle.padding.isApplied}
@@ -340,7 +340,7 @@ export function Editor({
 								});
 							}}
 							title="border"
-							className="grid grid-cols-2 gap-6"
+							className="grid lg:grid-cols-2 gap-6"
 						>
 							<BorderType
 								label="Border Style"
@@ -498,7 +498,7 @@ export function Editor({
 									}}
 									defaultOpen
 									title="size"
-									className="grid grid-cols-2 gap-6"
+									className="grid lg:grid-cols-2 gap-6"
 									isCollapsible={false}
 									showCheckbox={false}
 								>

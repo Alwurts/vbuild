@@ -26,11 +26,11 @@ export default function Home() {
 	>(["default", "destructive", "outline", "secondary"]);
 
 	return (
-		<div className="w-full h-screen flex flex-col gap-2 justify-center items-center p-10 bg-stone-300">
+		<div className="w-full h-screen flex flex-col gap-2 justify-center items-center p-4 lg:p-10 bg-stone-300">
 			<div className="flex justify-between items-center gap-2 w-full max-w-7xl px-4">
 				<div className="flex justify-start items-baseline gap-2">
 					<h1 className="text-2xl font-bold">shadcn/ui Editor</h1>
-					<p className="text-sm text-gray-500">
+					<p className="text-sm hidden lg:block text-gray-500">
 						Quickly customize shadcn/ui components
 					</p>
 				</div>
@@ -49,12 +49,8 @@ export default function Home() {
 					</Link>
 				</div>
 			</div>
-			<Card className="w-full max-w-7xl h-full flex gap-6">
-				<ComponentRender
-					openVariants={openVariants}
-					setOpenVariants={setOpenVariants}
-				/>
-				<div className="p-6 border-l border-border flex-1 space-y-6 overflow-y-auto">
+			<Card className="w-full max-w-7xl h-full flex flex-col overflow-y-auto lg:flex-row-reverse gap-6">
+				<div className="p-6 border-l border-border flex-1 space-y-6 lg:overflow-y-auto">
 					<Tabs defaultValue="toggles">
 						<TabsList className="grid w-full grid-cols-2">
 							<TabsTrigger value="css-variables">CSS Variables</TabsTrigger>
@@ -71,6 +67,10 @@ export default function Home() {
 						</TabsContent>
 					</Tabs>
 				</div>
+				<ComponentRender
+					openVariants={openVariants}
+					setOpenVariants={setOpenVariants}
+				/>
 			</Card>
 		</div>
 	);
