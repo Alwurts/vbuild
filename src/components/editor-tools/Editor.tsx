@@ -5,7 +5,6 @@ import {
 	roundedOptions,
 	opacityOptions,
 } from "@/lib/tailwindClasses";
-import type { ButtonSizeName, ButtonVariantName } from "@/types/style";
 import { CollapsibleGroup } from "@/components/layout/CollapsibleGroup";
 import { Label } from "@/components/ui/label";
 import {
@@ -29,28 +28,24 @@ import {
 	AccordionItem,
 	AccordionTrigger,
 } from "../ui/accordion";
+import type { ButtonSizeName, ButtonVariantName } from "@/types/button";
 
 export function Editor({
 	openVariants,
 	setOpenVariants,
 }: { openVariants: string[]; setOpenVariants: (value: string[]) => void }) {
 	const {
-		buttonText,
-		setButtonText,
-		variants,
+		styles,
 		currentVariant,
 		setCurrentVariant,
-		setGroupStyleProperty,
+		setStyleProperty,
 		toggleGroupIsApplied,
+		componentText,
+		setComponentText,
 	} = useStyleManagerStore();
 
-	const currentVariantStyle = variants.variant.find(
-		(style) => style.styleName === currentVariant.variant,
-	);
-
-	const currentSizeStyle = variants.size.find(
-		(style) => style.styleName === currentVariant.size,
-	);
+	const currentVariantStyle = styles.variant[currentVariant.variant];
+	const currentSizeStyle = styles.size[currentVariant.size];
 
 	if (!currentVariantStyle || !currentSizeStyle) {
 		return null;
@@ -67,7 +62,7 @@ export function Editor({
 								value={currentVariant.size}
 								onValueChange={(value) => {
 									setCurrentVariant({
-										variantType: "size",
+										styleType: "size",
 										name: value as ButtonSizeName,
 									});
 								}}
@@ -76,9 +71,9 @@ export function Editor({
 									<SelectValue placeholder="Theme" />
 								</SelectTrigger>
 								<SelectContent>
-									{variants.size.map((style) => (
-										<SelectItem key={style.styleName} value={style.styleName}>
-											{style.styleName}
+									{Object.keys(styles.size).map((sizeName) => (
+										<SelectItem key={sizeName} value={sizeName}>
+											{sizeName}
 										</SelectItem>
 									))}
 								</SelectContent>
@@ -89,7 +84,7 @@ export function Editor({
 							styleIsApplied={currentSizeStyle.size.isApplied}
 							toggleGroupIsApplied={() => {
 								toggleGroupIsApplied({
-									variantType: "size",
+									styleType: "size",
 									styleName: currentVariant.size,
 									group: "size",
 								});
@@ -106,10 +101,10 @@ export function Editor({
 								options={paddingXOptions}
 								value={currentSizeStyle.size.properties.paddingX}
 								onChange={(value) =>
-									setGroupStyleProperty({
-										variantType: "size",
-										variantName: currentVariant.size,
-										groupStyleName: "size",
+									setStyleProperty({
+										styleType: "size",
+										styleName: currentVariant.size,
+										group: "size",
 										property: "paddingX",
 										value: value,
 									})
@@ -121,10 +116,10 @@ export function Editor({
 								options={heightOptions}
 								value={currentSizeStyle.size.properties.height}
 								onChange={(value) =>
-									setGroupStyleProperty({
-										variantType: "size",
-										variantName: currentVariant.size,
-										groupStyleName: "size",
+									setStyleProperty({
+										styleType: "size",
+										styleName: currentVariant.size,
+										group: "size",
 										property: "height",
 										value: value,
 									})
@@ -142,7 +137,7 @@ export function Editor({
 								value={currentVariant.variant}
 								onValueChange={(value) => {
 									setCurrentVariant({
-										variantType: "variant",
+										styleType: "variant",
 										name: value as ButtonVariantName,
 									});
 									setOpenVariants(
@@ -154,9 +149,9 @@ export function Editor({
 									<SelectValue placeholder="Theme" />
 								</SelectTrigger>
 								<SelectContent>
-									{variants.variant.map((style) => (
-										<SelectItem key={style.styleName} value={style.styleName}>
-											{style.styleName}
+									{Object.keys(styles.variant).map((variantName) => (
+										<SelectItem key={variantName} value={variantName}>
+											{variantName}
 										</SelectItem>
 									))}
 								</SelectContent>
@@ -167,7 +162,7 @@ export function Editor({
 							styleIsApplied={currentVariantStyle.text.isApplied}
 							toggleGroupIsApplied={() => {
 								toggleGroupIsApplied({
-									variantType: "variant",
+									styleType: "variant",
 									styleName: currentVariant.variant,
 									group: "text",
 								});
@@ -177,8 +172,8 @@ export function Editor({
 						>
 							<InputTool
 								label="Button Text"
-								value={buttonText}
-								onChange={setButtonText}
+								value={componentText}
+								onChange={setComponentText}
 								isDisabled={!currentVariantStyle.text.isApplied}
 							/>
 							<ColorPicker
@@ -186,11 +181,10 @@ export function Editor({
 								isDisabled={!currentVariantStyle.text.isApplied}
 								value={currentVariantStyle.text.properties.textColor}
 								onChange={(value) => {
-									console.log(value);
-									setGroupStyleProperty({
-										variantType: "variant",
-										variantName: currentVariant.variant,
-										groupStyleName: "text",
+									setStyleProperty({
+										styleType: "variant",
+										styleName: currentVariant.variant,
+										group: "text",
 										property: "textColor",
 										value: value,
 									});
@@ -202,10 +196,10 @@ export function Editor({
 								options={fontSizesOptions}
 								value={currentVariantStyle.text.properties.fontSize}
 								onChange={(value) =>
-									setGroupStyleProperty({
-										variantType: "variant",
-										variantName: currentVariant.variant,
-										groupStyleName: "text",
+									setStyleProperty({
+										styleType: "variant",
+										styleName: currentVariant.variant,
+										group: "text",
 										property: "fontSize",
 										value: value,
 									})
@@ -217,10 +211,10 @@ export function Editor({
 								isDisabled={!currentVariantStyle.text.isApplied}
 								fontWeight={currentVariantStyle.text.properties.fontWeight}
 								setFontWeight={(value) =>
-									setGroupStyleProperty({
-										variantType: "variant",
-										variantName: currentVariant.variant,
-										groupStyleName: "text",
+									setStyleProperty({
+										styleType: "variant",
+										styleName: currentVariant.variant,
+										group: "text",
 										property: "fontWeight",
 										value: value,
 									})
@@ -233,7 +227,7 @@ export function Editor({
 							styleIsApplied={currentVariantStyle.background.isApplied}
 							toggleGroupIsApplied={() => {
 								toggleGroupIsApplied({
-									variantType: "variant",
+									styleType: "variant",
 									styleName: currentVariant.variant,
 									group: "background",
 								});
@@ -246,10 +240,10 @@ export function Editor({
 								label="Background Color"
 								value={currentVariantStyle.background.properties.bgColor}
 								onChange={(value) =>
-									setGroupStyleProperty({
-										variantType: "variant",
-										variantName: currentVariant.variant,
-										groupStyleName: "background",
+									setStyleProperty({
+										styleType: "variant",
+										styleName: currentVariant.variant,
+										group: "background",
 										property: "bgColor",
 										value: value,
 									})
@@ -262,7 +256,7 @@ export function Editor({
 							styleIsApplied={currentVariantStyle.border.isApplied}
 							toggleGroupIsApplied={() => {
 								toggleGroupIsApplied({
-									variantType: "variant",
+									styleType: "variant",
 									styleName: currentVariant.variant,
 									group: "border",
 								});
@@ -275,10 +269,10 @@ export function Editor({
 								isDisabled={!currentVariantStyle.border.isApplied}
 								borderStyle={currentVariantStyle.border.properties.borderStyle}
 								setBorderStyle={(value) =>
-									setGroupStyleProperty({
-										variantType: "variant",
-										variantName: currentVariant.variant,
-										groupStyleName: "border",
+									setStyleProperty({
+										styleType: "variant",
+										styleName: currentVariant.variant,
+										group: "border",
 										property: "borderStyle",
 										value: value,
 									})
@@ -289,10 +283,10 @@ export function Editor({
 								label="Border Width"
 								borderWidth={currentVariantStyle.border.properties.borderWidth}
 								setBorderWidth={(value) =>
-									setGroupStyleProperty({
-										variantType: "variant",
-										variantName: currentVariant.variant,
-										groupStyleName: "border",
+									setStyleProperty({
+										styleType: "variant",
+										styleName: currentVariant.variant,
+										group: "border",
 										property: "borderWidth",
 										value: value,
 									})
@@ -303,10 +297,10 @@ export function Editor({
 								label="Border Color"
 								value={currentVariantStyle.border.properties.borderColor}
 								onChange={(value) =>
-									setGroupStyleProperty({
-										variantType: "variant",
-										variantName: currentVariant.variant,
-										groupStyleName: "border",
+									setStyleProperty({
+										styleType: "variant",
+										styleName: currentVariant.variant,
+										group: "border",
 										property: "borderColor",
 										value: value,
 									})
@@ -318,10 +312,10 @@ export function Editor({
 								options={roundedOptions}
 								value={currentVariantStyle.border.properties.rounded}
 								onChange={(value) =>
-									setGroupStyleProperty({
-										variantType: "variant",
-										variantName: currentVariant.variant,
-										groupStyleName: "border",
+									setStyleProperty({
+										styleType: "variant",
+										styleName: currentVariant.variant,
+										group: "border",
 										property: "rounded",
 										value: value,
 									})
@@ -335,7 +329,7 @@ export function Editor({
 							styleIsApplied={currentVariantStyle.effects.isApplied}
 							toggleGroupIsApplied={() => {
 								toggleGroupIsApplied({
-									variantType: "variant",
+									styleType: "variant",
 									styleName: currentVariant.variant,
 									group: "effects",
 								});
@@ -347,10 +341,10 @@ export function Editor({
 								isDisabled={!currentVariantStyle.effects.isApplied}
 								shadow={currentVariantStyle.effects.properties.shadow}
 								setShadow={(value) =>
-									setGroupStyleProperty({
-										variantType: "variant",
-										variantName: currentVariant.variant,
-										groupStyleName: "effects",
+									setStyleProperty({
+										styleType: "variant",
+										styleName: currentVariant.variant,
+										group: "effects",
 										property: "shadow",
 										value: value,
 									})
@@ -362,10 +356,10 @@ export function Editor({
 								options={opacityOptions}
 								value={currentVariantStyle.effects.properties.opacity}
 								onChange={(value) =>
-									setGroupStyleProperty({
-										variantType: "variant",
-										variantName: currentVariant.variant,
-										groupStyleName: "effects",
+									setStyleProperty({
+										styleType: "variant",
+										styleName: currentVariant.variant,
+										group: "effects",
 										property: "opacity",
 										value: value,
 									})

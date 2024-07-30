@@ -37,7 +37,6 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import { useStyleManagerStore } from "@/store/useStyleManagerStore";
-import type { ButtonVariantName } from "@/types/style";
 import ComponentRender from "@/components/display/ComponentRender";
 import { Editor } from "@/components/editor-tools/Editor";
 

@@ -1,71 +1,33 @@
-import type {
-	ButtonSize,
-	ButtonVariantName,
-	ButtonVariant,
-	VariantStyleGroup,
-	VariantStyleProperty,
-	ButtonSizeName,
-	SizeStyleGroup,
-	SizeStyleProperty,
-} from "@/types/style";
+import type { ButtonSizeStyle, ButtonVariantStyle } from "./button";
+import type { ComponentStyle, Style, StyleGroup, StyleProperty } from "./style";
 
-export interface ButtonStore {
-	variants: {
-		variant: ButtonVariant[];
-		size: ButtonSize[];
-	};
+export interface ComponentStore<
+	TVariant extends string,
+	TSize extends string,
+	TVariantStyle extends ButtonVariantStyle,
+	TSizeStyle extends ButtonSizeStyle,
+> {
+	styles: ComponentStyle<TVariant, TSize, TVariantStyle, TSizeStyle>;
 	currentVariant: {
-		variant: ButtonVariantName;
-		size: ButtonSizeName;
+		variant: TVariant;
+		size: TSize;
 	};
-	buttonText: string;
-	setButtonText: (value: string) => void;
-	setGroupStyleProperty: ({
-		variantType,
-		variantName,
-		groupStyleName,
-		property,
-		value,
-	}:
-		| {
-				variantType: "variant";
-				variantName: ButtonVariantName;
-				groupStyleName: VariantStyleGroup;
-				property: VariantStyleProperty;
-				value: string;
-		  }
-		| {
-				variantType: "size";
-				variantName: ButtonSizeName;
-				groupStyleName: SizeStyleGroup;
-				property: SizeStyleProperty;
-				value: string;
-		  }) => void;
-	toggleGroupIsApplied: ({
-		variantType,
-		styleName,
-		group,
-	}:
-		| {
-				variantType: "variant";
-				styleName: ButtonVariantName;
-				group: VariantStyleGroup;
-		  }
-		| {
-				variantType: "size";
-				styleName: ButtonSizeName;
-				group: SizeStyleGroup;
-		  }) => void;
-	setCurrentVariant: ({
-		variantType,
-		name,
-	}:
-		| {
-				variantType: "variant";
-				name: ButtonVariantName;
-		  }
-		| {
-				variantType: "size";
-				name: ButtonSizeName;
-		  }) => void;
+	componentText: string;
+	setComponentText: (value: string) => void;
+	setStyleProperty: <TGroup extends StyleGroup>(params: {
+		styleType: "variant" | "size";
+		styleName: TVariant | TSize;
+		group: TGroup;
+		property: StyleProperty[TGroup];
+		value: string;
+	}) => void;
+	toggleGroupIsApplied: (params: {
+		styleType: "variant" | "size";
+		styleName: TVariant | TSize;
+		group: StyleGroup;
+	}) => void;
+	setCurrentVariant: (params: {
+		styleType: "variant" | "size";
+		name: TVariant | TSize;
+	}) => void;
 }

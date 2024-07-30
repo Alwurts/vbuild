@@ -1,71 +1,35 @@
-export type VariantStyleGroup = "background" | "text" | "border" | "effects";
-export type SizeStyleGroup = "size";
+import type { ButtonSizeStyle, ButtonVariantStyle } from "./button";
 
-export type VariantStyleProperty =
-	| "bgColor"
-	| "textColor"
-	| "fontSize"
-	| "fontWeight"
-	| "borderColor"
-	| "borderWidth"
-	| "borderStyle"
-	| "rounded"
-	| "shadow"
-	| "opacity";
+// Base types
+export type StyleGroup = "background" | "text" | "border" | "effects" | "size";
 
-export type SizeStyleProperty = "height" | "paddingX";
+export type StyleProperty = {
+	background: "bgColor";
+	text: "textColor" | "fontSize" | "fontWeight";
+	border: "borderColor" | "borderWidth" | "borderStyle" | "rounded";
+	effects: "shadow" | "opacity";
+	size: "height" | "paddingX";
+};
 
-export type ButtonVariantName =
-	| "default"
-	| "destructive"
-	| "outline"
-	| "secondary"
-	| "ghost"
-	| "link";
-
-export type ButtonSizeName = "default" | "sm" | "lg" | "icon";
-
-export type ButtonVariant = {
-	styleName: ButtonVariantName;
-	background: {
-		isApplied: boolean;
-		properties: {
-			bgColor: string;
-		};
-	};
-	text: {
-		isApplied: boolean;
-		properties: {
-			textColor: string;
-			fontSize: string;
-			fontWeight: string;
-		};
-	};
-	border: {
-		isApplied: boolean;
-		properties: {
-			borderColor: string;
-			borderWidth: string;
-			borderStyle: string;
-			rounded: string;
-		};
-	};
-	effects: {
-		isApplied: boolean;
-		properties: {
-			shadow: string;
-			opacity: string;
-		};
+// Generic style type
+export type Style<T extends StyleGroup> = {
+	isApplied: boolean;
+	properties: {
+		[K in StyleProperty[T]]: string;
 	};
 };
 
-export type ButtonSize = {
-	styleName: ButtonSizeName;
+// Generic component style type
+export type ComponentStyle<
+	TVariant extends string,
+	TSize extends string,
+	TVariantStyle extends ButtonVariantStyle,
+	TSizeStyle extends ButtonSizeStyle,
+> = {
+	variant: {
+		[T in TVariant]: TVariantStyle;
+	};
 	size: {
-		isApplied: boolean;
-		properties: {
-			paddingX: string;
-			height: string;
-		};
+		[T in TSize]: TSizeStyle;
 	};
 };

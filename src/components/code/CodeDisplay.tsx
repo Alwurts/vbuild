@@ -3,66 +3,31 @@ import hljs from "highlight.js";
 import "highlight.js/styles/vs2015.css"; // Import a highlight.js theme
 import { Button } from "@/components/ui/button";
 import { CheckIcon, CopyIcon } from "lucide-react";
-import type {
-	ButtonVariantName,
-	ButtonVariant,
-	VariantStyleGroup,
-	ButtonSizeName,
-	SizeStyleGroup,
-} from "@/types/style";
-import { useStyleManagerStore } from "@/store/useStyleManagerStore";
 
-interface CodeDisplayProps {
-	code: string;
-}
+import { useStyleManagerStore } from "@/store/useStyleManagerStore";
+import { ButtonSizeName, ButtonVariantName } from "@/types/button";
 
 export function CodeDisplay() {
-	const { variants, buttonText } = useStyleManagerStore();
+	const { styles, componentText } = useStyleManagerStore();
 	const [copied, setCopied] = useState(false);
 
 	const getStyleClasses = ({
 		type,
 		name,
-	}:
-		| {
-				type: "variant";
-				name: ButtonVariantName;
-		  }
-		| {
-				type: "size";
-				name: ButtonSizeName;
-		  }) => {
-		if (type === "variant") {
-			const style = variants[type].find((s) => s.styleName === name);
-			if (!style) return "";
-			const groupNames: VariantStyleGroup[] = [
-				"text",
-				"background",
-				"border",
-				"effects",
-			];
-			const groupsToBeApplied = [];
-			for (const groupName of groupNames) {
-				if (style[groupName].isApplied) {
-					groupsToBeApplied.push(style[groupName].properties);
-				}
-			}
-			return groupsToBeApplied
-				.map((group) => Object.values(group).join(" "))
-				.join(" ");
-		}
-		const style = variants[type].find((s) => s.styleName === name);
+	}: {
+		type: "variant" | "size";
+		name: string;
+	}) => {
+		// @ts-ignore
+		const style = styles[type][name];
 		if (!style) return "";
-		const groupNames: SizeStyleGroup[] = ["size"];
-		const groupsToBeApplied = [];
-		for (const groupName of groupNames) {
-			if (style[groupName].isApplied) {
-				groupsToBeApplied.push(style[groupName].properties);
-			}
-		}
-		return groupsToBeApplied
-			.map((group) => Object.values(group).join(" "))
-			.join(" ");
+
+		const groupNames = Object.keys(style) as (keyof typeof style)[];
+		const groupsToBeApplied = groupNames
+			.filter((groupName) => style[groupName].isApplied)
+			.map((groupName) => Object.values(style[groupName].properties).join(" "));
+
+		return groupsToBeApplied.join(" ");
 	};
 
 	const buttonCode = `import * as React from "react"
@@ -76,18 +41,20 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "${getStyleClasses({ type: "variant", name: "default" })}",
-        destructive: "${getStyleClasses({ type: "variant", name: "destructive" })}",
-        outline: "${getStyleClasses({ type: "variant", name: "outline" })}",
-        secondary: "${getStyleClasses({ type: "variant", name: "secondary" })}",
-        ghost: "${getStyleClasses({ type: "variant", name: "ghost" })}",
-        link: "${getStyleClasses({ type: "variant", name: "link" })}",
+        ${Object.keys(styles.variant)
+					.map(
+						(variantName) =>
+							`${variantName}: "${getStyleClasses({ type: "variant", name: variantName })}"`,
+					)
+					.join(",\n        ")},
       },
       size: {
-        default: "${getStyleClasses({ type: "size", name: "default" })}",
-        sm: "${getStyleClasses({ type: "size", name: "sm" })}",
-        lg: "${getStyleClasses({ type: "size", name: "lg" })}",
-        icon: "${getStyleClasses({ type: "size", name: "icon" })}",
+        ${Object.keys(styles.size)
+					.map(
+						(sizeName) =>
+							`${sizeName}: "${getStyleClasses({ type: "size", name: sizeName })}"`,
+					)
+					.join(",\n        ")},
       },
     },
     defaultVariants: {
@@ -120,7 +87,7 @@ Button.displayName = "Button"
 export { Button, buttonVariants }
 
 // Usage:
-<Button variant="custom" size="custom">${buttonText}</Button>`;
+<Button variant="custom" size="custom">${componentText}</Button>`;
 
 	const copyToClipboard = () => {
 		navigator.clipboard.writeText(buttonCode);

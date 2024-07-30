@@ -3,13 +3,7 @@
 import { Button } from "@/components/ui/button";
 
 import { useStyleManagerStore } from "@/store/useStyleManagerStore";
-import type {
-	ButtonSize,
-	ButtonVariant,
-	SizeStyleGroup,
-	VariantStyleGroup,
-} from "@/types/style";
-import { Separator } from "@/components/ui/separator";
+
 import { Badge } from "@/components/ui/badge";
 import {
 	Accordion,
@@ -17,47 +11,37 @@ import {
 	AccordionItem,
 	AccordionTrigger,
 } from "@/components/ui/accordion";
+import type { ButtonSizeName, ButtonVariantName } from "@/types/button";
 
 function ButtonComponent({
 	component,
 }: {
 	component: {
-		buttonText: string;
-		variant: ButtonVariant;
-		size: ButtonSize;
+		componentText: string;
+		variant: ButtonVariantName;
+		size: ButtonSizeName;
 	};
 }) {
-	const extraStyles: string[] = [];
-	const variantGroupNames: VariantStyleGroup[] = [
-		"text",
-		"background",
-		"border",
-		"effects",
-	];
-	for (const groupName of variantGroupNames) {
-		if (component.variant[groupName].isApplied) {
-			extraStyles.push(
-				Object.values(component.variant[groupName].properties).join(" "),
-			);
-		}
-	}
+	const { styles } = useStyleManagerStore();
+	const variantStyle = styles.variant[component.variant];
+	const sizeStyle = styles.size[component.size];
 
-	const sizeGroupNames: SizeStyleGroup[] = ["size"];
-	for (const groupName of sizeGroupNames) {
-		if (component.size[groupName].isApplied) {
-			extraStyles.push(
-				Object.values(component.size[groupName].properties).join(" "),
-			);
-		}
-	}
+	const extraStyles = Object.entries(variantStyle)
+		.filter(([_, group]) => group.isApplied)
+		.flatMap(([_, group]) => Object.values(group.properties))
+		.concat(
+			Object.entries(sizeStyle)
+				.filter(([_, group]) => group.isApplied)
+				.flatMap(([_, group]) => Object.values(group.properties)),
+		);
 
 	return (
 		<Button
-			variant={component.variant.styleName}
-			size={component.size.styleName}
+			variant={component.variant}
+			size={component.size}
 			className={extraStyles.join(" ")}
 		>
-			{component.buttonText}
+			{component.componentText}
 		</Button>
 	);
 }
@@ -69,11 +53,7 @@ export default function ComponentRender({
 	openVariants: string[];
 	setOpenVariants: (value: string[]) => void;
 }) {
-	const { variants, buttonText } = useStyleManagerStore();
-
-	const currentVariantStyles = variants.variant;
-
-	const currentSizeStyles = variants.size;
+	const { styles, componentText } = useStyleManagerStore();
 
 	return (
 		<div className="p-6 w-full max-w-[600px] flex flex-col gap-2 items-stretch overflow-x-auto">
@@ -83,28 +63,28 @@ export default function ComponentRender({
 				value={openVariants}
 				onValueChange={setOpenVariants}
 			>
-				{currentVariantStyles.map((styleProps, index) => (
+				{Object.entries(styles.variant).map(([variantName, variantStyle]) => (
 					<AccordionItem
-						value={styleProps.styleName}
-						key={`variant-${styleProps.styleName}-${index}`}
+						value={variantName}
+						key={`variant-${variantName}`}
 						className="flex flex-col gap-2 p-2"
 					>
-						<AccordionTrigger>{styleProps.styleName}</AccordionTrigger>
+						<AccordionTrigger>{variantName}</AccordionTrigger>
 						<AccordionContent>
 							<div className="flex gap-2 pb-4">
-								{currentSizeStyles.map((sizeProps) => (
+								{Object.keys(styles.size).map((sizeName) => (
 									<div
-										key={`variant-${styleProps.styleName}-${sizeProps.styleName}`}
+										key={`variant-${variantName}-${sizeName}`}
 										className="p-2 flex flex-col justify-between items-center gap-2"
 									>
 										<ButtonComponent
 											component={{
-												buttonText: buttonText,
-												variant: styleProps,
-												size: sizeProps,
+												componentText,
+												variant: variantName as ButtonVariantName,
+												size: sizeName as ButtonSizeName,
 											}}
 										/>
-										<Badge variant="outline">{sizeProps.styleName}</Badge>
+										<Badge variant="outline">{sizeName}</Badge>
 									</div>
 								))}
 							</div>
