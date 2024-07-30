@@ -3,7 +3,7 @@ import type { Style, StyleGroup } from "./style";
 export type BadgeVariantName = "default" | "secondary" | "destructive" | "outline";
 
 export type BadgeVariantStyle = {
-  [K in Exclude<StyleGroup, "size">]: Style<K>;
+  [K in StyleGroup]: Style<K>;
 };
 
 export type BadgeComponentStyle = {

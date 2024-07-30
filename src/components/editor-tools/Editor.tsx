@@ -333,6 +333,58 @@ export function Editor({
 								width="w-24"
 							/>
 						</CollapsibleGroup>
+
+						{currentComponent === "badge" && (
+							<CollapsibleGroup
+								styleIsApplied={currentVariantStyle.size.isApplied}
+								toggleGroupIsApplied={() => {
+									toggleGroupIsApplied({
+										component: currentComponent,
+										styleType: "variant",
+										styleName: currentVariant.variant,
+										group: "size",
+									});
+								}}
+								defaultOpen
+								title="size"
+								className="grid grid-cols-2 gap-6"
+								isCollapsible={false}
+								showCheckbox={false}
+							>
+								<GenericSliderSelector
+									isDisabled={!currentVariantStyle.size.isApplied}
+									label="Padding (X)"
+									options={paddingXOptions}
+									value={currentVariantStyle.size.properties.paddingX}
+									onChange={(value) =>
+										setStyleProperty({
+											component: currentComponent,
+											styleType: "variant",
+											styleName: currentVariant.variant,
+											group: "size",
+											property: "paddingX",
+											value: value,
+										})
+									}
+								/>
+								<GenericSliderSelector
+									isDisabled={!currentVariantStyle.size.isApplied}
+									label="Height"
+									options={heightOptions}
+									value={currentVariantStyle.size.properties.height}
+									onChange={(value) =>
+										setStyleProperty({
+											component: currentComponent,
+											styleType: "variant",
+											styleName: currentVariant.variant,
+											group: "size",
+											property: "height",
+											value: value,
+										})
+									}
+								/>
+							</CollapsibleGroup>
+						)}
 					</AccordionContent>
 				</AccordionItem>
 
