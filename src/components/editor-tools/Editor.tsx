@@ -32,6 +32,17 @@ import { useStyleManagerStore } from "@/store/useStyleManagerStore";
 import type { ButtonSizeName, ButtonVariantName } from "@/types/button";
 import type { ComponentType } from "@/types/style";
 import type { BadgeVariantName } from "@/types/badge";
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
+} from "../ui-editor/dialog";
+import { Button } from "../ui-editor/button";
+import { CopyIcon } from "lucide-react";
+import { CodeDisplay } from "../code/CodeDisplay";
 
 export function Editor({
 	openVariants,
@@ -72,7 +83,9 @@ export function Editor({
 	}
 
 	return (
-		<div>
+		<div className="flex flex-col gap-y-2 py-2">
+			<CodeDisplay />
+
 			<Accordion type="multiple" defaultValue={["variant"]}>
 				<AccordionItem value="variant">
 					<AccordionTrigger className="font-bold text-xl">

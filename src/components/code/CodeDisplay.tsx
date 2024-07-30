@@ -2,9 +2,10 @@ import { useState } from "react";
 import hljs from "highlight.js";
 import "highlight.js/styles/vs2015.css"; // Import a highlight.js theme
 import { Button } from "@/components/ui-editor/button";
-import { CheckIcon, CopyIcon } from "lucide-react";
+import { CheckIcon, CopyIcon, EyeIcon } from "lucide-react";
 
 import { useStyleManagerStore } from "@/store/useStyleManagerStore";
+import { Dialog, DialogContent, DialogTrigger } from "../ui-editor/dialog";
 
 export function CodeDisplay() {
 	const { styles, componentText, currentComponent } = useStyleManagerStore();
@@ -237,29 +238,46 @@ export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent }
 	};
 
 	return (
-		<div className="space-y-2">
-			<div className="flex items-center justify-between px-2">
-				Read-only code display
-				<Button variant="outline" onClick={copyToClipboard}>
-					{copied ? (
-						<CheckIcon className="w-4 h-4 mr-2" />
-					) : (
-						<CopyIcon className="w-4 h-4 mr-2" />
-					)}
-					Copy
+		<Dialog>
+			<DialogTrigger asChild>
+				<Button
+					variant="outline"
+					size="sm"
+					className="flex items-center gap-x-2 self-end mr-4"
+				>
+					View Code
+					<EyeIcon className="w-4 h-4" />
 				</Button>
-			</div>
-			<div className="relative">
-				<pre className="p-4 rounded-md overflow-x-auto bg-gray-900 text-white">
-					<code
-						// biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
-						dangerouslySetInnerHTML={{
-							__html: hljs.highlight(componentCode ?? "", { language: "tsx" })
-								.value,
-						}}
-					/>
-				</pre>
-			</div>
-		</div>
+			</DialogTrigger>
+			<DialogContent className="max-w-fit">
+				<div className="flex flex-col h-full gap-2">
+					<div className="flex-shrink-0 flex items-center justify-between px-2 py-2">
+						<span className="text-sm font-medium">Read-only code display</span>
+						<Button
+							variant="outline"
+							size="sm"
+							className="mr-3"
+							onClick={copyToClipboard}
+						>
+							{copied ? (
+								<CheckIcon className="w-4 h-4 mr-2" />
+							) : (
+								<CopyIcon className="w-4 h-4 mr-2" />
+							)}
+							Copy
+						</Button>
+					</div>
+					<pre className="h-[70vh] w-[800px] p-4 overflow-auto bg-gray-900 text-white text-sm rounded-lg">
+						<code
+							// biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
+							dangerouslySetInnerHTML={{
+								__html: hljs.highlight(componentCode ?? "", { language: "tsx" })
+									.value,
+							}}
+						/>
+					</pre>
+				</div>
+			</DialogContent>
+		</Dialog>
 	);
 }
