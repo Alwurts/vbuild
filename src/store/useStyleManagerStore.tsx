@@ -3,10 +3,15 @@ import type { ComponentStore } from "@/types/store";
 import { create } from "zustand";
 import { DEFAULT_BUTTON_STYLE } from "@/lib/components/buttonStyles";
 import { DEFAULT_BADGE_STYLE } from "@/lib/components/badgeStyles";
+import { CSSVariableNames } from "@/types/style";
 
 const DEFAULT_STYLES: AllComponentStyles = {
   button: DEFAULT_BUTTON_STYLE,
   badge: DEFAULT_BADGE_STYLE,
+};
+
+type CSSVariablesState = {
+  [K in CSSVariableNames]: string;
 };
 
 export const useStyleManagerStore = create<ComponentStore>((set) => ({
@@ -50,4 +55,22 @@ export const useStyleManagerStore = create<ComponentStore>((set) => ({
     set((state) => ({
       currentVariant: { ...state.currentVariant, [styleType]: name },
     })),
+
+  cssVariables: Object.fromEntries(
+    Object.keys(CSSVariableNames).map((key) => [
+      key,
+      getComputedStyle(document.documentElement).getPropertyValue(`--${key}`).trim()
+    ])
+  ) as CSSVariablesState,
+
+  setCSSVariable: (name: CSSVariableNames, value: string) =>
+    set((state) => {
+      document.documentElement.style.setProperty(`--background`, "0 84.2% 60.2%");
+      return {
+        cssVariables: {
+          ...state.cssVariables,
+          [name]: value,
+        },
+      };
+    }),
 }));

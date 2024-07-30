@@ -1,4 +1,4 @@
-import type { ComponentType, StyleGroup, AllComponentStyles } from "./style";
+import type { ComponentType, StyleGroup, AllComponentStyles, CSSVariableNames } from "./style";
 
 export interface ComponentStore {
   styles: AllComponentStyles;
@@ -28,4 +28,8 @@ export interface ComponentStore {
     styleType: "variant" | "size";
     name: string;
   }) => void;
+  cssVariables: {
+    [K in CSSVariableNames]: string;
+  };
+  setCSSVariable: (name: CSSVariableNames, value: string) => void;
 }

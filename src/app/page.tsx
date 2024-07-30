@@ -2,9 +2,15 @@
 
 import { useState } from "react";
 import { Card } from "@/components/ui-editor/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui-editor/tabs";
+import {
+	Tabs,
+	TabsContent,
+	TabsList,
+	TabsTrigger,
+} from "@/components/ui-editor/tabs";
 import { CodeDisplay } from "@/components/code/CodeDisplay";
 import { Editor } from "@/components/editor-tools/Editor";
+import { CSSVariablesEditor } from "@/components/editor-tools/CSSVariablesEditor";
 import ComponentRender from "@/components/display/ComponentRender";
 
 import { useStyleManagerStore } from "@/store/useStyleManagerStore";
@@ -25,7 +31,8 @@ export default function Home() {
 				/>
 				<div className="p-6 border-l border-border flex-1 space-y-6 overflow-y-auto">
 					<Tabs defaultValue="toggles">
-						<TabsList className="grid w-full grid-cols-2">
+						<TabsList className="grid w-full grid-cols-3">
+							<TabsTrigger value="css-variables">CSS Variables</TabsTrigger>
 							<TabsTrigger value="toggles">Editor</TabsTrigger>
 							<TabsTrigger value="code">Code</TabsTrigger>
 						</TabsList>
@@ -34,6 +41,9 @@ export default function Home() {
 								openVariants={openVariants}
 								setOpenVariants={setOpenVariants}
 							/>
+						</TabsContent>
+						<TabsContent value="css-variables">
+							<CSSVariablesEditor />
 						</TabsContent>
 						<TabsContent value="code">
 							<CodeDisplay />

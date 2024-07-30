@@ -41,3 +41,26 @@ export type AllComponentStyles = {
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   [K in ComponentType]: ComponentStyle<any, any, any, any>;
 };
+
+export enum CSSVariableNames {
+  background = "background",
+  foreground = "foreground",
+  card = "card",
+  "card-foreground" = "card-foreground",
+  popover = "popover",
+  "popover-foreground" = "popover-foreground",
+  primary = "primary",
+  "primary-foreground" = "primary-foreground",
+  secondary = "secondary",
+  "secondary-foreground" = "secondary-foreground",
+  muted = "muted",
+  "muted-foreground" = "muted-foreground",
+  accent = "accent",
+  "accent-foreground" = "accent-foreground",
+  destructive = "destructive",
+  "destructive-foreground" = "destructive-foreground",
+  border = "border",
+  input = "input",
+  ring = "ring",
+  radius = "radius",
+}

@@ -3,10 +3,10 @@ import {
 	Collapsible,
 	CollapsibleContent,
 	CollapsibleTrigger,
-} from "@/components/ui/collapsible";
+} from "@/components/ui-editor/collapsible";
+import { Checkbox } from "@/components/ui-editor/checkbox";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { Checkbox } from "../ui/checkbox";
 
 export const CollapsibleGroup = ({
 	styleIsApplied,
