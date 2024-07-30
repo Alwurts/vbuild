@@ -54,10 +54,17 @@ export function Editor({
 
 	const currentComponentStyle = styles[currentComponent];
 	const currentVariantStyle =
-		currentComponentStyle.variant[currentVariant.variant];
+		// @ts-ignore
+		currentComponentStyle.variant[
+			currentComponent === "card" ? "default" : currentVariant.variant
+		];
+
 	const currentSizeStyle =
-		currentComponent === "button" && currentComponentStyle.size
-			? currentComponentStyle.size[currentVariant.size]
+		currentComponent === "button" &&
+		"size" in currentComponentStyle &&
+		currentVariant.size
+			? // @ts-ignore
+				currentComponentStyle.size?.[currentVariant.size]
 			: null;
 
 	if (!currentVariantStyle) {
@@ -66,41 +73,46 @@ export function Editor({
 
 	return (
 		<div>
-			<Accordion type="multiple" defaultValue={["variant", "size"]}>
+			<Accordion type="multiple" defaultValue={["variant"]}>
 				<AccordionItem value="variant">
 					<AccordionTrigger className="font-bold text-xl">
-						Variant
+						{currentComponent === "card" ? "Card Style" : "Variant"}
 					</AccordionTrigger>
 					<AccordionContent className="flex flex-col gap-y-4 p-1">
-						<div>
-							<Label className="font-semibold">Variant style</Label>
-							<Select
-								value={currentVariant.variant}
-								onValueChange={(value) => {
-									setCurrentVariant({
-										styleType: "variant",
-										name: value as ButtonVariantName | BadgeVariantName,
-									});
-									const valueTyped = value as ButtonVariantName & BadgeVariantName;
-									setOpenVariants(
-										openVariants ? [...openVariants, valueTyped] : [valueTyped],
-									);
-								}}
-							>
-								<SelectTrigger>
-									<SelectValue placeholder="Theme" />
-								</SelectTrigger>
-								<SelectContent>
-									{Object.keys(currentComponentStyle.variant).map(
-										(variantName) => (
-											<SelectItem key={variantName} value={variantName}>
-												{variantName}
-											</SelectItem>
-										),
-									)}
-								</SelectContent>
-							</Select>
-						</div>
+						{currentComponent !== "card" && (
+							<div>
+								<Label className="font-semibold">Variant style</Label>
+								<Select
+									value={currentVariant.variant}
+									onValueChange={(value) => {
+										setCurrentVariant({
+											styleType: "variant",
+											name: value as ButtonVariantName | BadgeVariantName,
+										});
+										const valueTyped = value as ButtonVariantName &
+											BadgeVariantName;
+										setOpenVariants(
+											openVariants
+												? [...openVariants, valueTyped]
+												: [valueTyped],
+										);
+									}}
+								>
+									<SelectTrigger>
+										<SelectValue placeholder="Theme" />
+									</SelectTrigger>
+									<SelectContent>
+										{Object.keys(currentComponentStyle.variant).map(
+											(variantName) => (
+												<SelectItem key={variantName} value={variantName}>
+													{variantName}
+												</SelectItem>
+											),
+										)}
+									</SelectContent>
+								</Select>
+							</div>
+						)}
 						{/* Text Group */}
 						<CollapsibleGroup
 							styleIsApplied={currentVariantStyle.text.isApplied}
@@ -253,6 +265,56 @@ export function Editor({
 							</CollapsibleGroup>
 						)}
 
+						{/* Add padding group for card */}
+						{currentComponent === "card" && (
+							<CollapsibleGroup
+								styleIsApplied={currentVariantStyle.padding.isApplied}
+								toggleGroupIsApplied={() => {
+									toggleGroupIsApplied({
+										component: currentComponent,
+										styleType: "variant",
+										styleName: "default",
+										group: "padding",
+									});
+								}}
+								title="padding"
+								className="grid grid-cols-2 gap-6"
+							>
+								<GenericSliderSelector
+									isDisabled={!currentVariantStyle.padding.isApplied}
+									label="Padding (X)"
+									options={paddingXOptions}
+									value={currentVariantStyle.padding.properties.paddingX}
+									onChange={(value) =>
+										setStyleProperty({
+											component: currentComponent,
+											styleType: "variant",
+											styleName: "default",
+											group: "padding",
+											property: "paddingX",
+											value: value,
+										})
+									}
+								/>
+								<GenericSliderSelector
+									isDisabled={!currentVariantStyle.padding.isApplied}
+									label="Padding (Y)"
+									options={paddingYOptions}
+									value={currentVariantStyle.padding.properties.paddingY}
+									onChange={(value) =>
+										setStyleProperty({
+											component: currentComponent,
+											styleType: "variant",
+											styleName: "default",
+											group: "padding",
+											property: "paddingY",
+											value: value,
+										})
+									}
+								/>
+							</CollapsibleGroup>
+						)}
+
 						{/* Border Group */}
 						<CollapsibleGroup
 							styleIsApplied={currentVariantStyle.border.isApplied}
@@ -380,87 +442,89 @@ export function Editor({
 					</AccordionContent>
 				</AccordionItem>
 
-				{currentComponent === "button" && styles.button.size && (
-					<AccordionItem value="size">
-						<AccordionTrigger className="font-bold text-xl">
-							Size
-						</AccordionTrigger>
-						<AccordionContent className="flex flex-col gap-y-4 p-1">
-							<div>
-								<Label className="font-semibold">Size style</Label>
-								<Select
-									value={currentVariant.size}
-									onValueChange={(value) => {
-										setCurrentVariant({
+				{currentComponent === "button" &&
+					currentSizeStyle?.size &&
+					styles.button.size && (
+						<AccordionItem value="size">
+							<AccordionTrigger className="font-bold text-xl">
+								Size
+							</AccordionTrigger>
+							<AccordionContent className="flex flex-col gap-y-4 p-1">
+								<div>
+									<Label className="font-semibold">Size style</Label>
+									<Select
+										value={currentVariant.size}
+										onValueChange={(value) => {
+											setCurrentVariant({
+												styleType: "size",
+												name: value as ButtonSizeName,
+											});
+										}}
+									>
+										<SelectTrigger>
+											<SelectValue placeholder="Theme" />
+										</SelectTrigger>
+										<SelectContent>
+											{Object.keys(styles.button.size).map((sizeName) => (
+												<SelectItem key={sizeName} value={sizeName}>
+													{sizeName}
+												</SelectItem>
+											))}
+										</SelectContent>
+									</Select>
+								</div>
+								<CollapsibleGroup
+									styleIsApplied={currentSizeStyle.size.isApplied}
+									toggleGroupIsApplied={() => {
+										toggleGroupIsApplied({
+											component: currentComponent,
 											styleType: "size",
-											name: value as ButtonSizeName,
+											styleName: currentVariant.size,
+											group: "size",
 										});
 									}}
+									defaultOpen
+									title="size"
+									className="grid grid-cols-2 gap-6"
+									isCollapsible={false}
+									showCheckbox={false}
 								>
-									<SelectTrigger>
-										<SelectValue placeholder="Theme" />
-									</SelectTrigger>
-									<SelectContent>
-										{Object.keys(styles.button.size).map((sizeName) => (
-											<SelectItem key={sizeName} value={sizeName}>
-												{sizeName}
-											</SelectItem>
-										))}
-									</SelectContent>
-								</Select>
-							</div>
-							<CollapsibleGroup
-								styleIsApplied={currentSizeStyle.size.isApplied}
-								toggleGroupIsApplied={() => {
-									toggleGroupIsApplied({
-										component: currentComponent,
-										styleType: "size",
-										styleName: currentVariant.size,
-										group: "size",
-									});
-								}}
-								defaultOpen
-								title="size"
-								className="grid grid-cols-2 gap-6"
-								isCollapsible={false}
-								showCheckbox={false}
-							>
-								<GenericSliderSelector
-									isDisabled={!currentSizeStyle.size.isApplied}
-									label="Padding (X)"
-									options={paddingXOptions}
-									value={currentSizeStyle.size.properties.paddingX}
-									onChange={(value) =>
-										setStyleProperty({
-											component: currentComponent,
-											styleType: "size",
-											styleName: currentVariant.size,
-											group: "size",
-											property: "paddingX",
-											value: value,
-										})
-									}
-								/>
-								<GenericSliderSelector
-									isDisabled={!currentSizeStyle.size.isApplied}
-									label="Height"
-									options={heightOptions}
-									value={currentSizeStyle.size.properties.height}
-									onChange={(value) =>
-										setStyleProperty({
-											component: currentComponent,
-											styleType: "size",
-											styleName: currentVariant.size,
-											group: "size",
-											property: "height",
-											value: value,
-										})
-									}
-								/>
-							</CollapsibleGroup>
-						</AccordionContent>
-					</AccordionItem>
-				)}
+									<GenericSliderSelector
+										isDisabled={!currentSizeStyle.size.isApplied}
+										label="Padding (X)"
+										options={paddingXOptions}
+										value={currentSizeStyle.size.properties.paddingX}
+										onChange={(value) =>
+											setStyleProperty({
+												component: currentComponent,
+												styleType: "size",
+												styleName: currentVariant.size,
+												group: "size",
+												property: "paddingX",
+												value: value,
+											})
+										}
+									/>
+									<GenericSliderSelector
+										isDisabled={!currentSizeStyle.size.isApplied}
+										label="Height"
+										options={heightOptions}
+										value={currentSizeStyle.size.properties.height}
+										onChange={(value) =>
+											setStyleProperty({
+												component: currentComponent,
+												styleType: "size",
+												styleName: currentVariant.size,
+												group: "size",
+												property: "height",
+												value: value,
+											})
+										}
+									/>
+								</CollapsibleGroup>
+							</AccordionContent>
+						</AccordionItem>
+					)}
 			</Accordion>
 		</div>
 	);

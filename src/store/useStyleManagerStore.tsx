@@ -7,11 +7,13 @@ import type { ComponentStore } from "@/types/store";
 import { create } from "zustand";
 import { DEFAULT_BUTTON_STYLE } from "@/lib/components/buttonStyles";
 import { DEFAULT_BADGE_STYLE } from "@/lib/components/badgeStyles";
+import { DEFAULT_CARD_STYLE } from "@/lib/components/cardStyles";
 import type { CSSVariableNames } from "@/types/style";
 
 const DEFAULT_STYLES: AllComponentStyles = {
 	button: DEFAULT_BUTTON_STYLE,
 	badge: DEFAULT_BADGE_STYLE,
+	card: DEFAULT_CARD_STYLE,
 };
 
 type CSSVariablesState = {
@@ -39,8 +41,8 @@ export const useStyleManagerStore = create<ComponentStore>((set) => ({
 		set((state) => {
 			const newStyles = { ...state.styles };
 			const componentStyles = newStyles[component];
-			const stylesType = componentStyles[styleType];
 			// @ts-ignore (due to dynamic access)
+			const stylesType = componentStyles[styleType];
 			const stylesTypeVariant = stylesType[styleName];
 			stylesTypeVariant[group].properties[property] = value;
 			return { styles: newStyles };
@@ -49,8 +51,8 @@ export const useStyleManagerStore = create<ComponentStore>((set) => ({
 		set((state) => {
 			const newStyles = { ...state.styles };
 			const componentStyles = newStyles[component];
-			const stylesType = componentStyles[styleType];
 			// @ts-ignore (due to dynamic access)
+			const stylesType = componentStyles[styleType];
 			const stylesTypeVariant = stylesType[styleName];
 			stylesTypeVariant[group].isApplied = !stylesTypeVariant[group].isApplied;
 			return { styles: newStyles };

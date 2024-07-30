@@ -14,7 +14,7 @@ export const CollapsibleGroup = ({
 	title,
 	children,
 	className,
-	defaultOpen = false,
+	defaultOpen = true,
 	isCollapsible = true,
 	showCheckbox = true,
 }: {

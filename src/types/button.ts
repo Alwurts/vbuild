@@ -11,7 +11,7 @@ export type ButtonVariantName =
 export type ButtonSizeName = "default" | "sm" | "lg" | "icon";
 
 export type ButtonVariantStyle = {
-	[K in Exclude<StyleGroup, "size">]: Style<K>;
+	[K in Exclude<StyleGroup, "size" | "padding">]: Style<K>;
 };
 
 /* export type ButtonSizeStyle = Style<"size">; */
