@@ -30,7 +30,7 @@ export default function Home() {
 					setOpenVariants={setOpenVariants}
 				/>
 				<div className="p-6 border-l border-border flex-1 space-y-6 overflow-y-auto">
-					<Tabs defaultValue="css-variables">
+					<Tabs defaultValue="toggles">
 						<TabsList className="grid w-full grid-cols-2">
 							<TabsTrigger value="css-variables">CSS Variables</TabsTrigger>
 							<TabsTrigger value="toggles">Editor</TabsTrigger>
