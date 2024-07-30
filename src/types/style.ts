@@ -21,15 +21,23 @@ export type Style<T extends StyleGroup> = {
 
 // Generic component style type
 export type ComponentStyle<
-	TVariant extends string,
-	TSize extends string,
-	TVariantStyle extends ButtonVariantStyle,
-	TSizeStyle extends ButtonSizeStyle,
+  TVariant extends string,
+  TSize extends string,
+  TVariantStyle,
+  TSizeStyle
 > = {
-	variant: {
-		[T in TVariant]: TVariantStyle;
-	};
-	size: {
-		[T in TSize]: TSizeStyle;
-	};
+  variant: {
+    [T in TVariant]: TVariantStyle;
+  };
+  size?: {
+    [T in TSize]: TSizeStyle;
+  };
+};
+
+export type ComponentType = "button" | "badge";
+
+// Add a new type for all component styles
+export type AllComponentStyles = {
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  [K in ComponentType]: ComponentStyle<any, any, any, any>;
 };

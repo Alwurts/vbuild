@@ -29,6 +29,8 @@ import {
 	AccordionTrigger,
 } from "../ui/accordion";
 import type { ButtonSizeName, ButtonVariantName } from "@/types/button";
+import type { ComponentType } from "@/types/style";
+import type { BadgeVariantName } from "@/types/badge";
 
 export function Editor({
 	openVariants,
@@ -36,101 +38,49 @@ export function Editor({
 }: { openVariants: string[]; setOpenVariants: (value: string[]) => void }) {
 	const {
 		styles,
+		currentComponent,
 		currentVariant,
 		setCurrentVariant,
 		setStyleProperty,
 		toggleGroupIsApplied,
 		componentText,
 		setComponentText,
+		setCurrentComponent,
 	} = useStyleManagerStore();
 
-	const currentVariantStyle = styles.variant[currentVariant.variant];
-	const currentSizeStyle = styles.size[currentVariant.size];
+	const currentComponentStyle = styles[currentComponent];
+	const currentVariantStyle =
+		currentComponentStyle.variant[currentVariant.variant];
+	const currentSizeStyle =
+		currentComponent === "button" && currentComponentStyle.size
+			? currentComponentStyle.size[currentVariant.size]
+			: null;
 
-	if (!currentVariantStyle || !currentSizeStyle) {
+	if (!currentVariantStyle) {
 		return null;
 	}
+
 	return (
 		<div className="space-y-3">
+			<Select
+				value={currentComponent}
+				onValueChange={(value) => setCurrentComponent(value as ComponentType)}
+			>
+				<SelectTrigger>
+					<SelectValue placeholder="Component" />
+				</SelectTrigger>
+				<SelectContent>
+					<SelectItem value="button">Button</SelectItem>
+					<SelectItem value="badge">Badge</SelectItem>
+				</SelectContent>
+			</Select>
+
 			<Accordion type="multiple" defaultValue={["variant", "size"]}>
-				<AccordionItem value="size">
-					<AccordionTrigger className="font-bold text-xl">Size</AccordionTrigger>
-					<AccordionContent className="flex flex-col gap-y-4">
-						<div>
-							<Label className="font-semibold">Size style</Label>
-							<Select
-								value={currentVariant.size}
-								onValueChange={(value) => {
-									setCurrentVariant({
-										styleType: "size",
-										name: value as ButtonSizeName,
-									});
-								}}
-							>
-								<SelectTrigger>
-									<SelectValue placeholder="Theme" />
-								</SelectTrigger>
-								<SelectContent>
-									{Object.keys(styles.size).map((sizeName) => (
-										<SelectItem key={sizeName} value={sizeName}>
-											{sizeName}
-										</SelectItem>
-									))}
-								</SelectContent>
-							</Select>
-						</div>
-						{/* Size Group */}
-						<CollapsibleGroup
-							styleIsApplied={currentSizeStyle.size.isApplied}
-							toggleGroupIsApplied={() => {
-								toggleGroupIsApplied({
-									styleType: "size",
-									styleName: currentVariant.size,
-									group: "size",
-								});
-							}}
-							defaultOpen
-							title="size"
-							className="grid grid-cols-2 gap-6"
-              isCollapsible={false}
-              showCheckbox={false}
-						>
-							<GenericSliderSelector
-								isDisabled={!currentSizeStyle.size.isApplied}
-								label="Padding (X)"
-								options={paddingXOptions}
-								value={currentSizeStyle.size.properties.paddingX}
-								onChange={(value) =>
-									setStyleProperty({
-										styleType: "size",
-										styleName: currentVariant.size,
-										group: "size",
-										property: "paddingX",
-										value: value,
-									})
-								}
-							/>
-							<GenericSliderSelector
-								isDisabled={!currentSizeStyle.size.isApplied}
-								label="Height"
-								options={heightOptions}
-								value={currentSizeStyle.size.properties.height}
-								onChange={(value) =>
-									setStyleProperty({
-										styleType: "size",
-										styleName: currentVariant.size,
-										group: "size",
-										property: "height",
-										value: value,
-									})
-								}
-							/>
-						</CollapsibleGroup>
-					</AccordionContent>
-				</AccordionItem>
 				<AccordionItem value="variant">
-					<AccordionTrigger className="font-bold text-xl">Variant</AccordionTrigger>
-					<AccordionContent className="flex flex-col gap-y-4">
+					<AccordionTrigger className="font-bold text-xl">
+						Variant
+					</AccordionTrigger>
+					<AccordionContent className="flex flex-col gap-y-4 p-1">
 						<div>
 							<Label className="font-semibold">Variant style</Label>
 							<Select
@@ -138,7 +88,7 @@ export function Editor({
 								onValueChange={(value) => {
 									setCurrentVariant({
 										styleType: "variant",
-										name: value as ButtonVariantName,
+										name: value as ButtonVariantName | BadgeVariantName,
 									});
 									setOpenVariants(
 										openVariants ? [...openVariants, value] : [value],
@@ -149,11 +99,13 @@ export function Editor({
 									<SelectValue placeholder="Theme" />
 								</SelectTrigger>
 								<SelectContent>
-									{Object.keys(styles.variant).map((variantName) => (
-										<SelectItem key={variantName} value={variantName}>
-											{variantName}
-										</SelectItem>
-									))}
+									{Object.keys(currentComponentStyle.variant).map(
+										(variantName) => (
+											<SelectItem key={variantName} value={variantName}>
+												{variantName}
+											</SelectItem>
+										),
+									)}
 								</SelectContent>
 							</Select>
 						</div>
@@ -162,6 +114,7 @@ export function Editor({
 							styleIsApplied={currentVariantStyle.text.isApplied}
 							toggleGroupIsApplied={() => {
 								toggleGroupIsApplied({
+									component: currentComponent,
 									styleType: "variant",
 									styleName: currentVariant.variant,
 									group: "text",
@@ -182,6 +135,7 @@ export function Editor({
 								value={currentVariantStyle.text.properties.textColor}
 								onChange={(value) => {
 									setStyleProperty({
+										component: currentComponent,
 										styleType: "variant",
 										styleName: currentVariant.variant,
 										group: "text",
@@ -197,6 +151,7 @@ export function Editor({
 								value={currentVariantStyle.text.properties.fontSize}
 								onChange={(value) =>
 									setStyleProperty({
+										component: currentComponent,
 										styleType: "variant",
 										styleName: currentVariant.variant,
 										group: "text",
@@ -212,6 +167,7 @@ export function Editor({
 								fontWeight={currentVariantStyle.text.properties.fontWeight}
 								setFontWeight={(value) =>
 									setStyleProperty({
+										component: currentComponent,
 										styleType: "variant",
 										styleName: currentVariant.variant,
 										group: "text",
@@ -227,6 +183,7 @@ export function Editor({
 							styleIsApplied={currentVariantStyle.background.isApplied}
 							toggleGroupIsApplied={() => {
 								toggleGroupIsApplied({
+									component: currentComponent,
 									styleType: "variant",
 									styleName: currentVariant.variant,
 									group: "background",
@@ -241,6 +198,7 @@ export function Editor({
 								value={currentVariantStyle.background.properties.bgColor}
 								onChange={(value) =>
 									setStyleProperty({
+										component: currentComponent,
 										styleType: "variant",
 										styleName: currentVariant.variant,
 										group: "background",
@@ -256,6 +214,7 @@ export function Editor({
 							styleIsApplied={currentVariantStyle.border.isApplied}
 							toggleGroupIsApplied={() => {
 								toggleGroupIsApplied({
+									component: currentComponent,
 									styleType: "variant",
 									styleName: currentVariant.variant,
 									group: "border",
@@ -270,6 +229,7 @@ export function Editor({
 								borderStyle={currentVariantStyle.border.properties.borderStyle}
 								setBorderStyle={(value) =>
 									setStyleProperty({
+										component: currentComponent,
 										styleType: "variant",
 										styleName: currentVariant.variant,
 										group: "border",
@@ -284,6 +244,7 @@ export function Editor({
 								borderWidth={currentVariantStyle.border.properties.borderWidth}
 								setBorderWidth={(value) =>
 									setStyleProperty({
+										component: currentComponent,
 										styleType: "variant",
 										styleName: currentVariant.variant,
 										group: "border",
@@ -298,6 +259,7 @@ export function Editor({
 								value={currentVariantStyle.border.properties.borderColor}
 								onChange={(value) =>
 									setStyleProperty({
+										component: currentComponent,
 										styleType: "variant",
 										styleName: currentVariant.variant,
 										group: "border",
@@ -313,6 +275,7 @@ export function Editor({
 								value={currentVariantStyle.border.properties.rounded}
 								onChange={(value) =>
 									setStyleProperty({
+										component: currentComponent,
 										styleType: "variant",
 										styleName: currentVariant.variant,
 										group: "border",
@@ -329,6 +292,7 @@ export function Editor({
 							styleIsApplied={currentVariantStyle.effects.isApplied}
 							toggleGroupIsApplied={() => {
 								toggleGroupIsApplied({
+									component: currentComponent,
 									styleType: "variant",
 									styleName: currentVariant.variant,
 									group: "effects",
@@ -342,6 +306,7 @@ export function Editor({
 								shadow={currentVariantStyle.effects.properties.shadow}
 								setShadow={(value) =>
 									setStyleProperty({
+										component: currentComponent,
 										styleType: "variant",
 										styleName: currentVariant.variant,
 										group: "effects",
@@ -357,6 +322,7 @@ export function Editor({
 								value={currentVariantStyle.effects.properties.opacity}
 								onChange={(value) =>
 									setStyleProperty({
+										component: currentComponent,
 										styleType: "variant",
 										styleName: currentVariant.variant,
 										group: "effects",
@@ -369,6 +335,88 @@ export function Editor({
 						</CollapsibleGroup>
 					</AccordionContent>
 				</AccordionItem>
+
+				{currentComponent === "button" && styles.button.size && (
+					<AccordionItem value="size">
+						<AccordionTrigger className="font-bold text-xl">
+							Size
+						</AccordionTrigger>
+						<AccordionContent className="flex flex-col gap-y-4 p-1">
+							<div>
+								<Label className="font-semibold">Size style</Label>
+								<Select
+									value={currentVariant.size}
+									onValueChange={(value) => {
+										setCurrentVariant({
+											styleType: "size",
+											name: value as ButtonSizeName,
+										});
+									}}
+								>
+									<SelectTrigger>
+										<SelectValue placeholder="Theme" />
+									</SelectTrigger>
+									<SelectContent>
+										{Object.keys(styles.button.size).map((sizeName) => (
+											<SelectItem key={sizeName} value={sizeName}>
+												{sizeName}
+											</SelectItem>
+										))}
+									</SelectContent>
+								</Select>
+							</div>
+							<CollapsibleGroup
+								styleIsApplied={currentSizeStyle.size.isApplied}
+								toggleGroupIsApplied={() => {
+									toggleGroupIsApplied({
+										component: currentComponent,
+										styleType: "size",
+										styleName: currentVariant.size,
+										group: "size",
+									});
+								}}
+								defaultOpen
+								title="size"
+								className="grid grid-cols-2 gap-6"
+								isCollapsible={false}
+								showCheckbox={false}
+							>
+								<GenericSliderSelector
+									isDisabled={!currentSizeStyle.size.isApplied}
+									label="Padding (X)"
+									options={paddingXOptions}
+									value={currentSizeStyle.size.properties.paddingX}
+									onChange={(value) =>
+										setStyleProperty({
+											component: currentComponent,
+											styleType: "size",
+											styleName: currentVariant.size,
+											group: "size",
+											property: "paddingX",
+											value: value,
+										})
+									}
+								/>
+								<GenericSliderSelector
+									isDisabled={!currentSizeStyle.size.isApplied}
+									label="Height"
+									options={heightOptions}
+									value={currentSizeStyle.size.properties.height}
+									onChange={(value) =>
+										setStyleProperty({
+											component: currentComponent,
+											styleType: "size",
+											styleName: currentVariant.size,
+											group: "size",
+											property: "height",
+											value: value,
+										})
+									}
+								/>
+							</CollapsibleGroup>
+						</AccordionContent>
+					</AccordionItem>
+				)}
 			</Accordion>
 		</div>
 	);

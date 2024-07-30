@@ -1,4 +1,4 @@
-import type { Style, StyleGroup } from "./style";
+import type { ComponentStyle, Style, StyleGroup } from "./style";
 
 // Component-specific types
 export type ButtonVariantName =
@@ -19,11 +19,9 @@ export type ButtonSizeStyle = {
 	size: Style<"size">;
 };
 
-export type ButtonStyle = {
-	variant: {
-		[K in ButtonVariantName]: ButtonVariantStyle;
-	};
-	size: {
-		[K in ButtonSizeName]: ButtonSizeStyle;
-	};
-};
+export type ButtonComponentStyle = ComponentStyle<
+  ButtonVariantName,
+  ButtonSizeName,
+  ButtonVariantStyle,
+  ButtonSizeStyle
+>;

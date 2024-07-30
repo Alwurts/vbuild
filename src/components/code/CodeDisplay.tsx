@@ -8,7 +8,7 @@ import { useStyleManagerStore } from "@/store/useStyleManagerStore";
 import { ButtonSizeName, ButtonVariantName } from "@/types/button";
 
 export function CodeDisplay() {
-	const { styles, componentText } = useStyleManagerStore();
+	const { styles, componentText, currentComponent } = useStyleManagerStore();
 	const [copied, setCopied] = useState(false);
 
 	const getStyleClasses = ({
@@ -19,7 +19,7 @@ export function CodeDisplay() {
 		name: string;
 	}) => {
 		// @ts-ignore
-		const style = styles[type][name];
+		const style = styles[currentComponent][type][name];
 		if (!style) return "";
 
 		const groupNames = Object.keys(style) as (keyof typeof style)[];
@@ -30,7 +30,9 @@ export function CodeDisplay() {
 		return groupsToBeApplied.join(" ");
 	};
 
-	const buttonCode = `import * as React from "react"
+	const generateComponentCode = () => {
+		if (currentComponent === "button") {
+			return `import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"
 
@@ -41,7 +43,7 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        ${Object.keys(styles.variant)
+        ${Object.keys(styles.button.variant)
 					.map(
 						(variantName) =>
 							`${variantName}: "${getStyleClasses({ type: "variant", name: variantName })}"`,
@@ -49,7 +51,7 @@ const buttonVariants = cva(
 					.join(",\n        ")},
       },
       size: {
-        ${Object.keys(styles.size)
+        ${Object.keys(styles.button.size ?? {})
 					.map(
 						(sizeName) =>
 							`${sizeName}: "${getStyleClasses({ type: "size", name: sizeName })}"`,
@@ -88,9 +90,53 @@ export { Button, buttonVariants }
 
 // Usage:
 <Button variant="custom" size="custom">${componentText}</Button>`;
+		}
+		if (currentComponent === "badge") {
+			return `import * as React from "react"
+import { cva, type VariantProps } from "class-variance-authority"
+
+import { cn } from "@/lib/utils"
+
+const badgeVariants = cva(
+  "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+  {
+    variants: {
+      variant: {
+        ${Object.keys(styles.badge.variant)
+					.map(
+						(variantName) =>
+							`${variantName}: "${getStyleClasses({ type: "variant", name: variantName })}"`,
+					)
+					.join(",\n        ")},
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+    },
+  }
+)
+
+export interface BadgeProps
+  extends React.HTMLAttributes<HTMLDivElement>,
+    VariantProps<typeof badgeVariants> {}
+
+function Badge({ className, variant, ...props }: BadgeProps) {
+  return (
+    <div className={cn(badgeVariants({ variant }), className)} {...props} />
+  )
+}
+
+export { Badge, badgeVariants }
+
+// Usage:
+<Badge variant="custom">${componentText}</Badge>`;
+		}
+	};
+
+	const componentCode = generateComponentCode();
 
 	const copyToClipboard = () => {
-		navigator.clipboard.writeText(buttonCode);
+		navigator.clipboard.writeText(componentCode ?? "");
 		setCopied(true);
 		setTimeout(() => setCopied(false), 2000);
 	};
@@ -113,7 +159,7 @@ export { Button, buttonVariants }
 					<code
 						// biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
 						dangerouslySetInnerHTML={{
-							__html: hljs.highlight(buttonCode, { language: "tsx" }).value,
+							__html: hljs.highlight(componentCode ?? "", { language: "tsx" }).value,
 						}}
 					/>
 				</pre>

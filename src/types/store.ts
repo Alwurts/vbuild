@@ -1,33 +1,33 @@
-import type { ButtonSizeStyle, ButtonVariantStyle } from "./button";
-import type { ComponentStyle, Style, StyleGroup, StyleProperty } from "./style";
+import type { ButtonComponentStyle } from "./button";
+import type { BadgeComponentStyle } from "./badge";
+import type { ComponentType, StyleGroup, AllComponentStyles } from "./style";
 
-export interface ComponentStore<
-	TVariant extends string,
-	TSize extends string,
-	TVariantStyle extends ButtonVariantStyle,
-	TSizeStyle extends ButtonSizeStyle,
-> {
-	styles: ComponentStyle<TVariant, TSize, TVariantStyle, TSizeStyle>;
-	currentVariant: {
-		variant: TVariant;
-		size: TSize;
-	};
-	componentText: string;
-	setComponentText: (value: string) => void;
-	setStyleProperty: <TGroup extends StyleGroup>(params: {
-		styleType: "variant" | "size";
-		styleName: TVariant | TSize;
-		group: TGroup;
-		property: StyleProperty[TGroup];
-		value: string;
-	}) => void;
-	toggleGroupIsApplied: (params: {
-		styleType: "variant" | "size";
-		styleName: TVariant | TSize;
-		group: StyleGroup;
-	}) => void;
-	setCurrentVariant: (params: {
-		styleType: "variant" | "size";
-		name: TVariant | TSize;
-	}) => void;
+export interface ComponentStore {
+  styles: AllComponentStyles;
+  currentComponent: ComponentType;
+  currentVariant: {
+    variant: string;
+    size: string;
+  };
+  componentText: string;
+  setComponentText: (value: string) => void;
+  setCurrentComponent: (component: ComponentType) => void;
+  setStyleProperty: (params: {
+    component: ComponentType;
+    styleType: "variant" | "size";
+    styleName: string;
+    group: StyleGroup;
+    property: string;
+    value: string;
+  }) => void;
+  toggleGroupIsApplied: (params: {
+    component: ComponentType;
+    styleType: "variant" | "size";
+    styleName: string;
+    group: StyleGroup;
+  }) => void;
+  setCurrentVariant: (params: {
+    styleType: "variant" | "size";
+    name: string;
+  }) => void;
 }
