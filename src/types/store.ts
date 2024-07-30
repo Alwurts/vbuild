@@ -19,6 +19,7 @@ export interface ButtonStore {
 		size: ButtonSizeName;
 	};
 	buttonText: string;
+	setButtonText: (value: string) => void;
 	setGroupStyleProperty: ({
 		variantType,
 		variantName,

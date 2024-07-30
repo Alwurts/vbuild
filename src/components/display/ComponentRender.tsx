@@ -76,22 +76,22 @@ export default function ComponentRender({
 	const currentSizeStyles = variants.size;
 
 	return (
-		<div className="p-6 w-[600px] overflow-y-auto flex flex-col gap-2 items-stretch">
+		<div className="p-6 w-full max-w-[600px] flex flex-col gap-2 items-stretch overflow-x-auto">
 			<Accordion
 				type="multiple"
-				className="w-full"
+				className="w-full min-w-fit"
 				value={openVariants}
 				onValueChange={setOpenVariants}
 			>
-				{currentVariantStyles.map((styleProps) => (
-					<>
-						<AccordionItem
-							value={styleProps.styleName}
-							key={`variant-${styleProps.styleName}`}
-							className="flex flex-col gap-2 p-2"
-						>
-							<AccordionTrigger>{styleProps.styleName}</AccordionTrigger>
-							<AccordionContent className="flex gap-2">
+				{currentVariantStyles.map((styleProps, index) => (
+					<AccordionItem
+						value={styleProps.styleName}
+						key={`variant-${styleProps.styleName}-${index}`}
+						className="flex flex-col gap-2 p-2"
+					>
+						<AccordionTrigger>{styleProps.styleName}</AccordionTrigger>
+						<AccordionContent className="overflow-visible">
+							<div className="flex gap-2 pb-4">
 								{currentSizeStyles.map((sizeProps) => (
 									<div
 										key={`variant-${styleProps.styleName}-${sizeProps.styleName}`}
@@ -107,10 +107,9 @@ export default function ComponentRender({
 										<Badge variant="outline">{sizeProps.styleName}</Badge>
 									</div>
 								))}
-							</AccordionContent>
-						</AccordionItem>
-						<Separator key={`separator-${styleProps.styleName}`} />
-					</>
+							</div>
+						</AccordionContent>
+					</AccordionItem>
 				))}
 			</Accordion>
 		</div>

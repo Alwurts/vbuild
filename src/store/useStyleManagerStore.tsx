@@ -196,6 +196,12 @@ export const useStyleManagerStore = create<ButtonStore>((set) => ({
 		size: "default",
 	},
 	buttonText: "Edit me",
+	setButtonText: (value: string) => {
+		set((state) => ({
+			...state,
+			buttonText: value,
+		}));
+	},
 	setGroupStyleProperty: ({
 		variantType,
 		variantName,
