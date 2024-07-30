@@ -16,6 +16,9 @@ import ComponentRender from "@/components/display/ComponentRender";
 import { useStyleManagerStore } from "@/store/useStyleManagerStore";
 import type { ButtonVariantName } from "@/types/button";
 import type { BadgeVariantName } from "@/types/badge";
+import { Button, buttonVariants } from "@/components/ui-editor/button";
+import { GithubIcon, StarIcon } from "lucide-react";
+import Link from "next/link";
 
 export default function Home() {
 	const [openVariants, setOpenVariants] = useState<
@@ -23,7 +26,29 @@ export default function Home() {
 	>(["default", "destructive", "outline", "secondary"]);
 
 	return (
-		<div className="w-full h-screen flex justify-center items-center p-6 bg-stone-300">
+		<div className="w-full h-screen flex flex-col gap-2 justify-center items-center p-10 bg-stone-300">
+			<div className="flex justify-between items-center gap-2 w-full max-w-7xl px-4">
+				<div className="flex justify-start items-baseline gap-2">
+					<h1 className="text-2xl font-bold">shadcn/ui Editor</h1>
+					<p className="text-sm text-gray-500">
+						Quickly customize shadcn/ui components
+					</p>
+				</div>
+				<div className="">
+					<Link
+						href="https://github.com/Alwurts/shadcn-editor"
+						target="_blank"
+						className={buttonVariants({
+							variant: "outline",
+							size: "sm",
+							className: "flex items-center gap-2",
+						})}
+					>
+						View on Github
+						<StarIcon className="w-4 h-4" />
+					</Link>
+				</div>
+			</div>
 			<Card className="w-full max-w-7xl h-full flex gap-6">
 				<ComponentRender
 					openVariants={openVariants}

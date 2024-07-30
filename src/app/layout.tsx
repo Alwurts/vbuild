@@ -5,8 +5,21 @@ import Script from "next/script";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-	title: "Shadcn Editor",
-	description: "Shadcn Editor",
+	title: "shadcn/ui editor",
+	description: "Editor for quickly customizing shadcn/ui components",
+	keywords: [
+		"shadcn",
+		"ui",
+		"editor",
+		"shadcn-ui",
+		"shadcn-editor",
+		"react",
+		"nextjs",
+		"tailwind",
+		"tailwindcss",
+		"tailwindui",
+		"tailwindui-editor",
+	],
 };
 
 export default function RootLayout({
