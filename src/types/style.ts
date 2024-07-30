@@ -15,7 +15,7 @@ export type StyleProperty = {
 export type Style<T extends StyleGroup> = {
 	isApplied: boolean;
 	properties: {
-		[K in StyleProperty[T]]: string;
+		[K in StyleProperty[T]]?: string;
 	};
 };
 

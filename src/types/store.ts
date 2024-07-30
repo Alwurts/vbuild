@@ -1,5 +1,3 @@
-import type { ButtonComponentStyle } from "./button";
-import type { BadgeComponentStyle } from "./badge";
 import type { ComponentType, StyleGroup, AllComponentStyles } from "./style";
 
 export interface ComponentStore {

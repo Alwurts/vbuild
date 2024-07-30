@@ -16,7 +16,12 @@ export type ButtonVariantStyle = {
 
 /* export type ButtonSizeStyle = Style<"size">; */
 export type ButtonSizeStyle = {
-	size: Style<"size">;
+	size: Style<"size"> & {
+    properties: {
+      height: string;
+      paddingX: string;
+    }
+  };
 };
 
 export type ButtonComponentStyle = ComponentStyle<
