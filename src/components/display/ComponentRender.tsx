@@ -90,7 +90,7 @@ export default function ComponentRender({
 						className="flex flex-col gap-2 p-2"
 					>
 						<AccordionTrigger>{styleProps.styleName}</AccordionTrigger>
-						<AccordionContent className="overflow-visible">
+						<AccordionContent>
 							<div className="flex gap-2 pb-4">
 								{currentSizeStyles.map((sizeProps) => (
 									<div
