@@ -1,7 +1,7 @@
 import type { TNodeTree } from "@/types/jsx";
 import { Button } from "../ui-editor/button";
 import { DivFlex } from "./DivFlex";
-import { ComponentOverlay, ComponentOverlayWrapper } from "./ComponentOverlay";
+import { ComponentOverlayWrapper } from "./ComponentOverlay";
 
 export function renderReactNode(
   node: TNodeTree,
@@ -12,7 +12,9 @@ export function renderReactNode(
   }
 
   const renderWithOverlay = (component: React.ReactNode) => (
-    <ComponentOverlayWrapper key={node.key}>{component}</ComponentOverlayWrapper>
+    <ComponentOverlayWrapper nodeKey={node.key} nodeType={node.type}>
+      {component}
+    </ComponentOverlayWrapper>
   );
 
   if (node.type === "Button") {

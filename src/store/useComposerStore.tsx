@@ -23,36 +23,40 @@ export const useComposerStore = create<ComposerStore>((set) => ({
       if (nodeToMove.type === "Root") {
         throw Error("Root node cannot be moved");
       }
-      const nodeToMoveParent = state.nodes[nodeToMove.parent];
-      if (typeof nodeToMoveParent !== "object" || !nodeToMoveParent.children) {
+      const oldParentKey = nodeToMove.parent;
+      const oldParent = state.nodes[oldParentKey];
+      const newParent = state.nodes[newParentKey];
+
+      if (typeof oldParent !== "object" || !oldParent.children ||
+          typeof newParent !== "object" || !newParent.children) {
         throw Error("Parent node not found or children null");
       }
-      const nodeToMoveParentChildren = nodeToMoveParent.children;
 
-      const newNodeToMoveParent = {
-        ...nodeToMoveParent,
-        children: nodeToMoveParentChildren.filter((nodeKey) => nodeKey !== key),
+      const newNodes = { ...state.nodes };
+
+      // Remove from old parent
+      newNodes[oldParentKey] = {
+        ...oldParent,
+        children: oldParent.children.filter((nodeKey) => nodeKey !== key),
       };
 
-      const newParent = state.nodes[newParentKey];
-      if (typeof newParent !== "object" || !newParent.children) {
-        throw Error("New parent node not found or children null");
-      }
-      const newParentChildren = newParent.children;
-      const newNodeToMove = {
-        ...nodeToMove,
-        parent: newParentKey,
-        index: newIndex,
-      };
-      const newNodes = {
-        ...state.nodes,
-        [key]: newNodeToMove,
-        [nodeToMove.parent]: newNodeToMoveParent,
-        [newParentKey]: {
+      // Add to new parent
+      if (oldParentKey === newParentKey) {
+        // If same parent, just reorder
+        const children = [...newParent.children];
+        children.splice(children.indexOf(key), 1);
+        children.splice(newIndex, 0, key);
+        newNodes[newParentKey] = { ...newParent, children };
+      } else {
+        newNodes[newParentKey] = {
           ...newParent,
-          children: [...newParentChildren, newNodeToMove.key],
-        },
-      };
+          children: [...newParent.children.slice(0, newIndex), key, ...newParent.children.slice(newIndex)],
+        };
+      }
+
+      // Update moved node
+      newNodes[key] = { ...nodeToMove, parent: newParentKey };
+
       const newTreeAndReact = nodesAbstractToTreeAndReact(newNodes, state.headNodeKey);
       return {
         ...state,

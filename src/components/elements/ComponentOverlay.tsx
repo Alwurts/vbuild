@@ -131,31 +131,30 @@ export const ComponentOverlay = ({
 };
 
 export const ComponentOverlayWrapper = ({
-  key,
+  nodeKey,
+  nodeType,
   children,
 }: {
-  key: string;
+  nodeKey: string;
+  nodeType: string;
   children: React.ReactNode;
 }) => {
   const {
     overlaysAreActive,
-    nodeKey,
+    nodeKey: activeNodeKey,
     overlayContentRects,
     overlayPaddingRects,
     setOverlay,
     clearOverlay,
   } = useOverlayStore();
 
-  const { selectedNodeKey, setSelectedNodeKey } = useComposerStore();
+  const { moveNode, selectedNodeKey, setSelectedNodeKey } = useComposerStore();
 
   const childrenCloneAndEvents = React.Children.map(children, (child) => {
     if (React.isValidElement(child)) {
       return React.cloneElement(child, {
-        /* className: cn({
-          "pointer-events-none": nodeKey === key,
-        }), */
         onClick:
-          overlaysAreActive && nodeKey === key
+          overlaysAreActive && activeNodeKey === nodeKey
             ? undefined
             : child.props.onClick,
       } as React.HTMLAttributes<HTMLElement>);
@@ -163,10 +162,41 @@ export const ComponentOverlayWrapper = ({
     return child;
   });
 
+  const isDraggable = nodeType !== "Root";
+  const isDroppable = nodeType !== "Button"; // Add other non-droppable types here
+
+  const handleDragStart = (e: React.DragEvent<HTMLDivElement>) => {
+    if (!isDraggable) return;
+    e.stopPropagation();
+    console.log("dragging", nodeKey);
+    e.dataTransfer.setData("text/plain", nodeKey);
+  };
+
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    if (!isDroppable) return;
+    e.preventDefault();
+    console.log("dragging over", e);
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    if (!isDroppable) return;
+    e.preventDefault();
+    e.stopPropagation();
+    const draggedNodeKey = e.dataTransfer.getData("text/plain");
+    console.log("dropping", { nodeKey, draggedNodeKey });
+    if (draggedNodeKey !== nodeKey) {
+      moveNode(draggedNodeKey, nodeKey, 0); // Move as the first child
+    }
+  };
+
   return (
     // biome-ignore lint/a11y/useKeyWithClickEvents: <explanation>
     <div
       style={{ position: "relative" }}
+      draggable={isDraggable && !overlaysAreActive}
+      onDragStart={handleDragStart}
+      onDragOver={handleDragOver}
+      onDrop={handleDrop}
       onMouseEnter={
         overlaysAreActive
           ? (e: React.MouseEvent<HTMLElement>) => {
@@ -174,16 +204,12 @@ export const ComponentOverlayWrapper = ({
               console.log("mouse enter");
               if (isHTMLElement(target)) {
                 const contentRect = calculateBoxForElement(target, "content");
-                /* const marginRect = calculateBoxForElement(target, "margin");
-        const borderRect = calculateBoxForElement(target, "border"); */
                 const paddingRect = calculateBoxForElement(target, "padding");
 
-                /* const marginRects = boxClipPaths(marginRect, borderRect); */
-                /* const borderRects = boxClipPaths(borderRect, paddingRect);*/
                 const paddingRects = boxClipPaths(paddingRect, contentRect);
 
-                setOverlay(key, "content", [contentRect]);
-                setOverlay(key, "padding", paddingRects);
+                setOverlay(nodeKey, "content", [contentRect]);
+                setOverlay(nodeKey, "padding", paddingRects);
               }
             }
           : undefined
@@ -193,7 +219,7 @@ export const ComponentOverlayWrapper = ({
           ? (e) => {
               e.stopPropagation();
               console.log("clickDiv");
-              setSelectedNodeKey(key);
+              setSelectedNodeKey(nodeKey);
             }
           : undefined
       }
@@ -206,7 +232,7 @@ export const ComponentOverlayWrapper = ({
       }
     >
       {childrenCloneAndEvents}
-      {overlaysAreActive && nodeKey === key && (
+      {overlaysAreActive && activeNodeKey === nodeKey && (
         <div className="absolute inset-0 pointer-events-none z-10">
           <ComponentOverlay
             boxClipPaths={overlayContentRects}
