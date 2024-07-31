@@ -1,44 +1,63 @@
 import type { DivFlex } from "@/components/elements/DivFlex";
 import type { Button } from "@/components/ui-editor/button";
 
-export type TReactElement<T> = {
-	key: string | null;
-	/* ref: React.Ref<InferComponentRef<T>> | null; */
-	props: Omit<InferComponentProps<T>, "children"> & {
-		children: TReactNode | TReactNode[];
-	};
+type TComponent<T> = {
+	key: string;
+	props: Omit<InferComponentProps<T>, "children"> & {};
 };
 
-export type TReactElementNode<T> = TReactElement<T> & {
-	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-	parent?: TReactElementNode<any> | TReactElement<any>;
+// GenericComponent
+
+type TGenericComponentParent = {
+	parent: string;
 };
 
-export type TReactElementRoot = TReactElement<typeof DivFlex> & {
+// RootComponent
+export type TRootComponent = TComponent<typeof DivFlex> & {
 	type: "Root";
 };
 
-export type TButtonElement = TReactElementNode<typeof Button> & {
-	type: "Button";
+// Different GenericComponent's
+
+export type TButtonComponent = TComponent<typeof Button> &
+	TGenericComponentParent & {
+		type: "Button";
+	};
+
+export type TDivFlexComponent = TComponent<typeof DivFlex> &
+	TGenericComponentParent & {
+		type: "DivFlex";
+	};
+
+type TElementBasic = string | number | boolean;
+
+export type TGenericComponent = TButtonComponent | TDivFlexComponent;
+
+// Abstract types
+
+type TComponentChildrenAbstract = {
+	children: string[] | null;
 };
 
-export type TDivFlexElement = TReactElementNode<typeof DivFlex> & {
-	type: "DivFlex";
+export type TNodeAbstract =
+	| (TComponentChildrenAbstract & (TRootComponent | TGenericComponent))
+	| TElementBasic;
+
+export type TNodesAbstract = {
+	[key: string]: TNodeAbstract;
 };
 
-export type TElementComponent = TButtonElement | TDivFlexElement;
+// Tree types
 
-export type TElementBasic = string | number | boolean;
+type TComponentChildrenTree = {
+	children: TNodeTree[] | null;
+};
 
-// Define the JSX tree as a recursive type
-export type TReactNode =
-	| TReactElementRoot
-	| TElementBasic
-	| TElementComponent
-	| null;
+export type TNodeTree =
+	| (TComponentChildrenTree & (TRootComponent | TGenericComponent))
+	| TElementBasic;
 
-/* // Define the JSX tree as a recursive type
-export type TReactTree = TReactNode[]; */
+/* export type TReactTree = TReactNode[]; */
 
 export type InferComponentProps<T> = T extends React.ComponentType<infer P>
 	? P
