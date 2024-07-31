@@ -1,6 +1,7 @@
 import type { TNodeTree } from "@/types/jsx";
 import { Button } from "../ui-editor/button";
 import { DivFlex } from "./DivFlex";
+import { ComponentOverlay, ComponentOverlayWrapper } from "./ComponentOverlay";
 
 export function renderReactNode(
   node: TNodeTree,
@@ -10,31 +11,23 @@ export function renderReactNode(
     return String(node);
   }
 
+  const renderWithOverlay = (component: React.ReactNode) => (
+    <ComponentOverlayWrapper key={node.key}>{component}</ComponentOverlayWrapper>
+  );
+
   if (node.type === "Button") {
     const { props } = node;
-    return (
-      <Button {...props} key={node.key}>
-        {children}
-      </Button>
-    );
+    return renderWithOverlay(<Button {...props}>{children}</Button>);
   }
 
   if (node.type === "DivFlex") {
     const { props } = node;
-    return (
-      <DivFlex {...props} key={node.key}>
-        {children}
-      </DivFlex>
-    );
+    return renderWithOverlay(<DivFlex {...props}>{children}</DivFlex>);
   }
 
   if (node.type === "Root") {
     const { props } = node;
-    return (
-      <div {...props} key={node.key}>
-        {children}
-      </div>
-    );
+    return renderWithOverlay(<div {...props}>{children}</div>);
   }
 
   return null;

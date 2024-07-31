@@ -6,10 +6,7 @@ import { TreeView } from "../../components/element-composer/Explorer";
 
 import { ROOT_COMPONENT_TREE_AND_REACT_DEFAULT } from "@/lib/jsx";
 import type { TNodeTree } from "@/types/jsx";
-
-const Canvas = ({ jsxTree }: { jsxTree: React.ReactNode }) => {
-  return <div className="bg-stone-400 h-screen w-full">{jsxTree}</div>;
-};
+import { Canvas } from "@/components/element-composer/Canvas";
 
 export default function Editor() {
   const [componentTreeAndReact, setComponentTreeAndReact] = useState<{

@@ -28,7 +28,11 @@ const ROOT_COMPONENT_ABSTRACT_DEFAULT: TNodesAbstract = {
     parent: divFlexUuid,
     type: "Button",
     key: buttonUuid,
-    props: {},
+    props: {
+      onClick: () => {
+        console.log("clickButton");
+      },
+    },
     children: [buttonTextUuid],
   },
   [buttonTextUuid]: "Click me",
