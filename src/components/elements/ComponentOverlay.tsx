@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { useComposerStore } from "@/store/useComposerStore";
 import { useOverlayStore } from "@/store/useOverlayStore";
 import React from "react";
 import { useState, useRef, useEffect, useMemo } from "react";
@@ -145,6 +146,8 @@ export const ComponentOverlayWrapper = ({
     clearOverlay,
   } = useOverlayStore();
 
+  const { selectedNodeKey, setSelectedNodeKey } = useComposerStore();
+
   const childrenCloneAndEvents = React.Children.map(children, (child) => {
     if (React.isValidElement(child)) {
       return React.cloneElement(child, {
@@ -153,10 +156,7 @@ export const ComponentOverlayWrapper = ({
         }), */
         onClick:
           overlaysAreActive && nodeKey === key
-            ? (e) => {
-                /* e.stopPropagation();
-                e.preventDefault(); */
-              }
+            ? undefined
             : child.props.onClick,
       } as React.HTMLAttributes<HTMLElement>);
     }
@@ -191,7 +191,9 @@ export const ComponentOverlayWrapper = ({
       onClick={
         overlaysAreActive
           ? (e) => {
+              e.stopPropagation();
               console.log("clickDiv");
+              setSelectedNodeKey(key);
             }
           : undefined
       }
@@ -205,23 +207,7 @@ export const ComponentOverlayWrapper = ({
     >
       {childrenCloneAndEvents}
       {overlaysAreActive && nodeKey === key && (
-        // biome-ignore lint/a11y/useKeyWithClickEvents: <explanation>
-        <div
-          onClick={() => {
-            console.log("click");
-          }}
-          onMouseEnter={(e: React.MouseEvent<HTMLElement>) => {
-            console.log("mouse enter");
-            e.stopPropagation();
-            e.preventDefault();
-          }}
-          onMouseLeave={(e: React.MouseEvent<HTMLElement>) => {
-            console.log("mouse leave");
-            e.stopPropagation();
-            e.preventDefault();
-          }}
-          className="absolute inset-0 pointer-events-none z-10"
-        >
+        <div className="absolute inset-0 pointer-events-none z-10">
           <ComponentOverlay
             boxClipPaths={overlayContentRects}
             overlayColor="rgba(0, 136, 207, 0.4)"

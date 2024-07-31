@@ -5,12 +5,12 @@ import type { TNodesAbstract, TNodeTree } from "@/types/jsx";
 
 import { v4 as uuidv4 } from "uuid";
 
-const rootUuid = uuidv4();
+export const rootUuid = uuidv4();
 const divFlexUuid = uuidv4();
 const buttonUuid = uuidv4();
 const buttonTextUuid = uuidv4();
 
-const ROOT_COMPONENT_ABSTRACT_DEFAULT: TNodesAbstract = {
+export const ROOT_COMPONENT_ABSTRACT_DEFAULT: TNodesAbstract = {
   [rootUuid]: {
     type: "Root",
     key: rootUuid,

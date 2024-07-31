@@ -7,26 +7,24 @@ import { TreeView } from "../../components/element-composer/Explorer";
 import { ROOT_COMPONENT_TREE_AND_REACT_DEFAULT } from "@/lib/jsx";
 import type { TNodeTree } from "@/types/jsx";
 import { Canvas } from "@/components/element-composer/Canvas";
+import { useComposerStore } from "@/store/useComposerStore";
 
 export default function Editor() {
-  const [componentTreeAndReact, setComponentTreeAndReact] = useState<{
-    tree: TNodeTree;
-    react: React.ReactNode;
-  }>(ROOT_COMPONENT_TREE_AND_REACT_DEFAULT);
+  const { tree, react } = useComposerStore();
 
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  if (!mounted || !componentTreeAndReact) {
+  if (!mounted || !tree || !react) {
     return null;
   }
 
   return (
     <div className="flex w-screen h-screen">
-      <TreeView tree={componentTreeAndReact.tree} />
-      <Canvas jsxTree={componentTreeAndReact.react} />
+      <TreeView tree={tree} />
+      <Canvas jsxTree={react} />
     </div>
   );
 }

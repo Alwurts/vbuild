@@ -2,7 +2,7 @@ import type { OverlayStore } from "@/types/overlay-store";
 import { create } from "zustand";
 
 export const useOverlayStore = create<OverlayStore>((set) => ({
-  overlaysAreActive: false,
+  overlaysAreActive: true,
   nodeKey: "",
   overlayContentRects: [],
   overlayPaddingRects: [],
