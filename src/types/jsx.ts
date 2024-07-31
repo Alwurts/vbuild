@@ -35,7 +35,7 @@ export type TGenericComponent = TButtonComponent | TDivFlexComponent;
 
 // Abstract types
 
-type TComponentChildrenAbstract = {
+export type TComponentChildrenAbstract = {
 	children: string[] | null;
 };
 
@@ -56,8 +56,6 @@ type TComponentChildrenTree = {
 export type TNodeTree =
 	| (TComponentChildrenTree & (TRootComponent | TGenericComponent))
 	| TElementBasic;
-
-/* export type TReactTree = TReactNode[]; */
 
 export type InferComponentProps<T> = T extends React.ComponentType<infer P>
 	? P
