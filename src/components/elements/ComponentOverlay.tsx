@@ -148,7 +148,11 @@ export const ComponentOverlayWrapper = ({
     clearOverlay,
   } = useOverlayStore();
 
-  const { moveNode, selectedNodeKey, setSelectedNodeKey } = useComposerStore();
+  const { moveNode, selectedNodeKey, setSelectedNodeKey, nodes } =
+    useComposerStore();
+
+  const [dropPosition, setDropPosition] = useState<{ type: 'before' | 'after' | 'inside', index: number } | null>(null);
+  const ref = useRef<HTMLDivElement>(null);
 
   const childrenCloneAndEvents = React.Children.map(children, (child) => {
     if (React.isValidElement(child)) {
@@ -175,7 +179,74 @@ export const ComponentOverlayWrapper = ({
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     if (!isDroppable) return;
     e.preventDefault();
-    console.log("dragging over", e);
+    e.stopPropagation();
+
+    const container = ref.current;
+    if (!container) return;
+
+    const node = nodes[nodeKey];
+    if (typeof node !== "object" || !node.children) return;
+
+    const containerRect = container.getBoundingClientRect();
+    const mouseX = e.clientX - containerRect.left;
+    const mouseY = e.clientY - containerRect.top;
+
+    if (node.children.length === 0) {
+      setDropPosition({ type: 'inside', index: 0 });
+      return;
+    }
+
+    const style = window.getComputedStyle(container);
+    const isFlexRow = style.display === 'flex' && style.flexDirection === 'row';
+    const isGrid = style.display === 'grid';
+
+    const childElements = Array.from(container.children);
+    let closestIndex = -1;
+    let minDistance = Number.POSITIVE_INFINITY;
+
+    childElements.forEach((child, index) => {
+      const childRect = child.getBoundingClientRect();
+      let distance: number;
+
+      if (isFlexRow || isGrid) {
+        const childCenterX = childRect.left + childRect.width / 2 - containerRect.left;
+        distance = Math.abs(mouseX - childCenterX);
+      } else {
+        const childCenterY = childRect.top + childRect.height / 2 - containerRect.top;
+        distance = Math.abs(mouseY - childCenterY);
+      }
+
+      if (distance < minDistance) {
+        minDistance = distance;
+        closestIndex = index;
+      }
+    });
+
+    if (closestIndex === -1) {
+      setDropPosition(null);
+      return;
+    }
+
+    const closestChild = childElements[closestIndex];
+    const closestChildRect = closestChild.getBoundingClientRect();
+
+    if (isFlexRow || isGrid) {
+      const childCenterX = closestChildRect.left + closestChildRect.width / 2 - containerRect.left;
+      setDropPosition({
+        type: mouseX < childCenterX ? 'before' : 'after',
+        index: closestIndex
+      });
+    } else {
+      const childCenterY = closestChildRect.top + closestChildRect.height / 2 - containerRect.top;
+      setDropPosition({
+        type: mouseY < childCenterY ? 'before' : 'after',
+        index: closestIndex
+      });
+    }
+  };
+
+  const handleDragLeave = () => {
+    setDropPosition(null);
   };
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
@@ -185,18 +256,42 @@ export const ComponentOverlayWrapper = ({
     const draggedNodeKey = e.dataTransfer.getData("text/plain");
     console.log("dropping", { nodeKey, draggedNodeKey });
     if (draggedNodeKey !== nodeKey) {
-      moveNode(draggedNodeKey, nodeKey, 0); // Move as the first child
+      const node = nodes[nodeKey];
+      if (typeof node !== "object" || !node.children) return;
+
+      let index = 0;
+      if (dropPosition?.type === "after") {
+        index = dropPosition.index + 1;
+      } else if (dropPosition?.type === "before") {
+        index = dropPosition.index;
+      } else if (dropPosition?.type === "inside") {
+        index = node.children.length;
+      }
+
+      moveNode(draggedNodeKey, nodeKey, index);
     }
+    setDropPosition(null);
   };
 
   return (
     // biome-ignore lint/a11y/useKeyWithClickEvents: <explanation>
     <div
+      ref={ref}
       style={{ position: "relative" }}
       draggable={isDraggable && !overlaysAreActive}
       onDragStart={handleDragStart}
       onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
       onDrop={handleDrop}
+      data-drop-position={dropPosition?.type}
+      data-drop-index={dropPosition?.index}
+      className={cn(
+        "relative",
+        dropPosition && "before:absolute before:content-[''] before:z-10 before:pointer-events-none",
+        dropPosition?.type === 'before' && "before:left-0 before:top-0 before:w-1 before:h-full before:bg-purple-500",
+        dropPosition?.type === 'after' && "before:right-0 before:top-0 before:w-1 before:h-full before:bg-purple-500",
+        dropPosition?.type === 'inside' && "before:inset-0 before:border-2 before:border-purple-500"
+      )}
       onMouseEnter={
         overlaysAreActive
           ? (e: React.MouseEvent<HTMLElement>) => {

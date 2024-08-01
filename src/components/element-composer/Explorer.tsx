@@ -11,7 +11,7 @@ interface TreeNodeProps {
 
 // TreeNode component
 const TreeNode = ({ node, depth = 0 }: TreeNodeProps) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
 
   if (typeof node !== "object") {
     return (

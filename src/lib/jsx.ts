@@ -9,6 +9,7 @@ export const rootUuid = uuidv4();
 const divFlexUuid = uuidv4();
 const divFlex2Uuid = uuidv4();
 const divFlex3Uuid = uuidv4();
+const divFlex4Uuid = uuidv4();
 const buttonUuid = uuidv4();
 const button2Uuid = uuidv4();
 const buttonTextUuid = uuidv4();
@@ -29,7 +30,7 @@ export const ROOT_COMPONENT_ABSTRACT_DEFAULT: TNodesAbstract = {
 			className:
 				"bg-green-400 flex",
 		},
-		children: [divFlexUuid, divFlex2Uuid],
+		children: [divFlexUuid, divFlex2Uuid, divFlex4Uuid],
 	},
 	[divFlexUuid]: {
 		parent: rootUuid,
@@ -37,9 +38,19 @@ export const ROOT_COMPONENT_ABSTRACT_DEFAULT: TNodesAbstract = {
 		key: divFlexUuid,
 		props: {
 			className:
-				"bg-red-400 w-[300px] h-[300px] flex justify-center items-center",
+				"bg-red-400 w-[300px] h-[300px] flex",
 		},
 		children: [buttonUuid],
+	},
+  [divFlex4Uuid]: {
+		parent: rootUuid,
+		type: "DivFlex",
+		key: divFlex4Uuid,
+		props: {
+			className:
+				"bg-yellow-400 w-[300px] h-[300px] flex",
+		},
+		children: [],
 	},
 	[divFlex2Uuid]: {
 		parent: rootUuid,
@@ -47,7 +58,7 @@ export const ROOT_COMPONENT_ABSTRACT_DEFAULT: TNodesAbstract = {
 		key: divFlex2Uuid,
 		props: {
 			className:
-				"bg-blue-400 w-[300px] h-[300px] flex justify-center items-center",
+				"bg-blue-400 w-[300px] h-[300px] flex",
 		},
 		children: [button2Uuid],
 	},
@@ -74,7 +85,7 @@ export const ROOT_COMPONENT_ABSTRACT_DEFAULT: TNodesAbstract = {
 		},
 		children: [buttonText2Uuid],
 	},
-	[buttonText2Uuid]: "Click me",
+	[buttonText2Uuid]: "s me",
 };
 
 export const ROOT_COMPONENT_TREE_AND_REACT_DEFAULT =
