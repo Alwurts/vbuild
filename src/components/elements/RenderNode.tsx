@@ -12,24 +12,28 @@ export function renderReactNode(
   }
 
   const renderWithOverlay = (component: React.ReactNode) => (
-    <ComponentOverlayWrapper nodeKey={node.key} nodeType={node.type}>
+    <ComponentOverlayWrapper
+      nodeKey={node.key}
+      key={node.key}
+      nodeType={node.type}
+    >
       {component}
     </ComponentOverlayWrapper>
   );
 
   if (node.type === "Button") {
     const { props } = node;
-    return renderWithOverlay(<Button {...props}>{children}</Button>);
+    return renderWithOverlay(<Button {...props} key={node.key}>{children}</Button>);
   }
 
   if (node.type === "DivFlex") {
     const { props } = node;
-    return renderWithOverlay(<DivFlex {...props}>{children}</DivFlex>);
+    return renderWithOverlay(<DivFlex {...props} key={node.key}>{children}</DivFlex>);
   }
 
   if (node.type === "Root") {
     const { props } = node;
-    return renderWithOverlay(<div {...props}>{children}</div>);
+    return renderWithOverlay(<div {...props} key={node.key}>{children}</div>);
   }
 
   return null;

@@ -16,6 +16,12 @@ export const useComposerStore = create<ComposerStore>((set) => ({
   setSelectedNodeKey: (key) => set({ selectedNodeKey: key }),
   moveNode: (key, newParentKey, newIndex) => {
     set((state) => {
+      console.log("Parmas", {
+        key,
+        newParentKey,
+        newIndex,
+      });
+      console.log("Initial state", JSON.parse(JSON.stringify(state)));
       const nodeToMove = state.nodes[key];
       if (typeof nodeToMove !== "object") {
         return state;
@@ -58,6 +64,13 @@ export const useComposerStore = create<ComposerStore>((set) => ({
       newNodes[key] = { ...nodeToMove, parent: newParentKey };
 
       const newTreeAndReact = nodesAbstractToTreeAndReact(newNodes, state.headNodeKey);
+      console.log("New state", JSON.parse(JSON.stringify({
+        ...state,
+        nodes: newNodes,
+        tree: newTreeAndReact.tree,
+        react: newTreeAndReact.react,
+      })));
+
       return {
         ...state,
         nodes: newNodes,

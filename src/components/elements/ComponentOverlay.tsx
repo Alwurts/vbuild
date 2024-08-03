@@ -151,7 +151,10 @@ export const ComponentOverlayWrapper = ({
   const { moveNode, selectedNodeKey, setSelectedNodeKey, nodes } =
     useComposerStore();
 
-  const [dropPosition, setDropPosition] = useState<{ type: 'before' | 'after' | 'inside', index: number } | null>(null);
+  const [dropPosition, setDropPosition] = useState<{
+    type: "before" | "after" | "inside";
+    index: number;
+  } | null>(null);
   const ref = useRef<HTMLDivElement>(null);
 
   const childrenCloneAndEvents = React.Children.map(children, (child) => {
@@ -192,13 +195,13 @@ export const ComponentOverlayWrapper = ({
     const mouseY = e.clientY - containerRect.top;
 
     if (node.children.length === 0) {
-      setDropPosition({ type: 'inside', index: 0 });
+      setDropPosition({ type: "inside", index: 0 });
       return;
     }
 
     const style = window.getComputedStyle(container);
-    const isFlexRow = style.display === 'flex' && style.flexDirection === 'row';
-    const isGrid = style.display === 'grid';
+    const isFlexRow = style.display === "flex" && style.flexDirection === "row";
+    const isGrid = style.display === "grid";
 
     const childElements = Array.from(container.children);
     let closestIndex = -1;
@@ -209,10 +212,12 @@ export const ComponentOverlayWrapper = ({
       let distance: number;
 
       if (isFlexRow || isGrid) {
-        const childCenterX = childRect.left + childRect.width / 2 - containerRect.left;
+        const childCenterX =
+          childRect.left + childRect.width / 2 - containerRect.left;
         distance = Math.abs(mouseX - childCenterX);
       } else {
-        const childCenterY = childRect.top + childRect.height / 2 - containerRect.top;
+        const childCenterY =
+          childRect.top + childRect.height / 2 - containerRect.top;
         distance = Math.abs(mouseY - childCenterY);
       }
 
@@ -231,16 +236,18 @@ export const ComponentOverlayWrapper = ({
     const closestChildRect = closestChild.getBoundingClientRect();
 
     if (isFlexRow || isGrid) {
-      const childCenterX = closestChildRect.left + closestChildRect.width / 2 - containerRect.left;
+      const childCenterX =
+        closestChildRect.left + closestChildRect.width / 2 - containerRect.left;
       setDropPosition({
-        type: mouseX < childCenterX ? 'before' : 'after',
-        index: closestIndex
+        type: mouseX < childCenterX ? "before" : "after",
+        index: closestIndex,
       });
     } else {
-      const childCenterY = closestChildRect.top + closestChildRect.height / 2 - containerRect.top;
+      const childCenterY =
+        closestChildRect.top + closestChildRect.height / 2 - containerRect.top;
       setDropPosition({
-        type: mouseY < childCenterY ? 'before' : 'after',
-        index: closestIndex
+        type: mouseY < childCenterY ? "before" : "after",
+        index: closestIndex,
       });
     }
   };
@@ -287,10 +294,14 @@ export const ComponentOverlayWrapper = ({
       data-drop-index={dropPosition?.index}
       className={cn(
         "relative",
-        dropPosition && "before:absolute before:content-[''] before:z-10 before:pointer-events-none",
-        dropPosition?.type === 'before' && "before:left-0 before:top-0 before:w-1 before:h-full before:bg-purple-500",
-        dropPosition?.type === 'after' && "before:right-0 before:top-0 before:w-1 before:h-full before:bg-purple-500",
-        dropPosition?.type === 'inside' && "before:inset-0 before:border-2 before:border-purple-500"
+        dropPosition &&
+          "before:absolute before:content-[''] before:z-10 before:pointer-events-none",
+        dropPosition?.type === "before" &&
+          "before:left-0 before:top-0 before:w-1 before:h-full before:bg-purple-500",
+        dropPosition?.type === "after" &&
+          "before:right-0 before:top-0 before:w-1 before:h-full before:bg-purple-500",
+        dropPosition?.type === "inside" &&
+          "before:inset-0 before:border-2 before:border-purple-500"
       )}
       onMouseEnter={
         overlaysAreActive

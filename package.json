@@ -33,7 +33,8 @@
     "tailwind-merge": "^2.4.0",
     "tailwindcss-animate": "^1.0.7",
     "uuid": "^10.0.0",
-    "zustand": "^4.5.4"
+    "zustand": "^4.5.4",
+    "zustymiddlewarets": "^1.4.2"
   },
   "devDependencies": {
     "@types/node": "^20",

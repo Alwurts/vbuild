@@ -1,95 +1,212 @@
-import { DivFlex } from "@/components/elements/DivFlex";
 import { renderReactNode } from "@/components/elements/RenderNode";
-import { Button } from "@/components/ui-editor/button";
-import type { TNodesAbstract, TNodeTree } from "@/types/jsx";
+import type { TNodeAbstract, TNodesAbstract, TNodeTree } from "@/types/jsx";
+import React from "react";
 
 import { v4 as uuidv4 } from "uuid";
 
-export const rootUuid = uuidv4();
-const divFlexUuid = uuidv4();
-const divFlex2Uuid = uuidv4();
-const divFlex3Uuid = uuidv4();
-const divFlex4Uuid = uuidv4();
-const buttonUuid = uuidv4();
-const button2Uuid = uuidv4();
-const buttonTextUuid = uuidv4();
-const buttonText2Uuid = uuidv4();
 
-export const ROOT_COMPONENT_ABSTRACT_DEFAULT: TNodesAbstract = {
+function tsStructureToJsxString(nodes: TNodesAbstract, rootKey: string, indentLevel: number = 0): string {
+  const node = nodes[rootKey];
+  if (typeof node !== 'object') {
+    return String(node);
+  }
+
+  const indent = '  '.repeat(indentLevel);
+  const childIndent = '  '.repeat(indentLevel + 1);
+
+  let jsxString = `${indent}<${node.type}`;
+
+  // Add props
+  for (const [key, value] of Object.entries(node.props)) {
+    if (typeof value === 'string') {
+      jsxString += ` ${key}="${value}"`;
+    } else {
+      jsxString += ` ${key}={${JSON.stringify(value)}}`;
+    }
+  }
+
+  if (!node.children || node.children.length === 0) {
+    return `${jsxString} />`;
+  }
+
+  jsxString += '>\n';
+
+  // Process children
+  for (const childKey of node.children) {
+    jsxString += tsStructureToJsxString(nodes, childKey, indentLevel + 1);
+    jsxString += '\n';
+  }
+
+  jsxString += `${indent}</${node.type}>`;
+
+  return jsxString;
+}
+
+function formatJsxCode(jsxString: string): string {
+  // This is a simple formatter. For more complex formatting,
+  // you might want to use a library like Prettier.
+  const lines = jsxString.split('\n');
+  let indentLevel = 0;
+  const formattedLines = lines.map(line => {
+    line = line.trim();
+    if (line.startsWith('</')) {
+      indentLevel--;
+    }
+    const formattedLine = '  '.repeat(indentLevel) + line;
+    if (!line.endsWith('/>') && !line.startsWith('</')) {
+      indentLevel++;
+    }
+    return formattedLine;
+  });
+  return formattedLines.join('\n');
+}
+
+// Example usage:
+const tsStructure = {
+  // ... your TNodesAbstract structure here
+};
+
+const rootKey = Object.keys(tsStructure).find(key => tsStructure[key].type === 'Root')!;
+const jsxString = tsStructureToJsxString(tsStructure, rootKey);
+const formattedJsxCode = formatJsxCode(jsxString);
+
+function jsxToTsStructure(jsx: JSX.Element): TNodesAbstract {
+  const nodes: TNodesAbstract = {};
+  const rootKey = uuidv4();
+
+  function processElement(element: JSX.Element, parentKey: string): string {
+    const key = uuidv4();
+    const type = element.type.name;
+    const props = { ...element.props };
+    delete props.children;
+
+    const node: TNodeAbstract = {
+      type,
+      key,
+      parent: parentKey,
+      props,
+      children: null,
+    };
+
+    if (React.Children.count(element.props.children) > 0) {
+      node.children = [];
+      React.Children.forEach(element.props.children, (child) => {
+        if (React.isValidElement(child)) {
+          const childKey = processElement(child, key);
+          node.children!.push(childKey);
+        } else if (typeof child === 'string' || typeof child === 'number' || typeof child === 'boolean') {
+          const childKey = uuidv4();
+          nodes[childKey] = child;
+          node.children!.push(childKey);
+        }
+      });
+    }
+
+    nodes[key] = node;
+    return key;
+  }
+
+  const rootNode: TNodeAbstract = {
+    type: 'Root',
+    key: rootKey,
+    props: {},
+    children: [processElement(jsx, rootKey)],
+  };
+
+  nodes[rootKey] = rootNode;
+  return nodes;
+}
+
+const tsStructure = jsxToTsStructure(jsxElement);
+
+export const addComponent = (
+	nodesAbstract: TNodesAbstract,
+	newParentKey: string,
+	newComponent: TNodeAbstract,
+): [TNodesAbstract, string] => {
+	const newComponentKey = uuidv4();
+	const newComponentParent = nodesAbstract[newParentKey];
+
+	if (typeof newComponentParent !== "object") {
+		throw new Error("New component parent must be an object");
+	}
+
+	if (typeof newComponent !== "object") {
+		return [
+			{
+				...nodesAbstract,
+				[newParentKey]: {
+					...newComponentParent,
+					children: [...(newComponentParent.children || []), newComponentKey],
+				},
+				[newComponentKey]: newComponent,
+			},
+			newComponentKey,
+		];
+	}
+
+	if (newComponent.type === "Root") {
+		throw new Error("New component must not be a Root");
+	}
+
+	return [
+		{
+			...nodesAbstract,
+			[newParentKey]: {
+				...newComponentParent,
+				children: [...(newComponentParent.children || []), newComponentKey],
+			},
+			[newComponentKey]: {
+				...newComponent,
+				key: newComponentKey,
+				parent: newParentKey,
+			},
+		},
+		newComponentKey,
+	];
+};
+
+export const rootUuid = uuidv4();
+
+const ROOT_COMPONENT_ABSTRACT_DEFAULT: TNodesAbstract = {
 	[rootUuid]: {
 		type: "Root",
 		key: rootUuid,
 		props: {},
-		children: [divFlex3Uuid],
-	},
-	[divFlex3Uuid]: {
-		parent: rootUuid,
-		type: "DivFlex",
-		key: divFlex3Uuid,
-		props: {
-			className:
-				"bg-green-400 flex",
-		},
-		children: [divFlexUuid, divFlex2Uuid, divFlex4Uuid],
-	},
-	[divFlexUuid]: {
-		parent: rootUuid,
-		type: "DivFlex",
-		key: divFlexUuid,
-		props: {
-			className:
-				"bg-red-400 w-[300px] h-[300px] flex",
-		},
-		children: [buttonUuid],
-	},
-  [divFlex4Uuid]: {
-		parent: rootUuid,
-		type: "DivFlex",
-		key: divFlex4Uuid,
-		props: {
-			className:
-				"bg-yellow-400 w-[300px] h-[300px] flex",
-		},
 		children: [],
 	},
-	[divFlex2Uuid]: {
-		parent: rootUuid,
-		type: "DivFlex",
-		key: divFlex2Uuid,
-		props: {
-			className:
-				"bg-blue-400 w-[300px] h-[300px] flex",
-		},
-		children: [button2Uuid],
-	},
-	[buttonUuid]: {
-		parent: divFlexUuid,
-		type: "Button",
-		key: buttonUuid,
-		props: {
-			onClick: () => {
-				console.log("clickButton");
-			},
-		},
-		children: [buttonTextUuid],
-	},
-	[buttonTextUuid]: "Click me",
-	[button2Uuid]: {
-		parent: divFlex2Uuid,
-		type: "Button",
-		key: button2Uuid,
-		props: {
-			onClick: () => {
-				console.log("clickButton");
-			},
-		},
-		children: [buttonText2Uuid],
-	},
-	[buttonText2Uuid]: "s me",
 };
 
+const [rootWithFlex, divFlexUuid] = addComponent(
+	ROOT_COMPONENT_ABSTRACT_DEFAULT,
+	rootUuid,
+	{
+		type: "DivFlex",
+		key: "",
+		parent: "",
+		children: null,
+		props: {
+			className: "w-full bg-red-500",
+		},
+	},
+);
+
+export const [rootWithFlex2, divFlex2Uuid] = addComponent(
+	rootWithFlex,
+	divFlexUuid,
+	{
+		type: "DivFlex",
+		key: "",
+		parent: "",
+		children: null,
+		props: {
+			className: "w-40 h-40 bg-blue-500",
+		},
+	},
+);
+
 export const ROOT_COMPONENT_TREE_AND_REACT_DEFAULT =
-	nodesAbstractToTreeAndReact(ROOT_COMPONENT_ABSTRACT_DEFAULT, rootUuid);
+	nodesAbstractToTreeAndReact(rootWithFlex2, rootUuid);
 
 export function nodesAbstractToTreeAndReact(
 	nodesAbstract: TNodesAbstract,
