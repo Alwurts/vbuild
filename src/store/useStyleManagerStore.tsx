@@ -73,7 +73,6 @@ export const useStyleManagerStore = create<ComponentStore>((set) => ({
 		}),
 	setCSSVariable: (name: CSSVariableNames, value: string) =>
 		set((state) => {
-			console.log(name, value)
 			if (!state.cssVariables) return state;
 			document.documentElement.style.setProperty(`--${name}`, value);
 			return {

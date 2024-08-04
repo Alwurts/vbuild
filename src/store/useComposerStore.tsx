@@ -1,27 +1,17 @@
 import {
-  nodesAbstractToTreeAndReact,
   ROOT_COMPONENT_ABSTRACT_DEFAULT,
-  ROOT_COMPONENT_TREE_AND_REACT_DEFAULT,
-  rootUuid,
-} from "@/lib/jsx";
+  ROOT_COMPONENT_ABSTRACT_DEFAULT_HEAD_KEY,
+} from "@/components/element-composer/defaultJSX";
 import type { ComposerStore } from "@/types/jsx-store";
 import { create } from "zustand";
 
 export const useComposerStore = create<ComposerStore>((set) => ({
   nodes: ROOT_COMPONENT_ABSTRACT_DEFAULT,
-  headNodeKey: rootUuid,
-  tree: ROOT_COMPONENT_TREE_AND_REACT_DEFAULT.tree,
-  react: ROOT_COMPONENT_TREE_AND_REACT_DEFAULT.react,
+  headNodeKey: ROOT_COMPONENT_ABSTRACT_DEFAULT_HEAD_KEY,
   selectedNodeKey: null,
   setSelectedNodeKey: (key) => set({ selectedNodeKey: key }),
   moveNode: (key, newParentKey, newIndex) => {
     set((state) => {
-      console.log("Parmas", {
-        key,
-        newParentKey,
-        newIndex,
-      });
-      console.log("Initial state", JSON.parse(JSON.stringify(state)));
       const nodeToMove = state.nodes[key];
       if (typeof nodeToMove !== "object") {
         return state;
@@ -33,8 +23,12 @@ export const useComposerStore = create<ComposerStore>((set) => ({
       const oldParent = state.nodes[oldParentKey];
       const newParent = state.nodes[newParentKey];
 
-      if (typeof oldParent !== "object" || !oldParent.children ||
-          typeof newParent !== "object" || !newParent.children) {
+      if (
+        typeof oldParent !== "object" ||
+        !oldParent.children ||
+        typeof newParent !== "object" ||
+        !newParent.children
+      ) {
         throw Error("Parent node not found or children null");
       }
 
@@ -56,26 +50,22 @@ export const useComposerStore = create<ComposerStore>((set) => ({
       } else {
         newNodes[newParentKey] = {
           ...newParent,
-          children: [...newParent.children.slice(0, newIndex), key, ...newParent.children.slice(newIndex)],
+          children: [
+            ...newParent.children.slice(0, newIndex),
+            key,
+            ...newParent.children.slice(newIndex),
+          ],
         };
       }
 
       // Update moved node
       newNodes[key] = { ...nodeToMove, parent: newParentKey };
 
-      const newTreeAndReact = nodesAbstractToTreeAndReact(newNodes, state.headNodeKey);
-      console.log("New state", JSON.parse(JSON.stringify({
-        ...state,
-        nodes: newNodes,
-        tree: newTreeAndReact.tree,
-        react: newTreeAndReact.react,
-      })));
-
       return {
         ...state,
-        nodes: newNodes,
-        tree: newTreeAndReact.tree,
-        react: newTreeAndReact.react,
+        nodes: {
+          ...newNodes,
+        },
       };
     });
   },

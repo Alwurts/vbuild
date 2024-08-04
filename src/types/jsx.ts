@@ -1,9 +1,11 @@
-import type { DivFlex } from "@/components/elements/DivFlex";
+import type { Div } from "@/components/elements/Div";
+import type { Root } from "@/components/elements/Root";
 import type { Button } from "@/components/ui-editor/button";
 
 type TComponent<T> = {
 	key: string;
 	props: Omit<InferComponentProps<T>, "children"> & {};
+	reactNode: React.ReactNode;
 };
 
 // GenericComponent
@@ -13,7 +15,7 @@ type TGenericComponentParent = {
 };
 
 // RootComponent
-export type TRootComponent = TComponent<typeof DivFlex> & {
+export type TRootComponent = TComponent<typeof Root> & {
 	type: "Root";
 };
 
@@ -24,9 +26,9 @@ export type TButtonComponent = TComponent<typeof Button> &
 		type: "Button";
 	};
 
-export type TDivFlexComponent = TComponent<typeof DivFlex> &
+export type TDivFlexComponent = TComponent<typeof Div> &
 	TGenericComponentParent & {
-		type: "DivFlex";
+		type: "Div";
 	};
 
 type TElementBasic = string | number | boolean;
@@ -49,13 +51,13 @@ export type TNodesAbstract = {
 
 // Tree types
 
-type TComponentChildrenTree = {
+/* type TComponentChildrenTree = {
 	children: TNodeTree[] | null;
 };
 
 export type TNodeTree =
 	| (TComponentChildrenTree & (TRootComponent | TGenericComponent))
-	| TElementBasic;
+	| TElementBasic; */
 
 export type InferComponentProps<T> = T extends React.ComponentType<infer P>
 	? P

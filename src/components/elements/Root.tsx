@@ -1,12 +1,12 @@
 import { cn } from "@/lib/utils";
 
-export const DivFlex = ({
+export const Root = ({
 	children,
 	className,
 	...props
 }: React.HTMLAttributes<HTMLDivElement>) => (
 	<div
-		className={cn("flex", className)}
+		className={cn(className)}
 		{...props}
 	>
 		{children}
