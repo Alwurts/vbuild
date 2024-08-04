@@ -1,14 +1,15 @@
+import { checkIfDraggable, checkIfDroppable } from "@/lib/jsx/draggable";
 import { useComposerStore } from "@/store/useComposerStore";
 import React from "react";
 
 function CanvasNode({ nodeKey }: { nodeKey: string }) {
-  const { nodes } = useComposerStore();
+  const { nodes, canvasHighlightKey, setCanvashighlightKey } =
+    useComposerStore();
   const node = nodes[nodeKey];
 
-  const isDraggable = typeof node === "object" && node.type !== "Root";
+  const isDraggable = checkIfDraggable;
 
-  const isDroppable =
-    typeof node === "object" && (node.type === "Div" || node.type === "Root");
+  const isDroppable = checkIfDroppable(node);
 
   if (typeof node !== "object") {
     return node;
@@ -32,11 +33,30 @@ function CanvasNode({ nodeKey }: { nodeKey: string }) {
     children: nodeChildren,
   });
 
-  return reactNodeWithChildren;
+  return (
+    <div
+      className="relative inline"
+      onMouseEnter={() => {
+        setCanvashighlightKey(nodeKey);
+      }}
+      onMouseLeave={() => {
+        setCanvashighlightKey(null);
+      }}
+    >
+      {reactNodeWithChildren}
+      {canvasHighlightKey === nodeKey && (
+        <div className="pointer-events-none absolute inset-0 w-full h-full bg-transparent border-2 border-yellow-500 box-border" />
+      )}
+    </div>
+  );
 }
 
 export const Canvas = () => {
   const { headNodeKey } = useComposerStore();
 
-  return <CanvasNode nodeKey={headNodeKey} />;
+  return (
+    <div className="w-full h-full flex-1">
+      <CanvasNode nodeKey={headNodeKey} />
+    </div>
+  );
 };

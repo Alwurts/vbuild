@@ -1,3 +1,4 @@
+import { isValidComponentName } from "@/types/elements/elements";
 import type { TNodeAbstract, TNodesAbstract } from "@/types/jsx";
 import React from "react";
 import { v4 as uuidv4 } from "uuid";
@@ -56,8 +57,9 @@ const jsxNodesToNodesAbstract = (
 					? reactNodeClone.type.displayName
 					: reactNodeClone.type.name;
 
-		if (typeName !== "Root" && typeName !== "Div" && typeName !== "Button") {
-			throw new Error("Invalid type name");
+		if (!isValidComponentName(typeName)) {
+			console.log("typeName", typeName);
+			throw new Error(`Invalid type name: ${String(typeName)}`);
 		}
 
 		if (typeName === "Root") {

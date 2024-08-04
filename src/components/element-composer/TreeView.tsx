@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useComposerStore } from "@/store/useComposerStore";
 import { cn } from "@/lib/utils";
 import type { TNodeAbstract } from "@/types/jsx";
+import { checkIfDraggable, checkIfDroppable } from "@/lib/jsx/draggable";
 
 interface TreeNodeProps {
   nodeKey: string;
@@ -13,27 +14,40 @@ interface TreeNodeProps {
 
 // TreeNode component
 const TreeNode = ({ nodeKey, depth = 0, dropClassName }: TreeNodeProps) => {
-  const { moveNode, nodes, setSelectedNodeKey } = useComposerStore();
+  const {
+    moveNode,
+    nodes,
+    setSelectedNodeKey,
+    setCanvashighlightKey,
+    dropItem,
+    setDraggableDropItem,
+    setDropDropItem,
+  } = useComposerStore();
 
   const node = nodes[nodeKey];
 
   const chidlrenContainerRef = useRef<HTMLDivElement>(null);
 
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
 
-  const [dropPosition, setDropPosition] = useState<{
-    type: "before" | "after" | "inside";
-    index: number;
-  } | null>(null);
+  const isDraggable = checkIfDraggable(node);
 
-  const isDraggable = typeof node === "object" && node.type !== "Root";
+  const isDroppable = checkIfDroppable(node);
 
-  const isDroppable =
-    typeof node === "object" && (node.type === "Div" || node.type === "Root");
+  const nodeIsDropping =
+    isDroppable &&
+    typeof node === "object" &&
+    dropItem?.drop?.dropNodeKey === node.key &&
+    dropItem.draggedStartedOn === "TreeView";
 
   const handleDragStart = (e: React.DragEvent<HTMLDivElement>) => {
     e.stopPropagation();
     if (!isDraggable) return;
+    setDraggableDropItem({
+      draggedStartedOn: "TreeView",
+      draggedNodeKey: node.key,
+      drop: null,
+    });
     e.dataTransfer.setData("text/plain", node.key);
   };
 
@@ -46,18 +60,24 @@ const TreeNode = ({ nodeKey, depth = 0, dropClassName }: TreeNodeProps) => {
     const childrenContainer = chidlrenContainerRef.current;
 
     if (!childrenContainer) {
-      setDropPosition({ type: "inside", index: 0 });
+      setDropDropItem({
+        dropNodeKey: node.key,
+        type: "inside",
+        index: 0,
+      });
       return;
     }
-
-    const childrenContainerRect = childrenContainer.getBoundingClientRect();
 
     const childrenContainerChildren = childrenContainer.children;
 
     const childrenElements = Array.from(childrenContainerChildren);
 
     if (!childrenElements.length || !isOpen) {
-      setDropPosition({ type: "inside", index: 0 });
+      setDropDropItem({
+        dropNodeKey: node.key,
+        type: "inside",
+        index: 0,
+      });
       return;
     }
 
@@ -72,8 +92,14 @@ const TreeNode = ({ nodeKey, depth = 0, dropClassName }: TreeNodeProps) => {
     ) {
       const childrenRect = childrenElementsRects[childrenIndex];
       if (childrenIndex === 0 && e.clientY < childrenRect.top) {
-        setDropPosition({ type: "before", index: 0 });
+        setDropDropItem({
+          dropNodeKey: node.key,
+          type: "before",
+          index: 0,
+        });
         console.log("OUTSIDE", {
+          dropNodeKey: node.key,
+          name: node.type,
           type: "before",
           index: 0,
         });
@@ -83,16 +109,28 @@ const TreeNode = ({ nodeKey, depth = 0, dropClassName }: TreeNodeProps) => {
         const childrenMiddle = childrenRect.top + childrenRect.height / 2;
 
         if (e.clientY < childrenMiddle) {
-          setDropPosition({ type: "before", index: childrenIndex });
+          setDropDropItem({
+            dropNodeKey: node.key,
+            type: "before",
+            index: childrenIndex,
+          });
           console.log("before", {
+            dropNodeKey: node.key,
+            name: node.type,
             type: "before",
             index: childrenIndex,
           });
           return;
         }
         if (e.clientY > childrenMiddle) {
-          setDropPosition({ type: "after", index: childrenIndex });
+          setDropDropItem({
+            dropNodeKey: node.key,
+            type: "after",
+            index: childrenIndex,
+          });
           console.log("after", {
+            dropNodeKey: node.key,
+            name: node.type,
             type: "after",
             index: childrenIndex,
           });
@@ -101,45 +139,29 @@ const TreeNode = ({ nodeKey, depth = 0, dropClassName }: TreeNodeProps) => {
       }
     }
 
-    setDropPosition({ type: "inside", index: 0 });
-    console.log("Default Inside setDropPosition", {
+    setDropDropItem({
+      dropNodeKey: node.key,
       type: "inside",
       index: 0,
     });
   };
 
   const handleDragLeave = () => {
-    setDropPosition(null);
+    if (!nodeIsDropping) return;
+    setDropDropItem(null);
   };
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
-    if (!isDroppable) {
-      setDropPosition(null);
+
+    if (!nodeIsDropping) {
+      setDraggableDropItem(null);
       return;
     }
-    const draggedNodeKey = e.dataTransfer.getData("text/plain");
 
-    if (draggedNodeKey !== node.key && dropPosition) {
-      let targetKey = node.key;
-      let index = 0;
-
-      if (node.children) {
-        if (dropPosition.type === "before") {
-          targetKey = node.key;
-          index = node.children.indexOf(node.key);
-        } else if (dropPosition.type === "after") {
-          targetKey = node.key;
-          index = node.children.indexOf(node.key);
-        } else if (dropPosition.type === "inside") {
-          index = node.children.length;
-        }
-      }
-
-      moveNode(draggedNodeKey, targetKey, index);
-    }
-    setDropPosition(null);
+    setDraggableDropItem(null);
+    moveNode(dropItem, node.key);
   };
 
   if (typeof node !== "object") {
@@ -165,7 +187,8 @@ const TreeNode = ({ nodeKey, depth = 0, dropClassName }: TreeNodeProps) => {
       onDragLeave={isDroppable ? handleDragLeave : undefined}
       onDrop={isDroppable ? handleDrop : undefined}
       className={cn(
-        dropPosition?.type === "inside" &&
+        nodeIsDropping &&
+          dropItem?.drop?.type === "inside" &&
           "border-4 rounded-md border-purple-500",
         dropClassName
       )}
@@ -174,6 +197,8 @@ const TreeNode = ({ nodeKey, depth = 0, dropClassName }: TreeNodeProps) => {
         className={cn("flex justify-stretch")}
         draggable={isDraggable}
         onDragStart={handleDragStart}
+        onMouseEnter={() => setCanvashighlightKey(node.key)}
+        onMouseLeave={() => setCanvashighlightKey(null)}
       >
         {node.children ? (
           <Button
@@ -208,11 +233,13 @@ const TreeNode = ({ nodeKey, depth = 0, dropClassName }: TreeNodeProps) => {
             return (
               <TreeNode
                 dropClassName={cn(
-                  dropPosition?.index === index &&
-                    dropPosition.type === "before" &&
+                  nodeIsDropping &&
+                    dropItem?.drop?.index === index &&
+                    dropItem.drop.type === "before" &&
                     "border-t-4 border-purple-500",
-                  dropPosition?.index === index &&
-                    dropPosition.type === "after" &&
+                  nodeIsDropping &&
+                    dropItem?.drop?.index === index &&
+                    dropItem.drop.type === "after" &&
                     "border-b-4 border-purple-500"
                 )}
                 key={childNode}

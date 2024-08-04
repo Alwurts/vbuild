@@ -2,7 +2,7 @@ import {
   ROOT_COMPONENT_ABSTRACT_DEFAULT,
   ROOT_COMPONENT_ABSTRACT_DEFAULT_HEAD_KEY,
 } from "@/components/element-composer/defaultJSX";
-import type { ComposerStore } from "@/types/jsx-store";
+import type { ComposerStore } from "@/types/composer-store";
 import { create } from "zustand";
 
 export const useComposerStore = create<ComposerStore>((set) => ({
@@ -10,17 +10,45 @@ export const useComposerStore = create<ComposerStore>((set) => ({
   headNodeKey: ROOT_COMPONENT_ABSTRACT_DEFAULT_HEAD_KEY,
   selectedNodeKey: null,
   setSelectedNodeKey: (key) => set({ selectedNodeKey: key }),
-  moveNode: (key, newParentKey, newIndex) => {
+  canvasHighlightKey: null,
+  setCanvashighlightKey: (key) => set({ canvasHighlightKey: key }),
+  dropItem: null,
+  setDraggableDropItem: (dropItem) => set({ dropItem }),
+  setDropDropItem: (drop) =>
     set((state) => {
-      const nodeToMove = state.nodes[key];
-      if (typeof nodeToMove !== "object") {
+      if (!state.dropItem) {
         return state;
       }
-      if (nodeToMove.type === "Root") {
-        throw Error("Root node cannot be moved");
+      return {
+        ...state,
+        dropItem: {
+          ...state.dropItem,
+          drop,
+        },
+      };
+    }),
+  moveNode: (draggedNode) => {
+    set((state) => {
+      if (!draggedNode || !draggedNode.drop) return state;
+
+      const { draggedNodeKey, drop } = draggedNode;
+      const { dropNodeKey, type, index } = drop;
+      const nodeToMove = state.nodes[draggedNodeKey];
+
+      if (typeof nodeToMove !== "object" || nodeToMove.type === "Root") {
+        return state;
       }
+
       const oldParentKey = nodeToMove.parent;
       const oldParent = state.nodes[oldParentKey];
+      const dropNode = state.nodes[dropNodeKey];
+
+      if (!dropNode || typeof dropNode !== "object") {
+        return state;
+      }
+
+      // Determine the new parent based on the drop type
+      const newParentKey = dropNodeKey;
       const newParent = state.nodes[newParentKey];
 
       if (
@@ -37,35 +65,38 @@ export const useComposerStore = create<ComposerStore>((set) => ({
       // Remove from old parent
       newNodes[oldParentKey] = {
         ...oldParent,
-        children: oldParent.children.filter((nodeKey) => nodeKey !== key),
+        children: oldParent.children.filter((key) => key !== draggedNodeKey),
       };
 
       // Add to new parent
+      let newIndex = index;
+      if (type === "after") {
+        newIndex += 1;
+      }
+
       if (oldParentKey === newParentKey) {
         // If same parent, just reorder
         const children = [...newParent.children];
-        children.splice(children.indexOf(key), 1);
-        children.splice(newIndex, 0, key);
+        children.splice(children.indexOf(draggedNodeKey), 1);
+        children.splice(newIndex, 0, draggedNodeKey);
         newNodes[newParentKey] = { ...newParent, children };
       } else {
         newNodes[newParentKey] = {
           ...newParent,
           children: [
             ...newParent.children.slice(0, newIndex),
-            key,
+            draggedNodeKey,
             ...newParent.children.slice(newIndex),
           ],
         };
       }
 
       // Update moved node
-      newNodes[key] = { ...nodeToMove, parent: newParentKey };
+      newNodes[draggedNodeKey] = { ...nodeToMove, parent: newParentKey };
 
       return {
         ...state,
-        nodes: {
-          ...newNodes,
-        },
+        nodes: newNodes,
       };
     });
   },
