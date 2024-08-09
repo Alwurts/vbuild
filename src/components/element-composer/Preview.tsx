@@ -53,7 +53,6 @@ export function Preview() {
       }
 
       if (event.data.type === "UPDATE_STATE_FROM_SHADOW") {
-        console.log("update from shadow", event.data.update);
         receiveUpdateFromShadow(event.data.update);
       }
     };

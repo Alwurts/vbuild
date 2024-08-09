@@ -12,7 +12,6 @@ export default function CanvasPage() {
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
       if (event.data.type === "UPDATE_STATE") {
-        console.log("Received:", event.data.update);
         parseStateUpdate(event.data.update);
       }
     };

@@ -27,6 +27,7 @@ export const useComposerStore = create<ComposerStore>((set, get) => ({
       nodes,
       headNodeKey,
       canvasHighlightKey,
+      selectedNodeKey,
       dropItem,
       sendUpdateToShadow,
     } = get();
@@ -34,6 +35,7 @@ export const useComposerStore = create<ComposerStore>((set, get) => ({
       nodes,
       headNodeKey,
       canvasHighlightKey,
+      selectedNodeKey,
       dropItem,
     });
   },
@@ -45,6 +47,10 @@ export const useComposerStore = create<ComposerStore>((set, get) => ({
         update.canvasHighlightKey !== undefined
           ? update.canvasHighlightKey
           : state.canvasHighlightKey,
+      selectedNodeKey:
+        update.selectedNodeKey !== undefined
+          ? update.selectedNodeKey
+          : state.selectedNodeKey,
       dropItem:
         update.dropItem !== undefined ? update.dropItem : state.dropItem,
     }));
@@ -69,7 +75,6 @@ export const useComposerStore = create<ComposerStore>((set, get) => ({
         return state;
       }
       return {
-        ...state,
         dropItem: {
           ...state.dropItem,
           drop,
@@ -148,7 +153,6 @@ export const useComposerStore = create<ComposerStore>((set, get) => ({
       });
 
       return {
-        ...state,
         nodes: newNodes,
       };
     });

@@ -11,3 +11,9 @@ export const checkIfDroppable = (node: TNodeAbstract) =>
 		node.type === "CardContent" ||
 		node.type === "CardFooter" ||
 		node.type === "CardHeader");
+
+export const checkIfContentEditable = (node: TNodeAbstract) =>
+	typeof node === "object" &&
+	(node.type === "Button" ||
+		node.type === "CardTitle" ||
+		node.type === "CardDescription");
