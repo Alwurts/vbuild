@@ -1,12 +1,19 @@
 import { checkIfDraggable, checkIfDroppable } from "@/lib/jsx/draggable";
 import { useComposerStore } from "@/store/useComposerStore";
-import React from "react";
+import React, { useState } from "react";
 import { RenderNode } from "@/components/elements/RenderNode";
 import { Preview } from "./Preview";
+import type { TNodesAbstract } from "@/types/elements/jsx";
+import { useShadowComposerStore } from "@/store/useShadowComposerStore";
 
 function CanvasNode({ nodeKey }: { nodeKey: string }) {
-  const { nodes, canvasHighlightKey, setCanvashighlightKey } =
-    useComposerStore();
+  const { canvasHighlightKey, nodes, setCanvasHighlightKey: setCanvashighlightKey } =
+    useShadowComposerStore();
+
+  if (!nodes) {
+    return null;
+  }
+
   const node = nodes[nodeKey];
 
   const isDraggable = checkIfDraggable;
@@ -24,6 +31,12 @@ function CanvasNode({ nodeKey }: { nodeKey: string }) {
   return (
     <div
       className="relative inline"
+      onDragOver={(e) => {
+        console.log("Dragging over", nodeKey);
+        e.preventDefault();
+        e.stopPropagation();
+        /* setCanvashighlightKey(nodeKey); */
+      }}
       onMouseEnter={() => {
         setCanvashighlightKey(nodeKey);
       }}
@@ -42,11 +55,11 @@ function CanvasNode({ nodeKey }: { nodeKey: string }) {
 }
 
 export const Canvas = () => {
-  const { headNodeKey } = useComposerStore();
+  const { nodes, headNodeKey } = useShadowComposerStore();
 
-  return (
-    <div className="w-full h-full flex-1">
-      <Preview />
-    </div>
-  );
+  if (!nodes || !headNodeKey) {
+    return null;
+  }
+
+  return <CanvasNode key={headNodeKey} nodeKey={headNodeKey} />;
 };

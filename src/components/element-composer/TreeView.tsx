@@ -46,7 +46,8 @@ function TreeNode({ nodeKey, depth = 0, dropClassName }: TreeNodeProps) {
     moveNode,
     nodes,
     setSelectedNodeKey,
-    setCanvashighlightKey,
+    setCanvasHighlightKey,
+    canvasHighlightKey,
     dropItem,
     setDraggableDropItem,
     setDropDropItem,
@@ -56,7 +57,7 @@ function TreeNode({ nodeKey, depth = 0, dropClassName }: TreeNodeProps) {
 
   const chidlrenContainerRef = useRef<HTMLDivElement>(null);
 
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
 
   const isDraggable = checkIfDraggable(node);
 
@@ -128,12 +129,12 @@ function TreeNode({ nodeKey, depth = 0, dropClassName }: TreeNodeProps) {
           type: "before",
           index: 0,
         });
-        console.log("OUTSIDE", {
+        /* console.log("OUTSIDE", {
           dropNodeKey: node.key,
           name: node.type,
           type: "before",
           index: 0,
-        });
+        }); */
         return;
       }
       if (
@@ -166,12 +167,12 @@ function TreeNode({ nodeKey, depth = 0, dropClassName }: TreeNodeProps) {
             type: "before",
             index: childrenIndex,
           });
-          console.log("before", {
+          /* console.log("before", {
             dropNodeKey: node.key,
             name: node.type,
             type: "before",
             index: childrenIndex,
-          });
+          }); */
           return;
         }
         if (e.clientY > childrenMiddle) {
@@ -180,12 +181,12 @@ function TreeNode({ nodeKey, depth = 0, dropClassName }: TreeNodeProps) {
             type: "after",
             index: childrenIndex,
           });
-          console.log("after", {
+          /* console.log("after", {
             dropNodeKey: node.key,
             name: node.type,
             type: "after",
             index: childrenIndex,
-          });
+          }); */
           return;
         }
       }
@@ -282,8 +283,8 @@ function TreeNode({ nodeKey, depth = 0, dropClassName }: TreeNodeProps) {
         <Button
           draggable={isDraggable}
           onDragStart={handleDragStart}
-          onMouseEnter={() => setCanvashighlightKey(node.key)}
-          onMouseLeave={() => setCanvashighlightKey(null)}
+          onMouseEnter={() => setCanvasHighlightKey(node.key)}
+          onMouseLeave={() => setCanvasHighlightKey(null)}
           variant="ghost"
           size="sm"
           style={{
@@ -291,7 +292,8 @@ function TreeNode({ nodeKey, depth = 0, dropClassName }: TreeNodeProps) {
           }}
           className={cn(
             "absolute inset-0 flex gap-1 w-full items-center justify-start h-7",
-            isDraggable && "cursor-move"
+            isDraggable && "cursor-move",
+            canvasHighlightKey === node.key && "border-2 border-yellow-500"  
           )}
           onClick={() => {
             setSelectedNodeKey(node.key);

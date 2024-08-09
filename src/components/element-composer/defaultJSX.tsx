@@ -15,8 +15,11 @@ export const [
   ROOT_COMPONENT_ABSTRACT_DEFAULT,
   ROOT_COMPONENT_ABSTRACT_DEFAULT_HEAD_KEY,
 ] = jsxNodesToNodesAbstract(
-  <Root className="flex flex-col h-full items-center justify-center">
-    <Card>
+  <Root className="flex flex-col items-stretch justify-start h-screen w-screen p-4 gap-4">
+    <Div className="border border-border rounded-lg">
+      <CardTitle className="text-red-500 font-bold">Card Title</CardTitle>
+    </Div>
+    <Card className="">
       <CardHeader>
         <CardTitle className="text-red-500 font-bold">Card Title</CardTitle>
         <CardDescription>Card Description</CardDescription>

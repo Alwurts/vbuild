@@ -13,18 +13,57 @@ import {
 } from "../ui-editor/resizable";
 import {
   CircleArrowLeft,
+  CircleX,
   Code,
+  LoaderCircle,
   Monitor,
   Smartphone,
   Tablet,
 } from "lucide-react";
 import { ToggleGroup, ToggleGroupItem } from "../ui-editor/toggle-group";
 import { Button } from "../ui-editor/button";
+import { useComposerStore } from "@/store/useComposerStore";
+import { useEffect, useRef, useState } from "react";
+import type { UpdateShadowState } from "@/types/shadow-composer-store";
 
 export function Preview() {
-  const [iframeIsLoading, setIframeIsLoading] = React.useState(true);
-  const [viewerSize, setViewerSize] = React.useState("100");
-  const viewerPanelRef = React.useRef<ImperativePanelHandle>(null);
+  const [viewerSize, setViewerSize] = useState("100");
+  const viewerPanelRef = useRef<ImperativePanelHandle>(null);
+  const iframeRef = useComposerStore((state) => state.iframeRef);
+  const sendUpdateOfWholeState = useComposerStore(
+    (state) => state.sendUpdateOfWholeStateToShadow
+  );
+  const receiveUpdateFromShadow = useComposerStore(
+    (state) => state.receiveUpdateFromShadow
+  );
+
+  useEffect(() => {
+    sendUpdateOfWholeState();
+  }, [sendUpdateOfWholeState]);
+
+  useEffect(() => {
+    const handleMessageFromShadow = (
+      event: MessageEvent<{
+        type: "UPDATE_STATE_FROM_SHADOW";
+        update: UpdateShadowState;
+      }>
+    ) => {
+      if (event.origin !== window.location.origin) {
+        return;
+      }
+
+      if (event.data.type === "UPDATE_STATE_FROM_SHADOW") {
+        console.log("update from shadow", event.data.update);
+        receiveUpdateFromShadow(event.data.update);
+      }
+    };
+
+    window.addEventListener("message", handleMessageFromShadow);
+
+    return () => {
+      window.removeEventListener("message", handleMessageFromShadow);
+    };
+  }, [receiveUpdateFromShadow]);
 
   return (
     <div className="flex-1 relative py-3 pl-4 pr-1 bg-muted-editor flex flex-col gap-2">
@@ -64,26 +103,28 @@ export function Preview() {
             className={cn(
               "relative rounded-lg border bg-background border-border"
             )}
+            defaultSize={100}
             onResize={(size) => {
               setViewerSize(size.toString());
             }}
             minSize={30}
           >
-            {iframeIsLoading ? (
-              <div className="absolute inset-0 z-10 flex h-[--container-height] w-full items-center justify-center gap-2 bg-background-editor text-sm text-muted-editor-foreground">
-                <CircleArrowLeft className="h-4 w-4 animate-spin" />
+            {/* {iframeIsLoading ? (
+              <div className="absolute inset-0 z-30 flex h-full w-full items-center justify-center gap-2 bg-background-editor text-sm text-muted-editor-foreground">
+                <LoaderCircle className="h-4 w-4 animate-spin" />
                 Loading...
               </div>
-            ) : null}
+            ) : null} */}
             <iframe
+              ref={iframeRef}
               title="block-preview"
-              src={"https://alwurts.com/"}
+              src={"/composer/canvas"}
               height={"100%"}
-              className="relative z-20 w-full bg-background"
+              className="relative z-20 w-full bg-background-editor"
               onLoad={() => {
-                setIframeIsLoading(false);
+                console.log("iframe loaded");
+                /* setIframeIsLoading(false); */
               }}
-              allowTransparency
             />
           </ResizablePanel>
           <ResizableHandle

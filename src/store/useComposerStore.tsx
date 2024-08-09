@@ -3,15 +3,64 @@ import {
   ROOT_COMPONENT_ABSTRACT_DEFAULT_HEAD_KEY,
 } from "@/components/element-composer/defaultJSX";
 import type { ComposerStore } from "@/types/composer-store";
+import type { UpdateShadowState } from "@/types/shadow-composer-store";
+import { createRef } from "react";
 import { create } from "zustand";
 
-export const useComposerStore = create<ComposerStore>((set) => ({
+export const useComposerStore = create<ComposerStore>((set, get) => ({
+  iframeRef: createRef(),
+  sendUpdateToShadow: (update) => {
+    const { iframeRef } = get();
+    if (iframeRef.current?.contentWindow) {
+      const targetOrigin = window.location.origin;
+      iframeRef.current.contentWindow.postMessage(
+        {
+          type: "UPDATE_STATE",
+          update,
+        },
+        targetOrigin
+      );
+    }
+  },
+  sendUpdateOfWholeStateToShadow: () => {
+    const {
+      nodes,
+      headNodeKey,
+      canvasHighlightKey,
+      dropItem,
+      sendUpdateToShadow,
+    } = get();
+    sendUpdateToShadow({
+      nodes,
+      headNodeKey,
+      canvasHighlightKey,
+      dropItem,
+    });
+  },
+  receiveUpdateFromShadow: (update) => {
+    set((state) => ({
+      nodes: update.nodes ?? state.nodes,
+      headNodeKey: update.headNodeKey ?? state.headNodeKey,
+      canvasHighlightKey:
+        update.canvasHighlightKey !== undefined
+          ? update.canvasHighlightKey
+          : state.canvasHighlightKey,
+      dropItem:
+        update.dropItem !== undefined ? update.dropItem : state.dropItem,
+    }));
+  },
   nodes: ROOT_COMPONENT_ABSTRACT_DEFAULT,
   headNodeKey: ROOT_COMPONENT_ABSTRACT_DEFAULT_HEAD_KEY,
   selectedNodeKey: null,
   setSelectedNodeKey: (key) => set({ selectedNodeKey: key }),
   canvasHighlightKey: null,
-  setCanvashighlightKey: (key) => set({ canvasHighlightKey: key }),
+  setCanvasHighlightKey: (key) => {
+    set({ canvasHighlightKey: key });
+    const { sendUpdateToShadow } = get();
+    sendUpdateToShadow({
+      canvasHighlightKey: key,
+    });
+  },
   dropItem: null,
   setDraggableDropItem: (dropItem) => set({ dropItem }),
   setDropDropItem: (drop) =>
@@ -93,6 +142,10 @@ export const useComposerStore = create<ComposerStore>((set) => ({
 
       // Update moved node
       newNodes[draggedNodeKey] = { ...nodeToMove, parent: newParentKey };
+
+      get().sendUpdateToShadow({
+        nodes: newNodes,
+      });
 
       return {
         ...state,

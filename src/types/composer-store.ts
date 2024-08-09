@@ -1,6 +1,8 @@
 import type { TNodesAbstract } from "./elements/jsx";
+import type { UpdateShadowState } from "./shadow-composer-store";
 
 export interface ComposerStore {
+	iframeRef: React.MutableRefObject<HTMLIFrameElement | null>;
 	nodes: TNodesAbstract;
 	headNodeKey: string;
 	moveNode: (
@@ -10,7 +12,7 @@ export interface ComposerStore {
 	selectedNodeKey: string | null;
 	setSelectedNodeKey: (key: string | null) => void;
 	canvasHighlightKey: string | null;
-	setCanvashighlightKey: (key: string | null) => void;
+	setCanvasHighlightKey: (key: string | null) => void;
 	dropItem: {
 		draggedStartedOn: "TreeView" | "Canvas";
 		draggedNodeKey: string;
@@ -21,9 +23,14 @@ export interface ComposerStore {
 		} | null;
 	} | null;
 	setDraggableDropItem: (dropItem: ComposerStore["dropItem"]) => void;
-	setDropDropItem: (drop: {
-		dropNodeKey: string;
-		type: "before" | "after" | "inside";
-		index: number;
-	} | null) => void;
+	setDropDropItem: (
+		drop: {
+			dropNodeKey: string;
+			type: "before" | "after" | "inside";
+			index: number;
+		} | null,
+	) => void;
+	sendUpdateOfWholeStateToShadow: () => void;
+	sendUpdateToShadow: (update: UpdateShadowState) => void;
+	receiveUpdateFromShadow: (update: UpdateShadowState) => void;
 }
