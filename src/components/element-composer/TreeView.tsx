@@ -1,9 +1,21 @@
 import { useRef, useState } from "react";
-import { ChevronRight, ChevronDown } from "lucide-react";
+import {
+  ChevronRight,
+  ChevronDown,
+  PanelsTopLeft,
+  Component,
+  SquareSlash,
+  SquareMousePointer,
+  SquareGanttChartIcon,
+  GitBranch,
+} from "lucide-react";
 import { Button } from "@/components/ui-editor/button";
 import { useComposerStore } from "@/store/useComposerStore";
 import { cn } from "@/lib/utils";
 import { checkIfDraggable, checkIfDroppable } from "@/lib/jsx/draggable";
+import { Separator } from "../ui-editor/separator";
+import type { GenericComponentName } from "@/types/elements/elements";
+import { ElementNodeIcon } from "./ElementNodeIcon";
 
 interface TreeNodeProps {
   nodeKey: string;
@@ -12,7 +24,7 @@ interface TreeNodeProps {
 }
 
 // TreeNode component
-const TreeNode = ({ nodeKey, depth = 0, dropClassName }: TreeNodeProps) => {
+function TreeNode({ nodeKey, depth = 0, dropClassName }: TreeNodeProps) {
   const {
     moveNode,
     nodes,
@@ -39,7 +51,7 @@ const TreeNode = ({ nodeKey, depth = 0, dropClassName }: TreeNodeProps) => {
     dropItem?.drop?.dropNodeKey === node.key &&
     dropItem?.draggedStartedOn === "TreeView";
 
-  const handleDragStart = (e: React.DragEvent<HTMLDivElement>) => {
+  const handleDragStart = (e: React.DragEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     if (!isDraggable) return;
     setDraggableDropItem({
@@ -90,7 +102,10 @@ const TreeNode = ({ nodeKey, depth = 0, dropClassName }: TreeNodeProps) => {
       childrenIndex++
     ) {
       const childrenRect = childrenElementsRects[childrenIndex];
-      if (childrenIndex === 0 && e.clientY < childrenRect.top) {
+      let childrenTop = childrenRect.top;
+      let childrenBottom = childrenRect.bottom;
+
+      if (childrenIndex === 0 && e.clientY < childrenTop) {
         setDropDropItem({
           dropNodeKey: node.key,
           type: "before",
@@ -104,7 +119,28 @@ const TreeNode = ({ nodeKey, depth = 0, dropClassName }: TreeNodeProps) => {
         });
         return;
       }
-      if (e.clientY > childrenRect.top && e.clientY < childrenRect.bottom) {
+      if (
+        childrenIndex === childrenElementsRects.length - 1 &&
+        e.clientY > childrenBottom
+      ) {
+        setDropDropItem({
+          dropNodeKey: node.key,
+          type: "after",
+          index: childrenIndex,
+        });
+        return;
+      }
+      if (childrenIndex > 0) {
+        const previousChildrenRect = childrenElementsRects[childrenIndex - 1];
+        childrenTop =
+          childrenTop - (childrenTop - previousChildrenRect.bottom) / 2;
+      }
+      if (childrenIndex < childrenElementsRects.length - 1) {
+        const nextChildrenRect = childrenElementsRects[childrenIndex + 1];
+        childrenBottom =
+          childrenBottom + (nextChildrenRect.top - childrenBottom) / 2;
+      }
+      if (e.clientY > childrenTop && e.clientY < childrenBottom) {
         const childrenMiddle = childrenRect.top + childrenRect.height / 2;
 
         if (e.clientY < childrenMiddle) {
@@ -186,48 +222,73 @@ const TreeNode = ({ nodeKey, depth = 0, dropClassName }: TreeNodeProps) => {
       onDragLeave={isDroppable ? handleDragLeave : undefined}
       onDrop={isDroppable ? handleDrop : undefined}
       className={cn(
+        "relative",
         nodeIsDropping &&
           dropItem?.drop?.type === "inside" &&
           "border-4 rounded-md border-purple-500",
         dropClassName
+        /* {
+          "bg-red-500": node.type === "Root",
+          "bg-green-500": node.type === "Card",
+          "bg-blue-500": node.type === "CardContent",
+          "bg-yellow-500": node.type === "CardHeader",
+          "bg-purple-500": node.type === "CardFooter",
+          "bg-pink-500": node.type === "CardTitle",
+          "bg-orange-500": node.type === "CardDescription",
+          "bg-gray-500": node.type === "Div",
+          "bg-cyan-500": node.type === "Button",
+        } */
       )}
     >
-      <div
-        className={cn("flex justify-stretch")}
-        draggable={isDraggable}
-        onDragStart={handleDragStart}
-        onMouseEnter={() => setCanvashighlightKey(node.key)}
-        onMouseLeave={() => setCanvashighlightKey(null)}
-      >
-        {node.children ? (
+      <div className="relative h-7">
+        {node.children && (
           <Button
+            style={{
+              marginLeft: `${depth * 16}px`,
+            }}
             variant="ghost"
             size="sm"
-            style={{
-              paddingLeft: `${depth * 16}px`,
-            }}
             className={cn(
-              "flex gap-1 w-full justify-start h-7 px-3",
-              isDraggable && "cursor-move"
+              "p-0 h-4 z-10 absolute left-0 top-1/2 -translate-y-1/2 mr-2",
+              {
+                "pointer-events-none": !!dropItem,
+              }
             )}
             onClick={() => {
               setIsOpen(!isOpen);
-              setSelectedNodeKey(node.key);
             }}
           >
             {isOpen ? (
-              <ChevronDown className="w-4 h-4" />
+              <ChevronDown className="w-4 h-4 shrink-0" />
             ) : (
-              <ChevronRight className="w-4 h-4" />
+              <ChevronRight className="w-4 h-4 shrink-0" />
             )}
-            <span className="font-mono">{node.type}</span>
           </Button>
-        ) : (
-          <span className="font-mono font-extralight">{node.type}</span>
         )}
+        <Button
+          draggable={isDraggable}
+          onDragStart={handleDragStart}
+          onMouseEnter={() => setCanvashighlightKey(node.key)}
+          onMouseLeave={() => setCanvashighlightKey(null)}
+          variant="ghost"
+          size="sm"
+          style={{
+            paddingLeft: `${(depth + 1) * 17}px`,
+          }}
+          className={cn(
+            "absolute inset-0 flex gap-1 w-full items-center justify-start h-7",
+            isDraggable && "cursor-move"
+          )}
+          onClick={() => {
+            setSelectedNodeKey(node.key);
+          }}
+        >
+          <ElementNodeIcon type={node.type} className="w-4 h-4 shrink-0" />
+          <span className="font-mono truncate">{node.type}</span>
+        </Button>
       </div>
       {isOpen && node.children && (
-        <div ref={chidlrenContainerRef}>
+        <div ref={chidlrenContainerRef} className={cn("space-y-1.5 py-1.5")}>
           {node.children.map((childNode, index) => {
             return (
               <TreeNode
@@ -251,14 +312,21 @@ const TreeNode = ({ nodeKey, depth = 0, dropClassName }: TreeNodeProps) => {
       )}
     </div>
   );
-};
+}
 
 // TreeView component
 export const TreeView = () => {
   const { headNodeKey } = useComposerStore();
   return (
     <div className="border-r p-2 w-[200px]">
-      <TreeNode key={headNodeKey} nodeKey={headNodeKey} />
+      <div className="px-2 pb-2 pt-1 flex items-center gap-2">
+        <GitBranch className="w-4 h-4" />
+        <h3 className="text-sm font-medium">Tree View</h3>
+      </div>
+      <Separator />
+      <div className="py-2 px-1">
+        <TreeNode key={headNodeKey} nodeKey={headNodeKey} />
+      </div>
     </div>
   );
 };
