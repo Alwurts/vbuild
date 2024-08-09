@@ -1,4 +1,4 @@
-import type { TNodeAbstract } from "@/types/jsx";
+import type { TNodeAbstract } from "@/types/elements/jsx";
 
 export const checkIfDraggable = (node: TNodeAbstract) =>
 	typeof node === "object" && node.type !== "Root";

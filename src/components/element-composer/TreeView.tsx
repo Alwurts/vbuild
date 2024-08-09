@@ -1,9 +1,8 @@
 import { useRef, useState } from "react";
 import { ChevronRight, ChevronDown } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui-editor/button";
 import { useComposerStore } from "@/store/useComposerStore";
 import { cn } from "@/lib/utils";
-import type { TNodeAbstract } from "@/types/jsx";
 import { checkIfDraggable, checkIfDroppable } from "@/lib/jsx/draggable";
 
 interface TreeNodeProps {
@@ -38,7 +37,7 @@ const TreeNode = ({ nodeKey, depth = 0, dropClassName }: TreeNodeProps) => {
     isDroppable &&
     typeof node === "object" &&
     dropItem?.drop?.dropNodeKey === node.key &&
-    dropItem.draggedStartedOn === "TreeView";
+    dropItem?.draggedStartedOn === "TreeView";
 
   const handleDragStart = (e: React.DragEvent<HTMLDivElement>) => {
     e.stopPropagation();
@@ -258,7 +257,7 @@ const TreeNode = ({ nodeKey, depth = 0, dropClassName }: TreeNodeProps) => {
 export const TreeView = () => {
   const { headNodeKey } = useComposerStore();
   return (
-    <div className="border-r p-2 w-[200px] h-screen">
+    <div className="border-r p-2 w-[200px]">
       <TreeNode key={headNodeKey} nodeKey={headNodeKey} />
     </div>
   );

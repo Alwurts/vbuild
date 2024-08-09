@@ -6,7 +6,7 @@ import type {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
-import type { TComponent, TGenericComponentParent } from "../jsx";
+import type { TComponent, TGenericComponentParent } from "./jsx";
 
 export type TCardComponent = TComponent<typeof Card> &
 	TGenericComponentParent & {

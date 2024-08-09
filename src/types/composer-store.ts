@@ -1,4 +1,4 @@
-import type { TNodesAbstract } from "./jsx";
+import type { TNodesAbstract } from "./elements/jsx";
 
 export interface ComposerStore {
 	nodes: TNodesAbstract;

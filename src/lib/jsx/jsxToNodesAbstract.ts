@@ -1,5 +1,5 @@
 import { isValidComponentName } from "@/types/elements/elements";
-import type { TNodeAbstract, TNodesAbstract } from "@/types/jsx";
+import type { TNodeAbstract, TNodesAbstract } from "@/types/elements/jsx";
 import React from "react";
 import { v4 as uuidv4 } from "uuid";
 
@@ -65,13 +65,6 @@ const jsxNodesToNodesAbstract = (
 		if (typeName === "Root") {
 			const newNodeAbstract: TNodeAbstract = {
 				key: newkey,
-				reactNode: {
-					...reactNodeClone,
-					props: {
-						...props,
-						children: null,
-					},
-				},
 				props,
 				type: typeName, // Get correct type
 				children: childrenKeys,
@@ -89,13 +82,6 @@ const jsxNodesToNodesAbstract = (
 		const newNodeAbstract: TNodeAbstract = {
 			key: newkey,
 			parent: parentKey,
-			reactNode: {
-				...reactNodeClone,
-				props: {
-					...props,
-					children: null,
-				},
-			},
 			props,
 			type: typeName, // Get correct type
 			children: childrenKeys,

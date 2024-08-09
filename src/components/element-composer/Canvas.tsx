@@ -1,6 +1,8 @@
 import { checkIfDraggable, checkIfDroppable } from "@/lib/jsx/draggable";
 import { useComposerStore } from "@/store/useComposerStore";
 import React from "react";
+import { RenderNode } from "@/components/elements/RenderNode";
+import { Preview } from "./Preview";
 
 function CanvasNode({ nodeKey }: { nodeKey: string }) {
   const { nodes, canvasHighlightKey, setCanvashighlightKey } =
@@ -15,23 +17,9 @@ function CanvasNode({ nodeKey }: { nodeKey: string }) {
     return node;
   }
 
-  const nodeReactNode = node.reactNode;
-
-  if (!React.isValidElement(nodeReactNode)) {
-    throw new Error("Invalid react node");
-  }
-
-  const reactNodeClone = React.cloneElement(
-    nodeReactNode
-  ) as React.ReactElement;
-
   const nodeChildren = node.children?.map((childKey) => (
     <CanvasNode key={childKey} nodeKey={childKey} />
   ));
-
-  const reactNodeWithChildren = React.cloneElement(reactNodeClone, {
-    children: nodeChildren,
-  });
 
   return (
     <div
@@ -43,7 +31,9 @@ function CanvasNode({ nodeKey }: { nodeKey: string }) {
         setCanvashighlightKey(null);
       }}
     >
-      {reactNodeWithChildren}
+      <RenderNode key={nodeKey} node={node} {...node.props}>
+        {nodeChildren}
+      </RenderNode>
       {canvasHighlightKey === nodeKey && (
         <div className="pointer-events-none absolute inset-0 w-full h-full bg-transparent border-2 border-yellow-500 box-border" />
       )}
@@ -56,7 +46,7 @@ export const Canvas = () => {
 
   return (
     <div className="w-full h-full flex-1">
-      <CanvasNode nodeKey={headNodeKey} />
+      <Preview />
     </div>
   );
 };

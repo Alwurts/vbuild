@@ -1,5 +1,5 @@
 import { useComposerStore } from "@/store/useComposerStore";
-import { Separator } from "../ui-editor/separator";
+import { Separator } from "@/components/ui-editor/separator";
 
 export const NodeEditor = () => {
   const { selectedNodeKey, nodes } = useComposerStore();
@@ -42,7 +42,7 @@ export const NodeEditor = () => {
   };
 
   return (
-    <div className="border-l p-2 w-[200px] h-screen ml-auto">
+    <div className="border-l p-2 w-[200px]">
       <Content />
     </div>
   );

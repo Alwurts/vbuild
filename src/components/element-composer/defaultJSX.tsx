@@ -18,17 +18,7 @@ export const [
   <Root className="flex flex-col h-full items-center justify-center">
     <Card>
       <CardHeader>
-        <CardTitle>Card Title</CardTitle>
-        <CardDescription>Card Description</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <Button>Click me</Button>
-      </CardContent>
-      <CardFooter>Card Footer</CardFooter>
-    </Card>
-    <Card>
-      <CardHeader>
-        <CardTitle>Card Title</CardTitle>
+        <CardTitle className="text-red-500 font-bold">Card Title</CardTitle>
         <CardDescription>Card Description</CardDescription>
       </CardHeader>
       <CardContent>
