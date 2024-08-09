@@ -8,6 +8,13 @@ import {
   SquareMousePointer,
   SquareGanttChartIcon,
   GitBranch,
+  EllipsisVertical,
+  CreditCard,
+  Keyboard,
+  Settings,
+  User,
+  TrashIcon,
+  Boxes,
 } from "lucide-react";
 import { Button } from "@/components/ui-editor/button";
 import { useComposerStore } from "@/store/useComposerStore";
@@ -16,6 +23,16 @@ import { checkIfDraggable, checkIfDroppable } from "@/lib/jsx/draggable";
 import { Separator } from "../ui-editor/separator";
 import type { GenericComponentName } from "@/types/elements/elements";
 import { ElementNodeIcon } from "./ElementNodeIcon";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuTrigger,
+} from "../ui-editor/dropdown-menu";
 
 interface TreeNodeProps {
   nodeKey: string;
@@ -249,10 +266,7 @@ function TreeNode({ nodeKey, depth = 0, dropClassName }: TreeNodeProps) {
             variant="ghost"
             size="sm"
             className={cn(
-              "p-0 h-4 z-10 absolute left-0 top-1/2 -translate-y-1/2 mr-2",
-              {
-                "pointer-events-none": !!dropItem,
-              }
+              "p-0 h-4 z-10 absolute left-0 top-1/2 -translate-y-1/2"
             )}
             onClick={() => {
               setIsOpen(!isOpen);
@@ -284,8 +298,40 @@ function TreeNode({ nodeKey, depth = 0, dropClassName }: TreeNodeProps) {
           }}
         >
           <ElementNodeIcon type={node.type} className="w-4 h-4 shrink-0" />
-          <span className="font-mono truncate">{node.type}</span>
+          <span className="truncate font-normal">{node.type}</span>
         </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              style={{
+                marginLeft: `${depth * 16}px`,
+              }}
+              variant="ghost"
+              size="sm"
+              className={cn(
+                "p-0 h-4 z-10 absolute right-0 top-1/2 -translate-y-1/2"
+              )}
+            >
+              <EllipsisVertical className="w-4 h-4 shrink-0" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-48">
+            <DropdownMenuLabel>{node.type}</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              <DropdownMenuItem>
+                <Boxes className="mr-2 h-4 w-4" />
+                <span>Add child</span>
+                <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <TrashIcon className="mr-2 h-4 w-4" />
+                <span>Delete</span>
+                <DropdownMenuShortcut>⇧⌘D</DropdownMenuShortcut>
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
       {isOpen && node.children && (
         <div ref={chidlrenContainerRef} className={cn("space-y-1.5 py-1.5")}>
