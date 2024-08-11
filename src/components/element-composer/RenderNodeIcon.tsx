@@ -7,7 +7,7 @@ import {
 } from "lucide-react";
 import { Component } from "react";
 
-export function ElementNodeIcon({
+export function RenderNodeIcon({
   type,
   className,
 }: {

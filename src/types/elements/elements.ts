@@ -6,7 +6,7 @@ import type {
 	TCardTitleComponent,
 	TCardDescriptionComponent,
 } from "./card";
-import type { TDivComponent } from "./layout";
+import type { TDivComponent, TRootComponent } from "./layout";
 import type { TButtonComponent } from "./button";
 
 const GenericComponentsNames = {
@@ -25,6 +25,7 @@ export type GenericComponentName =
 	(typeof GenericComponentsNames)[keyof typeof GenericComponentsNames];
 
 export type TGenericComponent =
+	| TRootComponent
 	| TButtonComponent
 	| TDivComponent
 	| TCardComponent

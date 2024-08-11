@@ -1,5 +1,4 @@
 import type { TGenericComponent } from "./elements";
-import type { TRootComponent } from "./layout";
 
 export type TComponent<T> = {
 	key: string;
@@ -21,7 +20,7 @@ export type TComponentChildrenAbstract = {
 };
 
 export type TNodeAbstract =
-	| (TComponentChildrenAbstract & (TRootComponent | TGenericComponent))
+	| (TComponentChildrenAbstract & TGenericComponent)
 	| TElementBasic;
 
 export type TNodesAbstract = {

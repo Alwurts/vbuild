@@ -1,7 +1,7 @@
 import { checkIfDraggable, checkIfDroppable } from "@/lib/jsx/draggable";
 import { useComposerStore } from "@/store/useComposerStore";
 import React, { useState } from "react";
-import { RenderNode } from "@/components/elements/RenderNode";
+import { RenderNode } from "@/components/element-composer/RenderNode";
 import { Preview } from "./Preview";
 import type { TNodesAbstract } from "@/types/elements/jsx";
 import { useShadowComposerStore } from "@/store/useShadowComposerStore";

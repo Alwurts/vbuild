@@ -22,7 +22,7 @@ import { cn } from "@/lib/utils";
 import { checkIfDraggable, checkIfDroppable } from "@/lib/jsx/draggable";
 import { Separator } from "../ui-editor/separator";
 import type { GenericComponentName } from "@/types/elements/elements";
-import { ElementNodeIcon } from "./ElementNodeIcon";
+import { RenderNodeIcon } from "./RenderNodeIcon";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -299,7 +299,7 @@ function TreeNode({ nodeKey, depth = 0, dropClassName }: TreeNodeProps) {
             setSelectedNodeKey(node.key);
           }}
         >
-          <ElementNodeIcon type={node.type} className="w-4 h-4 shrink-0" />
+          <RenderNodeIcon type={node.type} className="w-4 h-4 shrink-0" />
           <span className="truncate font-normal">{node.type}</span>
         </Button>
         <DropdownMenu>
