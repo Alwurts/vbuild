@@ -25,11 +25,15 @@ import { Button } from "../ui-editor/button";
 import { useComposerStore } from "@/store/useComposerStore";
 import { useEffect, useRef, useState } from "react";
 import type { UpdateShadowState } from "@/types/shadow-composer-store";
+import { nodesAbstractToJSX } from "@/lib/jsx/nodesAbstractToJSX";
+import { CodeDisplay } from "../code/CodeDisplay";
+import { CodeBlock } from "../code/CodeBlock";
 
 export function Preview() {
   const [viewerSize, setViewerSize] = useState("100");
   const viewerPanelRef = useRef<ImperativePanelHandle>(null);
   const iframeRef = useComposerStore((state) => state.iframeRef);
+  const { nodes, headNodeKey } = useComposerStore();
   const sendUpdateOfWholeState = useComposerStore(
     (state) => state.sendUpdateOfWholeStateToShadow
   );
@@ -89,10 +93,19 @@ export function Preview() {
             <Smartphone className="h-3.5 w-3.5" />
           </ToggleGroupItem>
         </ToggleGroup>
-        <Button size="sm" variant="default" className="flex items-center gap-1">
-          Code
-          <Code className="h-4 w-4" />
-        </Button>
+
+        <CodeBlock
+          button={
+            <Button
+              size="sm"
+              variant="default"
+              className="flex items-center gap-1"
+            >
+              Code
+              <Code className="h-4 w-4" />
+            </Button>
+          }
+        />
       </div>
       <div className="flex-1 relative after:absolute after:inset-0 after:right-3 after:z-0 after:rounded-lg after:bg-muted-editor-foreground/25 after:border after:border-border-editor">
         <ResizablePanelGroup direction="horizontal" className="relative z-10">
