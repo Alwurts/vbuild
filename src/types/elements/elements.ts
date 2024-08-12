@@ -84,13 +84,15 @@ export function isValidComponentName(
 	);
 }
 
+export type TGenericComponentRegistryEntry = TGenericComponent & {
+	icon: React.ReactNode;
+	component: React.ReactNode;
+	dependencies: string[];
+	draggable: boolean;
+	droppable: boolean;
+	editable: boolean;
+};
+
 export type TGenericComponentRegistry = {
-	[key in GenericComponentName]: TGenericComponent & {
-		icon: React.ReactNode;
-		component: React.ReactNode;
-		dependencies: string[];
-		draggable: boolean;
-		droppable: boolean;
-		editable: boolean;
-	};
+	[key in GenericComponentName]: TGenericComponentRegistryEntry;
 };

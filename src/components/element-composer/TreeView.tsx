@@ -1,28 +1,16 @@
-import { useRef, useState } from "react";
+import { cloneElement, isValidElement, useRef, useState } from "react";
 import {
   ChevronRight,
   ChevronDown,
-  PanelsTopLeft,
-  Component,
-  SquareSlash,
-  SquareMousePointer,
-  SquareGanttChartIcon,
   GitBranch,
   EllipsisVertical,
-  CreditCard,
-  Keyboard,
-  Settings,
-  User,
   TrashIcon,
   Boxes,
 } from "lucide-react";
 import { Button } from "@/components/ui-editor/button";
 import { useComposerStore } from "@/store/useComposerStore";
 import { cn } from "@/lib/utils";
-import { checkIfDraggable, checkIfDroppable } from "@/lib/jsx/draggable";
 import { Separator } from "../ui-editor/separator";
-import type { GenericComponentName } from "@/types/elements/elements";
-import { RenderNodeIcon } from "./RenderNodeIcon";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -33,6 +21,7 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "../ui-editor/dropdown-menu";
+import { Registry } from "../elements/Registry";
 
 interface TreeNodeProps {
   nodeKey: string;
@@ -59,13 +48,31 @@ function TreeNode({ nodeKey, depth = 0, dropClassName }: TreeNodeProps) {
 
   const [isOpen, setIsOpen] = useState(true);
 
-  const isDraggable = checkIfDraggable(node);
+  if (typeof node !== "object") {
+    return (
+      <span
+        style={{
+          paddingLeft: `${depth * 16}px`,
+        }}
+        className="text-sm h-7 px-3 cursor-default"
+      >
+        {typeof node === "string"
+          ? "TextNode"
+          : typeof node === "number"
+          ? "NumberNode"
+          : typeof node === "boolean" && "BooleanNode"}
+      </span>
+    );
+  }
 
-  const isDroppable = checkIfDroppable(node);
+  const {
+    draggable: isDraggable,
+    droppable: isDroppable,
+    icon: nodeIcon,
+  } = Registry[node.type];
 
   const nodeIsDropping =
     isDroppable &&
-    typeof node === "object" &&
     dropItem?.drop?.dropNodeKey === node.key &&
     dropItem?.draggedStartedOn === "TreeView";
 
@@ -217,23 +224,6 @@ function TreeNode({ nodeKey, depth = 0, dropClassName }: TreeNodeProps) {
     moveNode(dropItem, node.key);
   };
 
-  if (typeof node !== "object") {
-    return (
-      <span
-        style={{
-          paddingLeft: `${depth * 16}px`,
-        }}
-        className="text-sm h-7 px-3 cursor-default"
-      >
-        {typeof node === "string"
-          ? "TextNode"
-          : typeof node === "number"
-          ? "NumberNode"
-          : typeof node === "boolean" && "BooleanNode"}
-      </span>
-    );
-  }
-
   return (
     <div
       onDragOver={isDroppable ? handleDragOver : undefined}
@@ -293,13 +283,17 @@ function TreeNode({ nodeKey, depth = 0, dropClassName }: TreeNodeProps) {
           className={cn(
             "absolute inset-0 flex gap-1 w-full items-center justify-start h-7",
             isDraggable && "cursor-move",
-            canvasHighlightKey === node.key && "border-2 border-yellow-500"  
+            canvasHighlightKey === node.key && "border-2 border-yellow-500"
           )}
           onClick={() => {
             setSelectedNodeKey(node.key);
           }}
         >
-          <RenderNodeIcon type={node.type} className="w-4 h-4 shrink-0" />
+          {nodeIcon &&
+            isValidElement(nodeIcon) &&
+            cloneElement(nodeIcon as React.ReactElement, {
+              className: "w-4 h-4",
+            })}
           <span className="truncate font-normal">{node.type}</span>
         </Button>
         <DropdownMenu>

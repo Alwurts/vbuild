@@ -1,6 +1,11 @@
 import type { TGenericComponentRegistry } from "@/types/elements/elements";
 import { Button } from "../ui/button";
-import { PanelsTopLeft, SquareGanttChartIcon, SquareSlash } from "lucide-react";
+import {
+  PanelsTopLeft,
+  SquareGanttChartIcon,
+  SquareMousePointer,
+  SquareSlash,
+} from "lucide-react";
 import {
   Card,
   CardContent,
@@ -89,7 +94,7 @@ export const Registry: TGenericComponentRegistry = {
     props: {},
     dependencies: [],
     draggable: true,
-    droppable: false,
+    droppable: true,
     editable: false,
   },
   span: {
@@ -99,7 +104,7 @@ export const Registry: TGenericComponentRegistry = {
     props: {},
     dependencies: [],
     draggable: true,
-    droppable: false,
+    droppable: true,
     editable: true,
   },
   h1: {
@@ -180,7 +185,7 @@ export const Registry: TGenericComponentRegistry = {
   },
   Button: {
     type: "Button",
-    icon: <PanelsTopLeft />,
+    icon: <SquareMousePointer />,
     component: <Button />,
     props: {},
     dependencies: [],

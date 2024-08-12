@@ -1,12 +1,8 @@
-import { checkIfDraggable, checkIfDroppable } from "@/lib/jsx/draggable";
-import { useComposerStore } from "@/store/useComposerStore";
-import React, { useState } from "react";
-import { RenderNode } from "@/components/element-composer/RenderNode";
-import { Preview } from "./Preview";
-import type { TNodesAbstract } from "@/types/elements/jsx";
+import { cloneElement, isValidElement } from "react";
 import { useShadowComposerStore } from "@/store/useShadowComposerStore";
 import { Button } from "../ui-editor/button";
 import { MousePointer } from "lucide-react";
+import { Registry } from "../elements/Registry";
 
 function CanvasNode({ nodeKey }: { nodeKey: string }) {
   const {
@@ -14,6 +10,7 @@ function CanvasNode({ nodeKey }: { nodeKey: string }) {
     nodes,
     setCanvasHighlightKey,
     setSelectedNodeKey,
+    setContentEditable,
   } = useShadowComposerStore();
 
   if (!nodes) {
@@ -22,13 +19,12 @@ function CanvasNode({ nodeKey }: { nodeKey: string }) {
 
   const node = nodes[nodeKey];
 
-  const isDraggable = checkIfDraggable;
-
-  const isDroppable = checkIfDroppable(node);
-
   if (typeof node !== "object") {
     return node;
   }
+
+  const { component: nodeComponent, editable: isEditable } =
+    Registry[node.type];
 
   const nodeChildren = node.children?.map((childKey) => (
     <CanvasNode key={childKey} nodeKey={childKey} />
@@ -50,9 +46,21 @@ function CanvasNode({ nodeKey }: { nodeKey: string }) {
         setCanvasHighlightKey(null);
       }}
     >
-      <RenderNode key={nodeKey} node={node} {...node.props}>
-        {nodeChildren}
-      </RenderNode>
+      {nodeComponent &&
+        isValidElement(nodeComponent) &&
+        cloneElement(nodeComponent as React.ReactElement, {
+          ...node.props,
+          key: nodeKey,
+          children: nodeChildren,
+          contentEditable: isEditable,
+          onBlur: isEditable
+            ? (e: React.FocusEvent<HTMLElement>) => {
+                const newContent = e.target.innerHTML;
+                if (typeof node !== "object") return;
+                setContentEditable(node.key, newContent);
+              }
+            : nodeComponent.props.onBlur,
+        })}
       {canvasHighlightKey === nodeKey && (
         <div className="pointer-events-none absolute inset-0 w-full h-full bg-transparent border-2 border-yellow-500 box-border flex justify-start items-start">
           <Button
