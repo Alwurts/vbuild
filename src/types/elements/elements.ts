@@ -22,6 +22,14 @@ import type {
 	TPComponent,
 } from "@/types/elements/text";
 
+export type TGenericComponentInfer<T> = {
+	props: Omit<InferComponentProps<T>, "children"> & {};
+};
+
+type InferComponentProps<T> = T extends React.ComponentType<infer P>
+	? P
+	: never;
+
 const GenericComponentsNames = {
 	Root: "Root",
 	div: "div",
@@ -45,8 +53,7 @@ const GenericComponentsNames = {
 export type GenericComponentName =
 	(typeof GenericComponentsNames)[keyof typeof GenericComponentsNames];
 
-export type TGenericComponent =
-	| TRootComponent
+export type TGenericComponentWithParent =
 	| TDivComponent
 	| TSpanComponent
 	| TH1Component
@@ -65,6 +72,8 @@ export type TGenericComponent =
 	| TCardTitleComponent
 	| TCardDescriptionComponent;
 
+export type TGenericComponent = TRootComponent | TGenericComponentWithParent;
+
 export function isValidComponentName(
 	name: unknown,
 ): name is GenericComponentName {
@@ -74,3 +83,14 @@ export function isValidComponentName(
 		GenericComponentNames.includes(name as GenericComponentName)
 	);
 }
+
+export type TGenericComponentRegistry = {
+	[key in GenericComponentName]: TGenericComponent & {
+		icon: React.ReactNode;
+		component: React.ReactNode;
+		dependencies: string[];
+		draggable: boolean;
+		droppable: boolean;
+		editable: boolean;
+	};
+};

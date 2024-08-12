@@ -1,32 +1,28 @@
-import type { TGenericComponent } from "./elements";
-
-export type TComponent<T> = {
-	key: string;
-	props: Omit<InferComponentProps<T>, "children"> & {};
-};
-
-// GenericComponent
-
-export type TGenericComponentParent = {
-	parent: string;
-};
+import type { TGenericComponentWithParent } from "./elements";
+import type { TRootComponent } from "./layout";
 
 type TElementBasic = string | number | boolean;
 
-// Abstract types
+// Generic component abstract
 
-type TComponentChildrenAbstract = {
+type TGenericComponentParentAbstract = {
+	parent: string;
+};
+
+type TGenericComponentAbstract = {
+	key: string;
 	children: string[] | null;
 };
 
+// Node abstract
+
 export type TNodeAbstract =
-	| (TComponentChildrenAbstract & TGenericComponent)
+	| (TGenericComponentAbstract & TRootComponent)
+	| (TGenericComponentAbstract &
+			TGenericComponentParentAbstract &
+			TGenericComponentWithParent)
 	| TElementBasic;
 
 export type TNodesAbstract = {
 	[key: string]: TNodeAbstract;
 };
-
-type InferComponentProps<T> = T extends React.ComponentType<infer P>
-	? P
-	: never;

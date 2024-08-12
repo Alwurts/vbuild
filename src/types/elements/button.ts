@@ -1,7 +1,6 @@
 import type { Button } from "@/components/ui-editor/button";
-import type { TComponent, TGenericComponentParent } from "./jsx";
+import type { TGenericComponentInfer } from "./elements";
 
-export type TButtonComponent = TComponent<typeof Button> &
-	TGenericComponentParent & {
-		type: "Button";
-	};
+export type TButtonComponent = TGenericComponentInfer<typeof Button> & {
+	type: "Button";
+};

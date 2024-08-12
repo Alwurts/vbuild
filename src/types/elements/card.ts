@@ -6,34 +6,32 @@ import type {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
-import type { TComponent, TGenericComponentParent } from "./jsx";
+import type { TGenericComponentInfer } from "./elements";
 
-export type TCardComponent = TComponent<typeof Card> &
-	TGenericComponentParent & {
-		type: "Card";
-	};
+export type TCardComponent = TGenericComponentInfer<typeof Card> & {
+	type: "Card";
+};
 
-export type TCardHeaderComponent = TComponent<typeof CardHeader> &
-	TGenericComponentParent & {
-		type: "CardHeader";
-	};
+export type TCardHeaderComponent = TGenericComponentInfer<typeof CardHeader> & {
+	type: "CardHeader";
+};
 
-export type TCardContentComponent = TComponent<typeof CardContent> &
-	TGenericComponentParent & {
-		type: "CardContent";
-	};
+export type TCardContentComponent = TGenericComponentInfer<
+	typeof CardContent
+> & {
+	type: "CardContent";
+};
 
-export type TCardFooterComponent = TComponent<typeof CardFooter> &
-	TGenericComponentParent & {
-		type: "CardFooter";
-	};
+export type TCardFooterComponent = TGenericComponentInfer<typeof CardFooter> & {
+	type: "CardFooter";
+};
 
-export type TCardTitleComponent = TComponent<typeof CardTitle> &
-	TGenericComponentParent & {
-		type: "CardTitle";
-	};
+export type TCardTitleComponent = TGenericComponentInfer<typeof CardTitle> & {
+	type: "CardTitle";
+};
 
-export type TCardDescriptionComponent = TComponent<typeof CardDescription> &
-	TGenericComponentParent & {
-		type: "CardDescription";
-	};
+export type TCardDescriptionComponent = TGenericComponentInfer<
+	typeof CardDescription
+> & {
+	type: "CardDescription";
+};
