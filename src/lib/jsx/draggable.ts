@@ -5,7 +5,7 @@ export const checkIfDraggable = (node: TNodeAbstract) =>
 
 export const checkIfDroppable = (node: TNodeAbstract) =>
 	typeof node === "object" &&
-	(node.type === "Div" ||
+	(node.type === "div" ||
 		node.type === "Root" ||
 		node.type === "Card" ||
 		node.type === "CardContent" ||

@@ -13,6 +13,7 @@ const jsxNodesToNodesAbstract = (
 		parentKey: string | null = null,
 	): string | null => {
 		const newkey = uuidv4();
+		console.log("newkey", newkey);
 
 		if (reactNode === null || reactNode === undefined) {
 			return null;
@@ -24,6 +25,7 @@ const jsxNodesToNodesAbstract = (
 			typeof reactNode === "boolean"
 		) {
 			newNodesAbstract[newkey] = reactNode;
+			console.log("non object", reactNode);
 			return newkey;
 		}
 
@@ -32,6 +34,17 @@ const jsxNodesToNodesAbstract = (
 		}
 
 		const reactNodeClone = React.cloneElement(reactNode) as React.ReactElement;
+
+		console.log("reactNodeClone", reactNodeClone);
+
+		const typeName =
+			typeof reactNodeClone.type === "string"
+				? reactNodeClone.type
+				: "displayName" in reactNodeClone.type
+					? reactNodeClone.type.displayName
+					: reactNodeClone.type.name;
+
+		console.log("typeName", typeName);
 
 		const { children, ...props } = reactNodeClone.props;
 
@@ -49,13 +62,6 @@ const jsxNodesToNodesAbstract = (
 					(childKey: string | null): childKey is string => childKey !== null,
 				);
 		}
-
-		const typeName =
-			typeof reactNodeClone.type === "string"
-				? reactNodeClone.type
-				: "displayName" in reactNodeClone.type
-					? reactNodeClone.type.displayName
-					: reactNodeClone.type.name;
 
 		if (!isValidComponentName(typeName)) {
 			console.log("typeName", typeName);

@@ -1,7 +1,7 @@
 import {
   ROOT_COMPONENT_ABSTRACT_DEFAULT,
   ROOT_COMPONENT_ABSTRACT_DEFAULT_HEAD_KEY,
-} from "@/components/element-composer/DefaultJSX";
+} from "@/components/element-composer/defaultJSX";
 import type { ComposerStore } from "@/types/composer-store";
 import { createRef } from "react";
 import { create } from "zustand";

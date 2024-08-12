@@ -1,6 +1,5 @@
 import jsxNodesToNodesAbstract from "@/lib/jsx/jsxToNodesAbstract";
 import { Root } from "@/components/elements/Root";
-import { Div } from "@/components/elements/Div";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -16,9 +15,9 @@ export const [
   ROOT_COMPONENT_ABSTRACT_DEFAULT_HEAD_KEY,
 ] = jsxNodesToNodesAbstract(
   <Root className="flex flex-col items-stretch justify-start h-screen w-screen p-4 gap-4">
-    <Div className="border border-border rounded-lg">
+    <div className="border border-border rounded-lg">
       <CardTitle className="text-red-500 font-bold">Card Title</CardTitle>
-    </Div>
+    </div>
     <Card className="">
       <CardHeader>
         <CardTitle className="text-red-500 font-bold">Card Title</CardTitle>

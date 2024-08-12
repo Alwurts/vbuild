@@ -29,7 +29,7 @@ export function RenderNodeIcon({
       return <SquareSlash className={className} />;
     case "CardDescription":
       return <SquareSlash className={className} />;
-    case "Div":
+    case "div":
       return <SquareGanttChartIcon className={className} />;
     case "Button":
       return <SquareMousePointer className={className} />;

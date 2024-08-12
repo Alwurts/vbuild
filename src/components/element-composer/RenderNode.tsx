@@ -1,6 +1,5 @@
 import type { TNodeAbstract } from "@/types/elements/jsx";
 import { Button } from "@/components/ui-editor/button";
-import { Div } from "@/components/elements/Div";
 import { Root } from "@/components/elements/Root";
 import {
   Card,
@@ -44,8 +43,8 @@ export function RenderNode({
   switch (node.type) {
     case "Root":
       return <Root {...props}>{children}</Root>;
-    case "Div":
-      return <Div {...props}>{children}</Div>;
+    case "div":
+      return <div {...props}>{children}</div>;
     case "Button":
       return (
         <Button {...props} contentEditable onBlur={handleInput}>

@@ -15,7 +15,7 @@ type TElementBasic = string | number | boolean;
 
 // Abstract types
 
-export type TComponentChildrenAbstract = {
+type TComponentChildrenAbstract = {
 	children: string[] | null;
 };
 
@@ -27,6 +27,6 @@ export type TNodesAbstract = {
 	[key: string]: TNodeAbstract;
 };
 
-export type InferComponentProps<T> = T extends React.ComponentType<infer P>
+type InferComponentProps<T> = T extends React.ComponentType<infer P>
 	? P
 	: never;
