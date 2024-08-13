@@ -5,31 +5,20 @@ import type { ImperativePanelHandle } from "react-resizable-panels";
 
 import { cn } from "@/lib/utils";
 
-import { Tabs, TabsContent } from "@/components/ui-editor/tabs";
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
 } from "../ui-editor/resizable";
-import {
-  CircleArrowLeft,
-  CircleX,
-  Code,
-  LoaderCircle,
-  Monitor,
-  Smartphone,
-  Tablet,
-} from "lucide-react";
+import { Code, Monitor, Smartphone, Tablet } from "lucide-react";
 import { ToggleGroup, ToggleGroupItem } from "../ui-editor/toggle-group";
 import { Button } from "../ui-editor/button";
 import { useComposerStore } from "@/store/useComposerStore";
 import { useEffect, useRef, useState } from "react";
 import type { UpdateShadowState } from "@/types/shadow-composer-store";
-import { nodesAbstractToJSX } from "@/lib/jsx/nodesAbstractToJSX";
-import { CodeDisplay } from "../code/CodeDisplay";
 import { CodeBlock } from "../code/CodeBlock";
 
-export function Preview() {
+export default function Preview() {
   const [viewerSize, setViewerSize] = useState("100");
   const viewerPanelRef = useRef<ImperativePanelHandle>(null);
   const iframeRef = useComposerStore((state) => state.iframeRef);
@@ -41,16 +30,22 @@ export function Preview() {
     (state) => state.receiveUpdateFromShadow
   );
 
-  useEffect(() => {
+  /* useEffect(() => {
+    console.log("useEffect sendUpdateOfWholeState");
     sendUpdateOfWholeState();
-  }, [sendUpdateOfWholeState]);
+  }, [sendUpdateOfWholeState]); */
 
   useEffect(() => {
     const handleMessageFromShadow = (
-      event: MessageEvent<{
-        type: "UPDATE_STATE_FROM_SHADOW";
-        update: UpdateShadowState;
-      }>
+      event: MessageEvent<
+        | {
+            type: "UPDATE_STATE_FROM_SHADOW";
+            update: UpdateShadowState;
+          }
+        | {
+            type: "CANVAS_READY";
+          }
+      >
     ) => {
       if (event.origin !== window.location.origin) {
         return;
@@ -59,6 +54,9 @@ export function Preview() {
       if (event.data.type === "UPDATE_STATE_FROM_SHADOW") {
         receiveUpdateFromShadow(event.data.update);
       }
+      if (event.data.type === "CANVAS_READY") {
+        sendUpdateOfWholeState();
+      }
     };
 
     window.addEventListener("message", handleMessageFromShadow);
@@ -66,7 +64,7 @@ export function Preview() {
     return () => {
       window.removeEventListener("message", handleMessageFromShadow);
     };
-  }, [receiveUpdateFromShadow]);
+  }, [receiveUpdateFromShadow, sendUpdateOfWholeState]);
 
   return (
     <div className="flex-1 relative py-3 pl-4 pr-1 bg-muted-editor flex flex-col gap-2">
@@ -121,12 +119,6 @@ export function Preview() {
             }}
             minSize={30}
           >
-            {/* {iframeIsLoading ? (
-              <div className="absolute inset-0 z-30 flex h-full w-full items-center justify-center gap-2 bg-background-editor text-sm text-muted-editor-foreground">
-                <LoaderCircle className="h-4 w-4 animate-spin" />
-                Loading...
-              </div>
-            ) : null} */}
             <iframe
               ref={iframeRef}
               title="block-preview"
@@ -135,6 +127,7 @@ export function Preview() {
               className="relative z-20 w-full bg-background-editor"
               onLoad={() => {
                 console.log("iframe loaded");
+                /* sendUpdateOfWholeState(); */
                 /* setIframeIsLoading(false); */
               }}
             />

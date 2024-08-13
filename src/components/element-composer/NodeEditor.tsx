@@ -3,7 +3,7 @@ import { Separator } from "@/components/ui-editor/separator";
 import { Registry } from "../elements/Registry";
 import { cloneElement, isValidElement } from "react";
 
-export const NodeEditor = () => {
+export default function NodeEditor() {
   const { selectedNodeKey, nodes } = useComposerStore();
 
   const selectedNode = selectedNodeKey ? nodes[selectedNodeKey] : null;
@@ -49,4 +49,4 @@ export const NodeEditor = () => {
       </div>
     </div>
   );
-};
+}

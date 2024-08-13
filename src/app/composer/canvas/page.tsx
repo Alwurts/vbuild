@@ -7,18 +7,23 @@ import { LoaderCircle } from "lucide-react";
 import { useShadowComposerStore } from "@/store/useShadowComposerStore";
 
 export default function CanvasPage() {
-  const { receiveUpdateFromComposer: parseStateUpdate, nodes, headNodeKey } = useShadowComposerStore();
+  const { receiveUpdateFromComposer, nodes, headNodeKey } =
+    useShadowComposerStore();
 
   useEffect(() => {
+    console.log("useEffect CanvasPage");
     const handleMessage = (event: MessageEvent) => {
       if (event.data.type === "UPDATE_STATE") {
-        parseStateUpdate(event.data.update);
+        receiveUpdateFromComposer(event.data.update);
       }
     };
 
     window.addEventListener("message", handleMessage);
+    window.parent.postMessage({
+      type: "CANVAS_READY",
+    });
     return () => window.removeEventListener("message", handleMessage);
-  }, [parseStateUpdate]);
+  }, [receiveUpdateFromComposer]);
 
   if (!nodes || !headNodeKey) {
     return (

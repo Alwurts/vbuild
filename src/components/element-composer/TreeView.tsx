@@ -277,7 +277,7 @@ function TreeNodePlaceholder({
 }
 
 // TreeView component
-export const TreeView = () => {
+export default function TreeView() {
   const { headNodeKey } = useComposerStore();
   return (
     <div className="border-r p-2 w-[240px]">
@@ -291,4 +291,4 @@ export const TreeView = () => {
       </div>
     </div>
   );
-};
+}
