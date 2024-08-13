@@ -25,7 +25,7 @@ export const useComposerStore = create<ComposerStore>((set, get) => ({
     const {
       nodes,
       headNodeKey,
-      canvasHighlightKey,
+      canvasHighlight: canvasHighlightKey,
       selectedNodeKey,
       dropItem,
       sendUpdateToShadow,
@@ -33,7 +33,7 @@ export const useComposerStore = create<ComposerStore>((set, get) => ({
     sendUpdateToShadow({
       nodes,
       headNodeKey,
-      canvasHighlightKey,
+      canvasHighlight: canvasHighlightKey,
       selectedNodeKey,
       dropItem,
     });
@@ -42,10 +42,10 @@ export const useComposerStore = create<ComposerStore>((set, get) => ({
     set((state) => ({
       nodes: update.nodes ?? state.nodes,
       headNodeKey: update.headNodeKey ?? state.headNodeKey,
-      canvasHighlightKey:
-        update.canvasHighlightKey !== undefined
-          ? update.canvasHighlightKey
-          : state.canvasHighlightKey,
+      canvasHighlight:
+        update.canvasHighlight !== undefined
+          ? update.canvasHighlight
+          : state.canvasHighlight,
       selectedNodeKey:
         update.selectedNodeKey !== undefined
           ? update.selectedNodeKey
@@ -58,12 +58,12 @@ export const useComposerStore = create<ComposerStore>((set, get) => ({
   headNodeKey: ROOT_COMPONENT_ABSTRACT_DEFAULT_HEAD_KEY,
   selectedNodeKey: null,
   setSelectedNodeKey: (key) => set({ selectedNodeKey: key }),
-  canvasHighlightKey: null,
-  setCanvasHighlightKey: (key) => {
-    set({ canvasHighlightKey: key });
+  canvasHighlight: null,
+  setCanvasHighlight: (highlight) => {
+    set({ canvasHighlight: highlight });
     const { sendUpdateToShadow } = get();
     sendUpdateToShadow({
-      canvasHighlightKey: key,
+      canvasHighlight: highlight,
     });
   },
   dropItem: null,

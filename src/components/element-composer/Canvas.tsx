@@ -1,17 +1,35 @@
-import { cloneElement, isValidElement } from "react";
+import { cloneElement, isValidElement, useEffect, useRef } from "react";
 import { useShadowComposerStore } from "@/store/useShadowComposerStore";
 import { Button } from "../ui-editor/button";
 import { MousePointer } from "lucide-react";
 import { Registry } from "../elements/Registry";
+import { cn } from "@/lib/utils";
+import { createPortal } from "react-dom";
 
 function CanvasNode({ nodeKey }: { nodeKey: string }) {
+  const nodeRef = useRef<HTMLElement>(null);
   const {
-    canvasHighlightKey,
+    canvasHighlight,
     nodes,
-    setCanvasHighlightKey,
+    setCanvasHighlight,
     setSelectedNodeKey,
     setContentEditable,
   } = useShadowComposerStore();
+
+  useEffect(() => {
+    if (
+      canvasHighlight?.nodeKey === nodeKey &&
+      !canvasHighlight.domRect &&
+      nodeRef.current
+    ) {
+      console.log("canvas highlight", canvasHighlight);
+      const rect = nodeRef.current.getBoundingClientRect();
+      setCanvasHighlight({
+        nodeKey: nodeKey,
+        domRect: rect,
+      });
+    }
+  }, [canvasHighlight, nodeKey, setCanvasHighlight]);
 
   if (!nodes) {
     return null;
@@ -23,34 +41,35 @@ function CanvasNode({ nodeKey }: { nodeKey: string }) {
     return node;
   }
 
-  const { component: nodeComponent, editable: isEditable } =
-    Registry[node.type];
+  const {
+    component: nodeComponent,
+    editable: isEditable,
+    draggable,
+  } = Registry[node.type];
 
   const nodeChildren = node.children?.map((childKey) => (
     <CanvasNode key={childKey} nodeKey={childKey} />
   ));
 
-  return (
-    <div
-      className="relative inline"
-      onDragOver={(e) => {
-        console.log("Dragging over", nodeKey);
-        e.preventDefault();
-        e.stopPropagation();
-        /* setCanvashighlightKey(nodeKey); */
-      }}
-      onMouseEnter={() => {
-        setCanvasHighlightKey(nodeKey);
-      }}
-      onMouseLeave={() => {
-        setCanvasHighlightKey(null);
-      }}
-    >
-      {nodeComponent &&
-        isValidElement(nodeComponent) &&
-        cloneElement(nodeComponent as React.ReactElement, {
+  const onMouseOver = (e: React.MouseEvent<HTMLElement>, type: string) => {
+    e.stopPropagation();
+    const target = e.target as HTMLElement;
+    const rect = target.getBoundingClientRect();
+    setCanvasHighlight({ nodeKey: nodeKey, domRect: rect });
+  };
+
+  const onMouseLeave = (e: React.MouseEvent<HTMLElement>, type: string) => {
+    e.stopPropagation();
+    setCanvasHighlight(null);
+  };
+
+  const clonedNodeComponent =
+    nodeComponent && isValidElement(nodeComponent)
+      ? cloneElement(nodeComponent as React.ReactElement, {
           ...node.props,
           key: nodeKey,
+          draggable: draggable,
+          ref: nodeRef,
           children: nodeChildren,
           contentEditable: isEditable,
           onBlur: isEditable
@@ -59,26 +78,45 @@ function CanvasNode({ nodeKey }: { nodeKey: string }) {
                 if (typeof node !== "object") return;
                 setContentEditable(node.key, newContent);
               }
-            : nodeComponent.props.onBlur,
-        })}
-      {canvasHighlightKey === nodeKey && (
-        <div className="pointer-events-none absolute inset-0 w-full h-full bg-transparent border-2 border-yellow-500 box-border flex justify-start items-start">
-          <Button
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              console.log("Selecting:", nodeKey);
-              setSelectedNodeKey(nodeKey);
-            }}
-            variant="ghost"
-            size="icon"
-            className="h-4 w-4 pointer-events-auto bg-yellow-500 hover:bg-yellow-500 hover:text-primary-editor-foreground/50 rounded-none rounded-br-md text-primary-editor-foreground"
-          >
-            <MousePointer className="w-4 h-4" />
-          </Button>
-        </div>
+            : undefined,
+          onMouseOver: (e: React.MouseEvent<HTMLElement>) =>
+            onMouseOver(e, node.type),
+          onMouseLeave: (e: React.MouseEvent<HTMLElement>) =>
+            onMouseLeave(e, node.type),
+          onClick: (e: React.MouseEvent<HTMLElement>) => {
+            console.log("Clicked:", nodeKey);
+            e.stopPropagation();
+            setSelectedNodeKey(nodeKey);
+          },
+        })
+      : null;
+
+  return (
+    <>
+      {clonedNodeComponent}
+      {canvasHighlight?.nodeKey === nodeKey &&
+        canvasHighlight.domRect &&
+        createPortal(
+          <CanvasHighlight domRect={canvasHighlight.domRect} />,
+          document.body
+        )}
+    </>
+  );
+}
+
+function CanvasHighlight({ domRect }: { domRect: DOMRect }) {
+  return (
+    <div
+      style={{
+        top: domRect.top,
+        left: domRect.left,
+        width: domRect.width,
+        height: domRect.height,
+      }}
+      className={cn(
+        "pointer-events-none rounded-sm fixed z-30 bg-transparent border-[3px] border-yellow-500 flex justify-start items-start"
       )}
-    </div>
+    />
   );
 }
 

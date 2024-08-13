@@ -9,7 +9,7 @@ export const useShadowComposerStore = create<ShadowComposerStore>(
     nodes: null,
     headNodeKey: null,
     selectedNodeKey: null,
-    canvasHighlightKey: null,
+    canvasHighlight: null,
     dropItem: null,
     setContentEditable: (nodeKey, content) => {
       set((state) => {
@@ -32,9 +32,9 @@ export const useShadowComposerStore = create<ShadowComposerStore>(
         };
       });
     },
-    setCanvasHighlightKey: (key) => {
-      set({ canvasHighlightKey: key });
-      get().sendUpdateToComposer({ canvasHighlightKey: key });
+    setCanvasHighlight: (key) => {
+      set({ canvasHighlight: key });
+      get().sendUpdateToComposer({ canvasHighlight: key });
     },
     setSelectedNodeKey: (key) => {
       set({ selectedNodeKey: key });
@@ -47,13 +47,14 @@ export const useShadowComposerStore = create<ShadowComposerStore>(
       });
     },
     receiveUpdateFromComposer: (updatedState) => {
+      console.log("receiveUpdateFromComposer", updatedState);
       set((state) => ({
         nodes: updatedState.nodes ?? state.nodes,
         headNodeKey: updatedState.headNodeKey ?? state.headNodeKey,
-        canvasHighlightKey:
-          updatedState.canvasHighlightKey !== undefined
-            ? updatedState.canvasHighlightKey
-            : state.canvasHighlightKey,
+        canvasHighlight:
+          updatedState.canvasHighlight !== undefined
+            ? updatedState.canvasHighlight
+            : state.canvasHighlight,
         selectedNodeKey:
           updatedState.selectedNodeKey !== undefined
             ? updatedState.selectedNodeKey

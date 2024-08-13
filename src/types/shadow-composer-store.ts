@@ -4,7 +4,7 @@ export type UpdateShadowState = Partial<
 	Omit<
 		ShadowComposerStore,
 		| "receiveUpdateFromComposer"
-		| "setCanvasHighlightKey"
+		| "setCanvasHighlight"
 		| "sendUpdateToComposer"
 		| "setSelectedNodeKey"
 		| "setContentEditable"
@@ -14,10 +14,10 @@ export type UpdateShadowState = Partial<
 export interface ShadowComposerStore {
 	nodes: ComposerStore["nodes"] | null;
 	headNodeKey: ComposerStore["headNodeKey"] | null;
-	canvasHighlightKey: ComposerStore["canvasHighlightKey"] | null;
+	canvasHighlight: ComposerStore["canvasHighlight"] | null;
 	selectedNodeKey: ComposerStore["selectedNodeKey"] | null;
 	dropItem: ComposerStore["dropItem"] | null;
-	setCanvasHighlightKey: ComposerStore["setCanvasHighlightKey"];
+	setCanvasHighlight: ComposerStore["setCanvasHighlight"];
 	setSelectedNodeKey: ComposerStore["setSelectedNodeKey"];
 	setContentEditable: (nodeKey: string, content: string) => void;
 	sendUpdateToComposer: (update: UpdateShadowState) => void;

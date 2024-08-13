@@ -11,8 +11,12 @@ export interface ComposerStore {
 	) => void;
 	selectedNodeKey: string | null;
 	setSelectedNodeKey: (key: string | null) => void;
-	canvasHighlightKey: string | null;
-	setCanvasHighlightKey: (key: string | null) => void;
+	canvasHighlight: {
+		nodeKey: string;
+		domRect?: DOMRect;
+	} | null;
+	setCanvasHighlight: (highlight: ComposerStore["canvasHighlight"]) => void;
+	// Drag and drop
 	dropItem: {
 		draggedStartedOn: "TreeView" | "Canvas";
 		draggedNodeKey: string;
@@ -30,6 +34,7 @@ export interface ComposerStore {
 			index: number;
 		} | null,
 	) => void;
+	// Shadow Composer stuff
 	sendUpdateOfWholeStateToShadow: () => void;
 	sendUpdateToShadow: (update: UpdateShadowState) => void;
 	receiveUpdateFromShadow: (update: UpdateShadowState) => void;

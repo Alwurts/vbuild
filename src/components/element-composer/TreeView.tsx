@@ -34,8 +34,8 @@ function TreeNode({ nodeKey, depth = 0 }: TreeNodeProps) {
     moveNode,
     nodes,
     setSelectedNodeKey,
-    setCanvasHighlightKey,
-    canvasHighlightKey,
+    setCanvasHighlight,
+    canvasHighlight,
     dropItem,
     setDraggableDropItem,
     setDropDropItem,
@@ -174,8 +174,12 @@ function TreeNode({ nodeKey, depth = 0 }: TreeNodeProps) {
           onDragOver={droppable ? handleDragOver : undefined}
           onDragLeave={droppable ? handleDragLeave : undefined}
           onDrop={droppable ? handleDrop : undefined}
-          onMouseEnter={() => setCanvasHighlightKey(node.key)}
-          onMouseLeave={() => setCanvasHighlightKey(null)}
+          onMouseEnter={(e) =>
+            setCanvasHighlight({
+              nodeKey: node.key,
+            })
+          }
+          onMouseLeave={() => setCanvasHighlight(null)}
           variant="ghost"
           size="sm"
           style={{
@@ -183,7 +187,7 @@ function TreeNode({ nodeKey, depth = 0 }: TreeNodeProps) {
           }}
           className={cn(
             "absolute border-2 border-transparent inset-0 flex gap-1 w-full items-center justify-start h-7 pr-6 box-border",
-            canvasHighlightKey === node.key && "border-yellow-500",
+            canvasHighlight?.nodeKey === node.key && "border-yellow-500",
             draggable && "cursor-move",
             nodeIsDropping &&
               dropItem?.drop?.type === "inside" &&
