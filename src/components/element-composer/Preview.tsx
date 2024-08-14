@@ -124,11 +124,6 @@ export default function Preview() {
               src={"/composer/canvas"}
               height={"100%"}
               className="relative z-20 w-full bg-background-editor"
-              onLoad={() => {
-                console.log("iframe loaded");
-                /* sendUpdateOfWholeState(); */
-                /* setIframeIsLoading(false); */
-              }}
             />
           </ResizablePanel>
           <ResizableHandle

@@ -6,8 +6,10 @@ export interface ComposerStore {
 	nodes: TNodesAbstract;
 	headNodeKey: string;
 	moveNode: (
-		draggedNode: ComposerStore["dropItem"],
+		nodeToMoveKey: string,
 		newParentKey: string,
+		newParentIndex: number,
+		indexBeforeOrAfter: "before" | "after",
 	) => void;
 	selectedNodeKey: string | null;
 	setSelectedNodeKey: (key: string | null) => void;
@@ -17,22 +19,25 @@ export interface ComposerStore {
 	} | null;
 	setCanvasHighlight: (highlight: ComposerStore["canvasHighlight"]) => void;
 	// Drag and drop
-	dropItem: {
-		draggedStartedOn: "TreeView" | "Canvas";
-		draggedNodeKey: string;
-		drop: {
-			dropNodeKey: string;
+	dragAndDropTreeNode: {
+		startedOn: "TreeView" | "Canvas";
+		draggingItem: {
+			nodeKey: string;
+			domRect: DOMRect;
+		};
+		dropZone: {
+			nodeKey: string;
 			type: "before" | "after" | "inside";
-			index: number;
 		} | null;
 	} | null;
-	setDraggableDropItem: (dropItem: ComposerStore["dropItem"]) => void;
-	setDropDropItem: (
-		drop: {
-			dropNodeKey: string;
-			type: "before" | "after" | "inside";
-			index: number;
-		} | null,
+	resetDragAndDropTreeNode: () => void;
+	setDraggingTreeNode: (
+		draggingItem: NonNullable<
+			ComposerStore["dragAndDropTreeNode"]
+		>["draggingItem"],
+	) => void;
+	setTreeNodeDropZone: (
+		dropZone: NonNullable<ComposerStore["dragAndDropTreeNode"]>["dropZone"],
 	) => void;
 	// Shadow Composer stuff
 	sendUpdateOfWholeStateToShadow: () => void;

@@ -21,7 +21,6 @@ function CanvasNode({ nodeKey }: { nodeKey: string }) {
       !canvasHighlight.domRect &&
       nodeRef.current
     ) {
-      console.log("canvas highlight", canvasHighlight);
       const rect = nodeRef.current.getBoundingClientRect();
       setCanvasHighlight({
         nodeKey: nodeKey,
@@ -83,7 +82,6 @@ function CanvasNode({ nodeKey }: { nodeKey: string }) {
           onMouseLeave: (e: React.MouseEvent<HTMLElement>) =>
             onMouseLeave(e, node.type),
           onClick: (e: React.MouseEvent<HTMLElement>) => {
-            console.log("Clicked:", nodeKey);
             e.stopPropagation();
             setSelectedNodeKey(nodeKey);
           },
@@ -120,10 +118,10 @@ function CanvasHighlight({ domRect }: { domRect: DOMRect }) {
 }
 
 export default function Canvas() {
-  const { nodes, headNodeKey, receiveUpdateFromComposer } = useShadowComposerStore();
+  const { nodes, headNodeKey, receiveUpdateFromComposer } =
+    useShadowComposerStore();
 
   useEffect(() => {
-    console.log("useEffect CanvasPage");
     const handleMessage = (event: MessageEvent) => {
       if (event.data.type === "UPDATE_STATE") {
         receiveUpdateFromComposer(event.data.update);

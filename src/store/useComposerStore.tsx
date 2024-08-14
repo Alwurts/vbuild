@@ -8,6 +8,132 @@ import { create } from "zustand";
 
 export const useComposerStore = create<ComposerStore>((set, get) => ({
   iframeRef: createRef(),
+  nodes: ROOT_COMPONENT_ABSTRACT_DEFAULT,
+  headNodeKey: ROOT_COMPONENT_ABSTRACT_DEFAULT_HEAD_KEY,
+  selectedNodeKey: null,
+  setSelectedNodeKey: (key) => set({ selectedNodeKey: key }),
+  canvasHighlight: null,
+  setCanvasHighlight: (highlight) => {
+    set({ canvasHighlight: highlight });
+    const { sendUpdateToShadow } = get();
+    sendUpdateToShadow({
+      canvasHighlight: highlight,
+    });
+  },
+  moveNode: (
+    nodeToMoveKey,
+    newParentKey,
+    newParentIndex,
+    indexBeforOrAfter
+  ) => {
+    set((state) => {
+      let nodeToMove = state.nodes[nodeToMoveKey];
+
+      if (typeof nodeToMove !== "object") {
+        throw Error("Cannot move non object node");
+      }
+
+      if (nodeToMove.type === "Root") {
+        throw Error("Cannot move root node");
+      }
+
+      const newNodes = { ...state.nodes };
+
+      const oldParentKey = nodeToMove.parent;
+      let oldParent = state.nodes[oldParentKey];
+
+      if (!oldParent || typeof oldParent !== "object" || !oldParent.children) {
+        throw Error("Parent node not found or children null");
+      }
+
+      if (oldParentKey === newParentKey) {
+        // Just moving the node within the same parent
+        const currentIndex = oldParent.children.indexOf(nodeToMoveKey);
+        let newIndex =
+          indexBeforOrAfter === "before" ? newParentIndex : newParentIndex + 1;
+
+        // Adjust the new index if we're moving the node forward
+        if (currentIndex < newIndex) {
+          newIndex--;
+        }
+
+        const newChildren = [...oldParent.children];
+        newChildren.splice(currentIndex, 1);
+        newChildren.splice(newIndex, 0, nodeToMoveKey);
+
+        newNodes[oldParent.key] = {
+          ...oldParent,
+          children: newChildren,
+        };
+      } else {
+        oldParent = {
+          ...oldParent,
+          children: oldParent.children.filter((key) => key !== nodeToMoveKey),
+        };
+
+        let newParent = state.nodes[newParentKey];
+
+        if (!newParent || typeof newParent !== "object") {
+          throw Error("Drop zone node not found or not an object");
+        }
+
+        const parsedIndex =
+          indexBeforOrAfter === "before" ? newParentIndex : newParentIndex + 1;
+
+        newParent = {
+          ...newParent,
+          children: newParent.children
+            ? [
+                ...newParent.children.slice(0, parsedIndex),
+                nodeToMoveKey,
+                ...newParent.children.slice(parsedIndex),
+              ]
+            : [nodeToMoveKey],
+        };
+
+        nodeToMove = {
+          ...nodeToMove,
+          parent: newParent.key,
+        };
+
+        newNodes[oldParent.key] = oldParent;
+        newNodes[nodeToMove.key] = nodeToMove;
+        newNodes[newParent.key] = newParent;
+      }
+
+      get().sendUpdateToShadow({
+        nodes: newNodes,
+      });
+
+      return {
+        nodes: newNodes,
+      };
+    });
+  },
+  // Drag and Drop Tree Node
+  dragAndDropTreeNode: null,
+  resetDragAndDropTreeNode: () => set({ dragAndDropTreeNode: null }),
+  setDraggingTreeNode: (dropItem) =>
+    set({
+      dragAndDropTreeNode: {
+        startedOn: "TreeView",
+        draggingItem: dropItem,
+        dropZone: null,
+      },
+    }),
+  setTreeNodeDropZone: (dropZone) =>
+    set((state) => {
+      if (!state.dragAndDropTreeNode) {
+        return state;
+      }
+      return {
+        dragAndDropTreeNode: {
+          ...state.dragAndDropTreeNode,
+          dropZone,
+        },
+      };
+    }),
+  // Shadow Composer stuff
   sendUpdateToShadow: (update) => {
     const { iframeRef } = get();
     if (iframeRef.current?.contentWindow) {
@@ -27,7 +153,7 @@ export const useComposerStore = create<ComposerStore>((set, get) => ({
       headNodeKey,
       canvasHighlight: canvasHighlightKey,
       selectedNodeKey,
-      dropItem,
+      dragAndDropTreeNode: dropItem,
       sendUpdateToShadow,
     } = get();
     sendUpdateToShadow({
@@ -50,110 +176,10 @@ export const useComposerStore = create<ComposerStore>((set, get) => ({
         update.selectedNodeKey !== undefined
           ? update.selectedNodeKey
           : state.selectedNodeKey,
-      dropItem:
-        update.dropItem !== undefined ? update.dropItem : state.dropItem,
+      dragAndDropTreeNode:
+        update.dropItem !== undefined
+          ? update.dropItem
+          : state.dragAndDropTreeNode,
     }));
-  },
-  nodes: ROOT_COMPONENT_ABSTRACT_DEFAULT,
-  headNodeKey: ROOT_COMPONENT_ABSTRACT_DEFAULT_HEAD_KEY,
-  selectedNodeKey: null,
-  setSelectedNodeKey: (key) => set({ selectedNodeKey: key }),
-  canvasHighlight: null,
-  setCanvasHighlight: (highlight) => {
-    set({ canvasHighlight: highlight });
-    const { sendUpdateToShadow } = get();
-    sendUpdateToShadow({
-      canvasHighlight: highlight,
-    });
-  },
-  dropItem: null,
-  setDraggableDropItem: (dropItem) => set({ dropItem }),
-  setDropDropItem: (drop) =>
-    set((state) => {
-      if (!state.dropItem) {
-        return state;
-      }
-      return {
-        dropItem: {
-          ...state.dropItem,
-          drop,
-        },
-      };
-    }),
-  moveNode: (draggedNode) => {
-    set((state) => {
-      if (!draggedNode || !draggedNode.drop) return state;
-
-      const { draggedNodeKey, drop } = draggedNode;
-      const { dropNodeKey, type, index } = drop;
-      const nodeToMove = state.nodes[draggedNodeKey];
-
-      if (typeof nodeToMove !== "object" || nodeToMove.type === "Root") {
-        return state;
-      }
-
-      const oldParentKey = nodeToMove.parent;
-      const oldParent = state.nodes[oldParentKey];
-      const dropNode = state.nodes[dropNodeKey];
-
-      if (!dropNode || typeof dropNode !== "object") {
-        return state;
-      }
-
-      // Determine the new parent based on the drop type
-      const newParentKey = dropNodeKey;
-      const newParent = state.nodes[newParentKey];
-
-      if (
-        typeof oldParent !== "object" ||
-        !oldParent.children ||
-        typeof newParent !== "object" ||
-        !newParent.children
-      ) {
-        throw Error("Parent node not found or children null");
-      }
-
-      const newNodes = { ...state.nodes };
-
-      // Remove from old parent
-      newNodes[oldParentKey] = {
-        ...oldParent,
-        children: oldParent.children.filter((key) => key !== draggedNodeKey),
-      };
-
-      // Add to new parent
-      let newIndex = index;
-      if (type === "after") {
-        newIndex += 1;
-      }
-
-      if (oldParentKey === newParentKey) {
-        // If same parent, just reorder
-        const children = [...newParent.children];
-        children.splice(children.indexOf(draggedNodeKey), 1);
-        children.splice(newIndex, 0, draggedNodeKey);
-        newNodes[newParentKey] = { ...newParent, children };
-      } else {
-        newNodes[newParentKey] = {
-          ...newParent,
-          children: [
-            ...newParent.children.slice(0, newIndex),
-            draggedNodeKey,
-            ...newParent.children.slice(newIndex),
-          ],
-        };
-      }
-
-      // Update moved node
-      newNodes[draggedNodeKey] = { ...nodeToMove, parent: newParentKey };
-
-      get().sendUpdateToShadow({
-        nodes: newNodes,
-      });
-
-      return {
-        nodes: newNodes,
-      };
-    });
   },
 }));

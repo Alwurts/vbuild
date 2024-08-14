@@ -16,7 +16,7 @@ export interface ShadowComposerStore {
 	headNodeKey: ComposerStore["headNodeKey"] | null;
 	canvasHighlight: ComposerStore["canvasHighlight"] | null;
 	selectedNodeKey: ComposerStore["selectedNodeKey"] | null;
-	dropItem: ComposerStore["dropItem"] | null;
+	dropItem: ComposerStore["dragAndDropTreeNode"] | null;
 	setCanvasHighlight: ComposerStore["setCanvasHighlight"];
 	setSelectedNodeKey: ComposerStore["setSelectedNodeKey"];
 	setContentEditable: (nodeKey: string, content: string) => void;

@@ -47,7 +47,6 @@ export const useShadowComposerStore = create<ShadowComposerStore>(
       });
     },
     receiveUpdateFromComposer: (updatedState) => {
-      console.log("receiveUpdateFromComposer", updatedState);
       set((state) => ({
         nodes: updatedState.nodes ?? state.nodes,
         headNodeKey: updatedState.headNodeKey ?? state.headNodeKey,
