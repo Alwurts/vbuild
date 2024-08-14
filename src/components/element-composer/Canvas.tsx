@@ -1,7 +1,6 @@
 import { cloneElement, isValidElement, useEffect, useRef } from "react";
 import { useShadowComposerStore } from "@/store/useShadowComposerStore";
-import { Button } from "../ui-editor/button";
-import { MousePointer } from "lucide-react";
+import { LoaderCircle } from "lucide-react";
 import { Registry } from "../elements/Registry";
 import { cn } from "@/lib/utils";
 import { createPortal } from "react-dom";
@@ -120,12 +119,32 @@ function CanvasHighlight({ domRect }: { domRect: DOMRect }) {
   );
 }
 
-export const Canvas = () => {
-  const { nodes, headNodeKey } = useShadowComposerStore();
+export default function Canvas() {
+  const { nodes, headNodeKey, receiveUpdateFromComposer } = useShadowComposerStore();
+
+  useEffect(() => {
+    console.log("useEffect CanvasPage");
+    const handleMessage = (event: MessageEvent) => {
+      if (event.data.type === "UPDATE_STATE") {
+        receiveUpdateFromComposer(event.data.update);
+      }
+    };
+
+    window.addEventListener("message", handleMessage);
+    window.parent.postMessage({
+      type: "CANVAS_READY",
+    });
+    return () => window.removeEventListener("message", handleMessage);
+  }, [receiveUpdateFromComposer]);
 
   if (!nodes || !headNodeKey) {
-    return null;
+    return (
+      <div className="flex h-screen w-screen items-center justify-center gap-2 bg-background-editor text-sm text-muted-editor-foreground">
+        <LoaderCircle className="h-4 w-4 animate-spin" />
+        Loading...
+      </div>
+    );
   }
 
   return <CanvasNode key={headNodeKey} nodeKey={headNodeKey} />;
-};
+}

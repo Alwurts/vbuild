@@ -30,10 +30,9 @@ export default function Preview() {
     (state) => state.receiveUpdateFromShadow
   );
 
-  /* useEffect(() => {
-    console.log("useEffect sendUpdateOfWholeState");
+  useEffect(() => {
     sendUpdateOfWholeState();
-  }, [sendUpdateOfWholeState]); */
+  }, [sendUpdateOfWholeState]);
 
   useEffect(() => {
     const handleMessageFromShadow = (
