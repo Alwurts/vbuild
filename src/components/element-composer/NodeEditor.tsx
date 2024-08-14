@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 export default function NodeEditor() {
   const { selectedNode: selectedNodeKey, nodes } = useComposerStore();
 
-  const selectedNode = selectedNodeKey ? nodes[selectedNodeKey] : null;
+  const selectedNode = selectedNodeKey ? nodes[selectedNodeKey.nodeKey] : null;
 
   const Layout = ({
     children,
