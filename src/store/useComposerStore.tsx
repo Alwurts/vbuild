@@ -14,7 +14,13 @@ export const useComposerStore = create<ComposerStore>((set, get) => ({
   nodes: ROOT_COMPONENT_ABSTRACT_DEFAULT,
   headNodeKey: ROOT_COMPONENT_ABSTRACT_DEFAULT_HEAD_KEY,
   selectedNodeKey: null,
-  setSelectedNodeKey: (key) => set({ selectedNodeKey: key }),
+  setSelectedNodeKey: (key) => {
+    const { sendUpdateToShadow } = get();
+    sendUpdateToShadow({
+      selectedNodeKey: key,
+    });
+    return set({ selectedNodeKey: key });
+  },
   canvasHighlight: null,
   setCanvasHighlight: (highlight) => {
     set({ canvasHighlight: highlight });

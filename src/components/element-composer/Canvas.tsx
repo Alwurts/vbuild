@@ -10,6 +10,7 @@ function CanvasNode({ nodeKey }: { nodeKey: string }) {
   const {
     canvasHighlight,
     nodes,
+    selectedNodeKey,
     setCanvasHighlight,
     setSelectedNodeKey,
     setContentEditable,
@@ -97,6 +98,12 @@ function CanvasNode({ nodeKey }: { nodeKey: string }) {
           <CanvasHighlight domRect={canvasHighlight.domRect} />,
           document.body
         )}
+      {selectedNodeKey === nodeKey &&
+        canvasHighlight.domRect &&
+        createPortal(
+          <CanvasHighlight domRect={canvasHighlight.domRect} />,
+          document.body
+        )}
     </>
   );
 }
@@ -111,7 +118,7 @@ function CanvasHighlight({ domRect }: { domRect: DOMRect }) {
         height: domRect.height,
       }}
       className={cn(
-        "pointer-events-none rounded-sm fixed z-30 bg-transparent border-[3px] border-yellow-500 flex justify-start items-start"
+        "pointer-events-none rounded-sm fixed z-30 bg-transparent border-[3px] border-primary-editor flex justify-start items-start"
       )}
     />
   );

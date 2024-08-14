@@ -288,11 +288,13 @@ function TreeNode({ nodeKey, depth = 0 }: TreeNodeProps) {
           }}
           className={cn(
             "absolute border-2 border-transparent inset-0 flex gap-1 w-full items-center justify-start h-8 pr-6 box-border",
-            canvasHighlight?.nodeKey === node.key && "border-yellow-500",
+            canvasHighlight?.nodeKey === node.key &&
+              dragAndDropTreeNode?.draggingItem?.nodeKey !== node.key &&
+              "border-primary-editor",
             draggable && "cursor-move",
             nodeIsCurrentlyDropZone &&
               dragAndDropTreeNode?.dropZone?.type === "inside" &&
-              "border-purple-500"
+              "border-primary-editor"
           )}
           onClick={() => {
             setSelectedNodeKey(node.key);
@@ -357,7 +359,13 @@ function TreeNode({ nodeKey, depth = 0 }: TreeNodeProps) {
         </DropdownMenu>
       </div>
       {isOpen && node.children && (
-        <div>
+        <div className="relative">
+          <div
+            style={{
+              left: `${10 + depth * 16}px`,
+            }}
+            className="absolute z-30 top-0 w-[1px] rounded-full h-full bg-foreground-editor/20"
+          />
           {node.children.map((childNode, index) => {
             return (
               <TreeNode key={childNode} nodeKey={childNode} depth={depth + 1} />
@@ -383,18 +391,18 @@ function TreeNodePlaceholder({
   return (
     <div
       className={cn(
-        "z-30 absolute left-0 pr-0 w-full h-fit flex items-center justify-stretch",
+        "z-40 absolute left-0 pr-0 w-full h-fit flex items-center justify-stretch",
         type === "before" && "-top-1.5",
         type === "after" && "-bottom-1.5"
       )}
       style={{
-        paddingLeft: `${0 + depth * 16}px`,
+        paddingLeft: `${5 + depth * 16}px`,
       }}
     >
-      <div className="w-3 h-3 relative rounded-full bg-purple-600">
+      <div className="w-3 h-3 relative rounded-full bg-primary-editor">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-white" />
       </div>
-      <div className="w-full h-0.5 bg-purple-500" />
+      <div className="w-full h-0.5 bg-primary-editor" />
     </div>
   );
 }
