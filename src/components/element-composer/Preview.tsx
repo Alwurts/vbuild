@@ -22,13 +22,13 @@ export default function Preview() {
   const [viewerSize, setViewerSize] = useState("100");
   const viewerPanelRef = useRef<ImperativePanelHandle>(null);
   const iframeRef = useComposerStore((state) => state.iframeRef);
-  const { nodes, headNodeKey } = useComposerStore();
   const sendUpdateOfWholeState = useComposerStore(
     (state) => state.sendUpdateOfWholeStateToShadow
   );
   const receiveUpdateFromShadow = useComposerStore(
     (state) => state.receiveUpdateFromShadow
   );
+  const setSelectedNode = useComposerStore((state) => state.setSelectedNode);
 
   useEffect(() => {
     sendUpdateOfWholeState();
@@ -66,7 +66,13 @@ export default function Preview() {
   }, [receiveUpdateFromShadow, sendUpdateOfWholeState]);
 
   return (
-    <div className="flex-1 relative py-3 pl-4 pr-1 bg-muted-editor flex flex-col gap-2">
+    // biome-ignore lint/a11y/useKeyWithClickEvents: <explanation>
+    <div
+      onClick={() => {
+        setSelectedNode(null);
+      }}
+      className="flex-1 relative py-3 pl-4 pr-1 bg-muted-editor flex flex-col gap-2"
+    >
       <div className="flex items-center justify-start gap-2">
         <ToggleGroup
           type="single"

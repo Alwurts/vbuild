@@ -36,6 +36,7 @@ function TreeNode({ nodeKey, depth = 0 }: TreeNodeProps) {
     moveNode,
     deleteNode,
     nodes,
+    selectedNode,
     setSelectedNode,
     setCanvasHighlight,
     canvasHighlight,
@@ -239,6 +240,7 @@ function TreeNode({ nodeKey, depth = 0 }: TreeNodeProps) {
     <div
       className={cn("relative", {
         "opacity-50": dragAndDropTreeNode?.draggingItem?.nodeKey === node.key,
+        "bg-muted-editor": selectedNode?.nodeKey === node.key,
       })}
       ref={parentRef}
     >
@@ -281,20 +283,23 @@ function TreeNode({ nodeKey, depth = 0 }: TreeNodeProps) {
             })
           }
           onMouseLeave={() => setCanvasHighlight(null)}
-          variant="ghost"
+          variant={selectedNode?.nodeKey === node.key ? "default" : "ghost"}
           size="sm"
           style={{
             paddingLeft: `${22 + depth * 16}px`,
           }}
           className={cn(
             "absolute border-2 border-transparent inset-0 flex gap-1 w-full items-center justify-start h-8 pr-6 box-border",
+            draggable && "cursor-move",
             canvasHighlight?.nodeKey === node.key &&
+              selectedNode?.nodeKey !== node.key &&
               dragAndDropTreeNode?.draggingItem?.nodeKey !== node.key &&
               "border-primary-editor",
-            draggable && "cursor-move",
+            selectedNode?.nodeKey === node.key &&
+              "text-foreground-editor",
             nodeIsCurrentlyDropZone &&
               dragAndDropTreeNode?.dropZone?.type === "inside" &&
-              "border-primary-editor"
+              "border-primary-editor bg-primary-editor/80"
           )}
           onClick={() => {
             setSelectedNode({
