@@ -14,7 +14,7 @@ import {
   CardHeader,
   CardTitle,
 } from "../ui/card";
-import { Root } from "./Root";
+import Root from "./Root";
 
 export const Registry: TGenericComponentRegistry = {
   Root: {
