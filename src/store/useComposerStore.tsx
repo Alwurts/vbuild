@@ -13,13 +13,13 @@ export const useComposerStore = create<ComposerStore>((set, get) => ({
   iframeRef: createRef(),
   nodes: ROOT_COMPONENT_ABSTRACT_DEFAULT,
   headNodeKey: ROOT_COMPONENT_ABSTRACT_DEFAULT_HEAD_KEY,
-  selectedNodeKey: null,
-  setSelectedNodeKey: (key) => {
+  selectedNode: null,
+  setSelectedNode: (node) => {
     const { sendUpdateToShadow } = get();
     sendUpdateToShadow({
-      selectedNodeKey: key,
+      selectedNode: node,
     });
-    return set({ selectedNodeKey: key });
+    return set({ selectedNode: node });
   },
   canvasHighlight: null,
   setCanvasHighlight: (highlight) => {
@@ -276,7 +276,7 @@ export const useComposerStore = create<ComposerStore>((set, get) => ({
       nodes,
       headNodeKey,
       canvasHighlight: canvasHighlightKey,
-      selectedNodeKey,
+      selectedNode,
       dragAndDropTreeNode: dropItem,
       sendUpdateToShadow,
     } = get();
@@ -284,7 +284,7 @@ export const useComposerStore = create<ComposerStore>((set, get) => ({
       nodes,
       headNodeKey,
       canvasHighlight: canvasHighlightKey,
-      selectedNodeKey,
+      selectedNode,
       dropItem,
     });
   },
@@ -296,10 +296,10 @@ export const useComposerStore = create<ComposerStore>((set, get) => ({
         update.canvasHighlight !== undefined
           ? update.canvasHighlight
           : state.canvasHighlight,
-      selectedNodeKey:
-        update.selectedNodeKey !== undefined
-          ? update.selectedNodeKey
-          : state.selectedNodeKey,
+      selectedNode:
+        update.selectedNode !== undefined
+          ? update.selectedNode
+          : state.selectedNode,
       dragAndDropTreeNode:
         update.dropItem !== undefined
           ? update.dropItem

@@ -36,7 +36,7 @@ function TreeNode({ nodeKey, depth = 0 }: TreeNodeProps) {
     moveNode,
     deleteNode,
     nodes,
-    setSelectedNodeKey,
+    setSelectedNode,
     setCanvasHighlight,
     canvasHighlight,
     dragAndDropTreeNode,
@@ -297,7 +297,9 @@ function TreeNode({ nodeKey, depth = 0 }: TreeNodeProps) {
               "border-primary-editor"
           )}
           onClick={() => {
-            setSelectedNodeKey(node.key);
+            setSelectedNode({
+              nodeKey: node.key,
+            });
           }}
         >
           {nodeIcon &&

@@ -20,8 +20,11 @@ export interface ComposerStore {
 		newParentIndex: number,
 		indexBeforeOrAfter: "before" | "after",
 	) => void;
-	selectedNodeKey: string | null;
-	setSelectedNodeKey: (key: string | null) => void;
+	selectedNode: {
+		nodeKey: string;
+		domRect?: DOMRect;
+	} | null;
+	setSelectedNode: (node: ComposerStore["selectedNode"]) => void;
 	canvasHighlight: {
 		nodeKey: string;
 		domRect?: DOMRect;

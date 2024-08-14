@@ -10,9 +10,9 @@ function CanvasNode({ nodeKey }: { nodeKey: string }) {
   const {
     canvasHighlight,
     nodes,
-    selectedNodeKey,
+    selectedNode,
     setCanvasHighlight,
-    setSelectedNodeKey,
+    setSelectedNode,
     setContentEditable,
   } = useShadowComposerStore();
 
@@ -29,6 +29,20 @@ function CanvasNode({ nodeKey }: { nodeKey: string }) {
       });
     }
   }, [canvasHighlight, nodeKey, setCanvasHighlight]);
+
+  useEffect(() => {
+    if (
+      selectedNode?.nodeKey === nodeKey &&
+      !selectedNode.domRect &&
+      nodeRef.current
+    ) {
+      const rect = nodeRef.current.getBoundingClientRect();
+      setSelectedNode({
+        nodeKey: nodeKey,
+        domRect: rect,
+      });
+    }
+  }, [selectedNode, nodeKey, setSelectedNode]);
 
   if (!nodes) {
     return null;
@@ -84,7 +98,11 @@ function CanvasNode({ nodeKey }: { nodeKey: string }) {
             onMouseLeave(e, node.type),
           onClick: (e: React.MouseEvent<HTMLElement>) => {
             e.stopPropagation();
-            setSelectedNodeKey(nodeKey);
+            const rect = nodeRef.current?.getBoundingClientRect();
+            setSelectedNode({
+              nodeKey: nodeKey,
+              domRect: rect,
+            });
           },
         })
       : null;
@@ -98,10 +116,10 @@ function CanvasNode({ nodeKey }: { nodeKey: string }) {
           <CanvasHighlight domRect={canvasHighlight.domRect} />,
           document.body
         )}
-      {selectedNodeKey === nodeKey &&
-        canvasHighlight.domRect &&
+      {selectedNode?.nodeKey === nodeKey &&
+        selectedNode.domRect &&
         createPortal(
-          <CanvasHighlight domRect={canvasHighlight.domRect} />,
+          <CanvasHighlight domRect={selectedNode.domRect} />,
           document.body
         )}
     </>

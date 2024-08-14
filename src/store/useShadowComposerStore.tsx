@@ -8,7 +8,7 @@ export const useShadowComposerStore = create<ShadowComposerStore>(
   (set, get) => ({
     nodes: null,
     headNodeKey: null,
-    selectedNodeKey: null,
+    selectedNode: null,
     canvasHighlight: null,
     dropItem: null,
     setContentEditable: (nodeKey, content) => {
@@ -36,9 +36,9 @@ export const useShadowComposerStore = create<ShadowComposerStore>(
       set({ canvasHighlight: key });
       get().sendUpdateToComposer({ canvasHighlight: key });
     },
-    setSelectedNodeKey: (key) => {
-      set({ selectedNodeKey: key });
-      get().sendUpdateToComposer({ selectedNodeKey: key });
+    setSelectedNode: (node) => {
+      set({ selectedNode: node });
+      get().sendUpdateToComposer({ selectedNode: node });
     },
     sendUpdateToComposer: (update) => {
       window.parent.postMessage({
@@ -54,10 +54,10 @@ export const useShadowComposerStore = create<ShadowComposerStore>(
           updatedState.canvasHighlight !== undefined
             ? updatedState.canvasHighlight
             : state.canvasHighlight,
-        selectedNodeKey:
-          updatedState.selectedNodeKey !== undefined
-            ? updatedState.selectedNodeKey
-            : state.selectedNodeKey,
+        selectedNode:
+          updatedState.selectedNode !== undefined
+            ? updatedState.selectedNode
+            : state.selectedNode,
         dropItem:
           updatedState.dropItem !== undefined
             ? updatedState.dropItem

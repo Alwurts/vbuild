@@ -6,7 +6,7 @@ import { CircleSlash, Settings2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export default function NodeEditor() {
-  const { selectedNodeKey, nodes } = useComposerStore();
+  const { selectedNode: selectedNodeKey, nodes } = useComposerStore();
 
   const selectedNode = selectedNodeKey ? nodes[selectedNodeKey] : null;
 
