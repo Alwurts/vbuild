@@ -3,6 +3,9 @@ import {
   ROOT_COMPONENT_ABSTRACT_DEFAULT_HEAD_KEY,
 } from "@/components/element-composer/defaultJSX";
 import type { ComposerStore } from "@/types/composer-store";
+import type { TNodeAbstract } from "@/types/elements/jsx";
+import { v4 as uuidv4 } from "uuid";
+
 import { createRef } from "react";
 import { create } from "zustand";
 
@@ -18,6 +21,121 @@ export const useComposerStore = create<ComposerStore>((set, get) => ({
     const { sendUpdateToShadow } = get();
     sendUpdateToShadow({
       canvasHighlight: highlight,
+    });
+  },
+  deleteNode: (nodeKey) => {
+    set((state) => {
+      const newNodes = { ...state.nodes };
+      const nodeToDelete = newNodes[nodeKey];
+      if (!nodeToDelete) return state;
+
+      if (typeof nodeToDelete !== "object") {
+        throw Error("Cannot delete non object node");
+      }
+
+      if (nodeToDelete.type === "Root") {
+        throw Error("Cannot delete root node");
+      }
+
+      const parentKey = nodeToDelete.parent;
+      const parent = newNodes[parentKey];
+      if (!parent) return state;
+
+      if (typeof parent !== "object" || !parent.children) {
+        throw Error("Parent node not found or children null");
+      }
+
+      // Remove the node from its parent's children
+      parent.children = parent.children.filter(
+        (childKey) => childKey !== nodeKey
+      );
+
+      // Delete the node and its descendants
+      const deleteRecursively = (key: string) => {
+        const node = newNodes[key];
+
+        if (typeof node !== "object") {
+          delete newNodes[key];
+          return;
+        }
+
+        if (node.children) {
+          node.children.forEach(deleteRecursively);
+        }
+
+        delete newNodes[key];
+      };
+      deleteRecursively(nodeKey);
+
+      get().sendUpdateToShadow({ nodes: newNodes });
+      return { nodes: newNodes };
+    });
+  },
+  copyNodeKey: null,
+  setCopyNodeKey: (nodeKey) => set({ copyNodeKey: nodeKey }),
+  copyNode: (
+    nodeToCopyKey,
+    newParentKey,
+    newParentIndex,
+    indexBeforeOrAfter
+  ) => {
+    set((state) => {
+      const newNodes = { ...state.nodes };
+      const nodeToCopy = newNodes[nodeToCopyKey];
+
+      if (!nodeToCopy) {
+        throw Error("Node to copy not found");
+      }
+      if (typeof nodeToCopy !== "object") {
+        throw Error("Cannot copy non object node");
+      }
+      if (nodeToCopy.type === "Root") {
+        throw Error("Cannot copy root node");
+      }
+
+      const newParent = newNodes[newParentKey];
+      if (!newParent || typeof newParent !== "object" || !newParent.children) {
+        throw Error("New parent node not found or children null");
+      }
+
+      // Helper function to deep copy a node and its children
+      const deepCopyNode = (
+        node: TNodeAbstract,
+        copiedNodeNewParentKey: string
+      ): { copiedNode: TNodeAbstract; newKey: string } => {
+        const newKey = uuidv4();
+        if (typeof node !== "object") {
+          newNodes[newKey] = node;
+          return { copiedNode: node, newKey };
+        }
+        const copiedNode = {
+          ...node,
+          key: newKey,
+          parent: copiedNodeNewParentKey,
+        };
+
+        if (copiedNode.children) {
+          copiedNode.children = copiedNode.children.map((childKey) => {
+            const childCopy = deepCopyNode(newNodes[childKey], newKey);
+            newNodes[childCopy.newKey] = childCopy.copiedNode;
+            return childCopy.newKey;
+          });
+        }
+
+        newNodes[newKey] = copiedNode;
+
+        return { copiedNode, newKey };
+      };
+
+      const { newKey } = deepCopyNode(nodeToCopy, newParentKey);
+
+      // Insert the copied node into the new parent's children
+      const insertIndex =
+        indexBeforeOrAfter === "before" ? newParentIndex : newParentIndex + 1;
+      newParent.children.splice(insertIndex, 0, newKey);
+
+      get().sendUpdateToShadow({ nodes: newNodes });
+      return { nodes: newNodes, copyNodeKey: null };
     });
   },
   moveNode: (

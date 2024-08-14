@@ -6,6 +6,8 @@ import {
   EllipsisVertical,
   TrashIcon,
   Boxes,
+  CopyIcon,
+  PointerIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui-editor/button";
 import { useComposerStore } from "@/store/useComposerStore";
@@ -32,6 +34,7 @@ interface TreeNodeProps {
 function TreeNode({ nodeKey, depth = 0 }: TreeNodeProps) {
   const {
     moveNode,
+    deleteNode,
     nodes,
     setSelectedNodeKey,
     setCanvasHighlight,
@@ -40,6 +43,9 @@ function TreeNode({ nodeKey, depth = 0 }: TreeNodeProps) {
     setDraggingTreeNode,
     setTreeNodeDropZone,
     resetDragAndDropTreeNode,
+    setCopyNodeKey,
+    copyNodeKey,
+    copyNode,
   } = useComposerStore();
 
   const parentRef = useRef<HTMLDivElement>(null);
@@ -241,7 +247,7 @@ function TreeNode({ nodeKey, depth = 0 }: TreeNodeProps) {
           <TreeNodePlaceholder depth={depth} type="before" />
         )}
       <div className="relative h-8">
-        {node.children && (
+        {node.children && node.children.length > 0 && (
           <Button
             style={{
               left: `${3 + depth * 16}px`,
@@ -320,11 +326,32 @@ function TreeNode({ nodeKey, depth = 0 }: TreeNodeProps) {
                 <span>Add child</span>
                 <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <TrashIcon className="mr-2 h-4 w-4" />
-                <span>Delete</span>
-                <DropdownMenuShortcut>⇧⌘D</DropdownMenuShortcut>
+              {node.type !== "Root" && (
+                <DropdownMenuItem onClick={() => setCopyNodeKey(node.key)}>
+                  <CopyIcon className="mr-2 h-4 w-4" />
+                  <span>Copy</span>
+                  <DropdownMenuShortcut>⇧⌘C</DropdownMenuShortcut>
+                </DropdownMenuItem>
+              )}
+              <DropdownMenuItem
+                disabled={!copyNodeKey}
+                onClick={() => {
+                  if (copyNodeKey) {
+                    copyNode(copyNodeKey, node.key, 0, "before");
+                  }
+                }}
+              >
+                <PointerIcon className="mr-2 h-4 w-4" />
+                <span>Paste</span>
+                <DropdownMenuShortcut>⇧⌘V</DropdownMenuShortcut>
               </DropdownMenuItem>
+              {node.type !== "Root" && (
+                <DropdownMenuItem onClick={() => deleteNode(node.key)}>
+                  <TrashIcon className="mr-2 h-4 w-4" />
+                  <span>Delete</span>
+                  <DropdownMenuShortcut>⇧⌘D</DropdownMenuShortcut>
+                </DropdownMenuItem>
+              )}
             </DropdownMenuGroup>
           </DropdownMenuContent>
         </DropdownMenu>

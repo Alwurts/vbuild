@@ -11,6 +11,15 @@ export interface ComposerStore {
 		newParentIndex: number,
 		indexBeforeOrAfter: "before" | "after",
 	) => void;
+	deleteNode: (nodeKey: string) => void;
+	copyNodeKey: string | null;
+	setCopyNodeKey: (nodeKey: string | null) => void;
+	copyNode: (
+		nodeToCopyKey: string,
+		newParentKey: string,
+		newParentIndex: number,
+		indexBeforeOrAfter: "before" | "after",
+	) => void;
 	selectedNodeKey: string | null;
 	setSelectedNodeKey: (key: string | null) => void;
 	canvasHighlight: {
