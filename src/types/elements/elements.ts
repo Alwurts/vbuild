@@ -21,6 +21,7 @@ import type {
 	TH6Component,
 	TPComponent,
 } from "@/types/elements/text";
+import type { TailwindGroupNames } from "./tailwind";
 
 export type TGenericComponentInfer<T> = {
 	props: Omit<InferComponentProps<T>, "children"> & {};
@@ -91,6 +92,7 @@ export type TGenericComponentRegistryEntry = TGenericComponent & {
 	draggable: boolean;
 	droppable: boolean;
 	editable: boolean;
+	classNameGroups: TailwindGroupNames[];
 };
 
 export type TGenericComponentRegistry = {
