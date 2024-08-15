@@ -15,55 +15,34 @@ import { ToggleGroup, ToggleGroupItem } from "../ui-editor/toggle-group";
 import { Button } from "../ui-editor/button";
 import { useComposerStore } from "@/store/useComposerStore";
 import { useEffect, useRef, useState } from "react";
-import type { UpdateShadowState } from "@/types/shadow-composer-store";
+import type { CanvasMessageEvent } from "@/types/shadow-composer-store";
 import { CodeBlock } from "../code/CodeBlock";
 
 export default function Preview() {
   const [viewerSize, setViewerSize] = useState("100");
   const viewerPanelRef = useRef<ImperativePanelHandle>(null);
   const iframeRef = useComposerStore((state) => state.iframeRef);
-  const sendUpdateOfWholeState = useComposerStore(
-    (state) => state.sendUpdateOfWholeStateToShadow
+  const sendUpdateOfWholeStateToCanvas = useComposerStore(
+    (state) => state.sendUpdateOfWholeStateToCanvas
   );
-  const receiveUpdateFromShadow = useComposerStore(
+  const handleMessageFromCanvas = useComposerStore(
+    (state) => state.handleMessageFromCanvas
+  );
+  /* const receiveUpdateFromShadow = useComposerStore(
     (state) => state.receiveUpdateFromShadow
-  );
+  ); */
   const setSelectedNode = useComposerStore((state) => state.setSelectedNode);
 
   useEffect(() => {
-    sendUpdateOfWholeState();
-  }, [sendUpdateOfWholeState]);
+    sendUpdateOfWholeStateToCanvas();
+  }, [sendUpdateOfWholeStateToCanvas]);
 
   useEffect(() => {
-    const handleMessageFromShadow = (
-      event: MessageEvent<
-        | {
-            type: "UPDATE_STATE_FROM_SHADOW";
-            update: UpdateShadowState;
-          }
-        | {
-            type: "CANVAS_READY";
-          }
-      >
-    ) => {
-      if (event.origin !== window.location.origin) {
-        return;
-      }
-
-      if (event.data.type === "UPDATE_STATE_FROM_SHADOW") {
-        receiveUpdateFromShadow(event.data.update);
-      }
-      if (event.data.type === "CANVAS_READY") {
-        sendUpdateOfWholeState();
-      }
-    };
-
-    window.addEventListener("message", handleMessageFromShadow);
-
+    window.addEventListener("message", handleMessageFromCanvas);
     return () => {
-      window.removeEventListener("message", handleMessageFromShadow);
+      window.removeEventListener("message", handleMessageFromCanvas);
     };
-  }, [receiveUpdateFromShadow, sendUpdateOfWholeState]);
+  }, [handleMessageFromCanvas]);
 
   return (
     // biome-ignore lint/a11y/useKeyWithClickEvents: <explanation>

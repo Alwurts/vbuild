@@ -8,6 +8,7 @@ import { v4 as uuidv4 } from "uuid";
 
 import { createRef } from "react";
 import { create } from "zustand";
+import type { UpdateShadowStateMessage } from "@/types/shadow-composer-store";
 
 export const useComposerStore = create<ComposerStore>((set, get) => ({
   iframeRef: createRef(),
@@ -15,18 +16,24 @@ export const useComposerStore = create<ComposerStore>((set, get) => ({
   headNodeKey: ROOT_COMPONENT_ABSTRACT_DEFAULT_HEAD_KEY,
   selectedNode: null,
   setSelectedNode: (node) => {
-    const { sendUpdateToShadow } = get();
-    sendUpdateToShadow({
-      selectedNode: node,
+    const { sendMessageToCanvas } = get();
+    sendMessageToCanvas({
+      type: "UPDATE_SHADOW_STATE",
+      update: {
+        selectedNode: node,
+      },
     });
     return set({ selectedNode: node });
   },
   canvasHighlight: null,
   setCanvasHighlight: (highlight) => {
     set({ canvasHighlight: highlight });
-    const { sendUpdateToShadow } = get();
-    sendUpdateToShadow({
-      canvasHighlight: highlight,
+    const { sendMessageToCanvas } = get();
+    sendMessageToCanvas({
+      type: "UPDATE_SHADOW_STATE",
+      update: {
+        canvasHighlight: highlight,
+      },
     });
   },
   deleteNode: (nodeKey) => {
@@ -73,7 +80,12 @@ export const useComposerStore = create<ComposerStore>((set, get) => ({
       };
       deleteRecursively(nodeKey);
 
-      get().sendUpdateToShadow({ nodes: newNodes });
+      get().sendMessageToCanvas({
+        type: "UPDATE_SHADOW_STATE",
+        update: {
+          nodes: newNodes,
+        },
+      });
       return { nodes: newNodes };
     });
   },
@@ -140,7 +152,12 @@ export const useComposerStore = create<ComposerStore>((set, get) => ({
         indexBeforeOrAfter === "before" ? newParentIndex : newParentIndex + 1;
       newParent.children.splice(insertIndex, 0, newKey);
 
-      get().sendUpdateToShadow({ nodes: newNodes });
+      get().sendMessageToCanvas({
+        type: "UPDATE_SHADOW_STATE",
+        update: {
+          nodes: newNodes,
+        },
+      });
       return { nodes: newNodes, copyNodeKey: null };
     });
   },
@@ -225,8 +242,35 @@ export const useComposerStore = create<ComposerStore>((set, get) => ({
         newNodes[newParent.key] = newParent;
       }
 
-      get().sendUpdateToShadow({
+      get().sendMessageToCanvas({
+        type: "UPDATE_SHADOW_STATE",
+        update: {
+          nodes: newNodes,
+        },
+      });
+
+      return {
         nodes: newNodes,
+      };
+    });
+  },
+  setContentEditable: (nodeKey, content) => {
+    set((state) => {
+      const newNodes = { ...state.nodes };
+      const node = newNodes?.[nodeKey];
+
+      if (typeof node !== "object") return state;
+
+      const childNodeKey = node?.children?.[0];
+
+      if (!childNodeKey) return state;
+      if (typeof newNodes[childNodeKey] === "object") return state;
+
+      newNodes[childNodeKey] = content;
+
+      get().sendMessageToCanvas({
+        type: "UPDATE_SHADOW_STATE",
+        update: { nodes: newNodes },
       });
 
       return {
@@ -258,52 +302,45 @@ export const useComposerStore = create<ComposerStore>((set, get) => ({
       };
     }),
   // Shadow Composer stuff
-  sendUpdateToShadow: (update) => {
+  handleMessageFromCanvas: (messageEvent) => {
+    if (messageEvent.origin !== window.location.origin) {
+      return;
+    }
+    switch (messageEvent.data.type) {
+      case "CANVAS_READY":
+        get().sendUpdateOfWholeStateToCanvas();
+        break;
+      case "FUNCTION_CALL": {
+        const { function: fn } = messageEvent.data;
+        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+        (get()[fn.name] as (...args: any[]) => void)(...fn.args);
+        break;
+      }
+    }
+  },
+  sendMessageToCanvas: (message) => {
     const { iframeRef } = get();
     if (iframeRef.current?.contentWindow) {
       const targetOrigin = window.location.origin;
-      iframeRef.current.contentWindow.postMessage(
-        {
-          type: "UPDATE_STATE",
-          update,
-        },
-        targetOrigin
-      );
+      iframeRef.current.contentWindow.postMessage(message, targetOrigin);
     }
   },
-  sendUpdateOfWholeStateToShadow: () => {
+  sendUpdateOfWholeStateToCanvas: () => {
     const {
       nodes,
       headNodeKey,
-      canvasHighlight: canvasHighlightKey,
+      canvasHighlight,
       selectedNode,
-      dragAndDropTreeNode: dropItem,
-      sendUpdateToShadow,
+      sendMessageToCanvas,
     } = get();
-    sendUpdateToShadow({
-      nodes,
-      headNodeKey,
-      canvasHighlight: canvasHighlightKey,
-      selectedNode,
-      dropItem,
+    sendMessageToCanvas({
+      type: "UPDATE_SHADOW_STATE",
+      update: {
+        nodes,
+        headNodeKey,
+        canvasHighlight,
+        selectedNode,
+      },
     });
-  },
-  receiveUpdateFromShadow: (update) => {
-    set((state) => ({
-      nodes: update.nodes ?? state.nodes,
-      headNodeKey: update.headNodeKey ?? state.headNodeKey,
-      canvasHighlight:
-        update.canvasHighlight !== undefined
-          ? update.canvasHighlight
-          : state.canvasHighlight,
-      selectedNode:
-        update.selectedNode !== undefined
-          ? update.selectedNode
-          : state.selectedNode,
-      dragAndDropTreeNode:
-        update.dropItem !== undefined
-          ? update.dropItem
-          : state.dragAndDropTreeNode,
-    }));
   },
 }));

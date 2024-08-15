@@ -4,6 +4,7 @@ import { LoaderCircle } from "lucide-react";
 import { Registry } from "../elements/Registry";
 import { cn } from "@/lib/utils";
 import { createPortal } from "react-dom";
+import type { CanvasMessageEvent } from "@/types/shadow-composer-store";
 
 function CanvasNode({ nodeKey }: { nodeKey: string }) {
   const nodeRef = useRef<HTMLElement>(null);
@@ -143,22 +144,19 @@ function CanvasHighlight({ domRect }: { domRect: DOMRect }) {
 }
 
 export default function Canvas() {
-  const { nodes, headNodeKey, receiveUpdateFromComposer } =
-    useShadowComposerStore();
+  const {
+    nodes,
+    headNodeKey,
+    sendMessageToCanvasParent,
+    handleMessageFromCanvasParent,
+  } = useShadowComposerStore();
 
   useEffect(() => {
-    const handleMessage = (event: MessageEvent) => {
-      if (event.data.type === "UPDATE_STATE") {
-        receiveUpdateFromComposer(event.data.update);
-      }
-    };
-
-    window.addEventListener("message", handleMessage);
-    window.parent.postMessage({
-      type: "CANVAS_READY",
-    });
-    return () => window.removeEventListener("message", handleMessage);
-  }, [receiveUpdateFromComposer]);
+    window.addEventListener("message", handleMessageFromCanvasParent);
+    sendMessageToCanvasParent({ type: "CANVAS_READY" });
+    return () =>
+      window.removeEventListener("message", handleMessageFromCanvasParent);
+  }, [handleMessageFromCanvasParent, sendMessageToCanvasParent]);
 
   if (!nodes || !headNodeKey) {
     return (

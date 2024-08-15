@@ -1,10 +1,17 @@
 import type { TNodesAbstract } from "./elements/jsx";
-import type { UpdateShadowState } from "./shadow-composer-store";
+import type {
+	CanvasMessage,
+	CanvasMessageEvent,
+	CanvasReadyMessage,
+	UpdateShadowState,
+	UpdateShadowStateMessage,
+} from "./shadow-composer-store";
 
 export interface ComposerStore {
 	iframeRef: React.MutableRefObject<HTMLIFrameElement | null>;
 	nodes: TNodesAbstract;
 	headNodeKey: string;
+	setContentEditable: (nodeKey: string, content: string) => void;
 	moveNode: (
 		nodeToMoveKey: string,
 		newParentKey: string,
@@ -52,7 +59,7 @@ export interface ComposerStore {
 		dropZone: NonNullable<ComposerStore["dragAndDropTreeNode"]>["dropZone"],
 	) => void;
 	// Shadow Composer stuff
-	sendUpdateOfWholeStateToShadow: () => void;
-	sendUpdateToShadow: (update: UpdateShadowState) => void;
-	receiveUpdateFromShadow: (update: UpdateShadowState) => void;
+	sendUpdateOfWholeStateToCanvas: () => void;
+	handleMessageFromCanvas: (message: CanvasMessageEvent) => void;
+	sendMessageToCanvas: (message: CanvasMessage) => void;
 }

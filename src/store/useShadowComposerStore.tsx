@@ -1,6 +1,8 @@
 import type {
+  CanvasMessage,
+  CanvasReadyMessage,
   ShadowComposerStore,
-  UpdateShadowState,
+  UpdateShadowStateMessage,
 } from "@/types/shadow-composer-store";
 import { create } from "zustand";
 
@@ -12,57 +14,48 @@ export const useShadowComposerStore = create<ShadowComposerStore>(
     canvasHighlight: null,
     dropItem: null,
     setContentEditable: (nodeKey, content) => {
-      set((state) => {
-        const newNodes = { ...state.nodes };
-        const node = newNodes?.[nodeKey];
-
-        if (typeof node !== "object") return state;
-
-        const childNodeKey = node?.children?.[0];
-
-        if (!childNodeKey) return state;
-        if (typeof newNodes[childNodeKey] === "object") return state;
-
-        newNodes[childNodeKey] = content;
-
-        get().sendUpdateToComposer({ nodes: newNodes });
-
-        return {
-          nodes: newNodes,
-        };
+      get().sendMessageToCanvasParent({
+        type: "FUNCTION_CALL",
+        function: {
+          name: "setContentEditable",
+          args: [nodeKey, content],
+        },
       });
     },
     setCanvasHighlight: (key) => {
-      set({ canvasHighlight: key });
-      get().sendUpdateToComposer({ canvasHighlight: key });
-    },
-    setSelectedNode: (node) => {
-      set({ selectedNode: node });
-      get().sendUpdateToComposer({ selectedNode: node });
-    },
-    sendUpdateToComposer: (update) => {
-      window.parent.postMessage({
-        type: "UPDATE_STATE_FROM_SHADOW",
-        update,
+      get().sendMessageToCanvasParent({
+        type: "FUNCTION_CALL",
+        function: {
+          name: "setCanvasHighlight",
+          args: [key],
+        },
       });
     },
-    receiveUpdateFromComposer: (updatedState) => {
-      set((state) => ({
-        nodes: updatedState.nodes ?? state.nodes,
-        headNodeKey: updatedState.headNodeKey ?? state.headNodeKey,
-        canvasHighlight:
-          updatedState.canvasHighlight !== undefined
-            ? updatedState.canvasHighlight
-            : state.canvasHighlight,
-        selectedNode:
-          updatedState.selectedNode !== undefined
-            ? updatedState.selectedNode
-            : state.selectedNode,
-        dropItem:
-          updatedState.dropItem !== undefined
-            ? updatedState.dropItem
-            : state.dropItem,
-      }));
+    setSelectedNode: (node) => {
+      get().sendMessageToCanvasParent({
+        type: "FUNCTION_CALL",
+        function: {
+          name: "setSelectedNode",
+          args: [node],
+        },
+      });
+    },
+    // Communication with the canvas
+    handleMessageFromCanvasParent: (message) => {
+      if (message.origin !== window.location.origin) {
+        return;
+      }
+      switch (message.data.type) {
+        case "UPDATE_SHADOW_STATE":
+          get().receiveUpdateFromCanvasParent(message.data.update);
+          break;
+      }
+    },
+    sendMessageToCanvasParent: (message) => {
+      window.parent.postMessage(message);
+    },
+    receiveUpdateFromCanvasParent: (updatedState) => {
+      set(updatedState);
     },
   })
 );
