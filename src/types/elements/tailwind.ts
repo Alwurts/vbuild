@@ -4,14 +4,14 @@ export type TailwindClassNameRegex = {
 	[K in TailwindType]: RegExp;
 };
 
-export type TailwindGroupNames = "Size" | "Layout";
+export type TailwindGroupName = "Size" | "Layout";
 
 export type TailwindGroups = {
-	[K in TailwindGroupNames]: TailwindType[];
+	[K in TailwindGroupName]: TailwindType[];
 };
 
 export type TailwindClassName = {
-	[KeyGroup in TailwindGroupNames]?: {
+	[KeyGroup in TailwindGroupName]?: {
 		[KeyType in TailwindType]?: string;
 	};
 };

@@ -21,10 +21,10 @@ import type {
 	TH6Component,
 	TPComponent,
 } from "@/types/elements/text";
-import type { TailwindGroupNames } from "./tailwind";
+import type { TailwindGroupName } from "./tailwind";
 
 export type TGenericComponentInfer<T> = {
-	props: Omit<InferComponentProps<T>, "children"> & {};
+	props: Omit<InferComponentProps<T>, "children" | "className">;
 };
 
 type InferComponentProps<T> = T extends React.ComponentType<infer P>
@@ -85,14 +85,17 @@ export function isValidComponentName(
 	);
 }
 
-export type TGenericComponentRegistryEntry = TGenericComponent & {
+export type TGenericComponentRegistryEntry = Omit<
+	TGenericComponent,
+	"props"
+> & {
 	icon: React.ReactNode;
 	component: React.ReactNode;
 	dependencies: string[];
 	draggable: boolean;
 	droppable: boolean;
 	editable: boolean;
-	classNameGroups: TailwindGroupNames[];
+	classNameGroups: TailwindGroupName[];
 };
 
 export type TGenericComponentRegistry = {

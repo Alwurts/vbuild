@@ -4,6 +4,8 @@ import { Registry } from "../elements/Registry";
 import { cloneElement, isValidElement } from "react";
 import { CircleSlash, Settings2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import type { TailwindGroupName } from "@/types/elements/tailwind";
+import { TAILWIND_GROUPS } from "@/lib/jsx/tailwind";
 
 export default function NodeEditor() {
   const { selectedNode: selectedNodeKey, nodes } = useComposerStore();
@@ -45,27 +47,32 @@ export default function NodeEditor() {
     );
   }
 
-  const nodeIcon = Registry[selectedNode.type].icon;
+  const { classNameGroups } = Registry[selectedNode.type];
 
   return (
-    <Layout className="text-sm">
-      <div>
-        <h3>Node Type</h3>
-        <p>{selectedNode.type}</p>
-      </div>
-      <div>
-        <h3>Node Key</h3>
-        <p>{selectedNode.key}</p>
-      </div>
-      <div>
-        <h3>Props</h3>
-        {Object.entries(selectedNode.props).map(([key, value]) => (
-          <div key={key}>
-            <h4>{key}</h4>
-            <p>{value}</p>
-          </div>
-        ))}
-      </div>
+    <Layout>
+      {classNameGroups.map((groupName) => (
+        <GroupSection key={groupName} groupName={groupName} />
+      ))}
     </Layout>
+  );
+}
+
+function GroupSection({ groupName }: { groupName: TailwindGroupName }) {
+  const tailwindTypes = TAILWIND_GROUPS[groupName];
+  return (
+    <div>
+      <div className="p-2">
+        <h4 className="text-sm font-medium">{groupName}</h4>
+        <div>
+          {tailwindTypes.map((tailwindType) => (
+            <div key={tailwindType}>
+              <h5>{tailwindType}</h5>
+            </div>
+          ))}
+        </div>
+      </div>
+      <Separator />
+    </div>
   );
 }

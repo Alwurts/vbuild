@@ -49,25 +49,18 @@ const jsxNodesToNodesAbstract = (
 
 		const { classNameGroups: componentClassNameGroups } = Registry[typeName];
 
-		const { children, ...props } = reactNodeClone.props;
-
-		console.log("typeName", typeName);
-		console.log("className", props.className);
+		const { children, className, ...props } = reactNodeClone.props;
 
 		const tailwindClassName: TailwindClassName = {};
-		if (props.className) {
-			const classNameSeparated = (props.className as string).trim().split(" ");
-			console.log("classNameSeparated", classNameSeparated);
-
+		if (className) {
+			const classNameSeparated = (className as string).trim().split(" ");
 			for (const group of componentClassNameGroups) {
-				console.log("group", group);
 				const groupTypes = TAILWIND_GROUPS[group];
 				for (const type of groupTypes) {
 					const regex = TAILWIND_CLASS_NAME_REGEX[type];
 					const match = classNameSeparated.find((className) =>
 						regex.test(className),
 					);
-					console.log("Match", match);
 					if (match) {
 						if (!tailwindClassName[group]) {
 							tailwindClassName[group] = {};
@@ -79,8 +72,8 @@ const jsxNodesToNodesAbstract = (
 					}
 				}
 			}
-			console.log("tailwindClassName", tailwindClassName);
 		}
+		console.log("tailwindClassName", tailwindClassName);
 
 		let childrenKeys: string[] = [];
 		if ("children" in reactNodeClone.props && reactNodeClone.props.children) {
@@ -107,6 +100,7 @@ const jsxNodesToNodesAbstract = (
 				props,
 				type: typeName, // Get correct type
 				children: childrenKeys,
+				className: tailwindClassName,
 			};
 
 			newNodesAbstract[newkey] = newNodeAbstract;
@@ -124,6 +118,7 @@ const jsxNodesToNodesAbstract = (
 			props,
 			type: typeName, // Get correct type
 			children: childrenKeys,
+			className: tailwindClassName,
 		};
 
 		newNodesAbstract[newkey] = newNodeAbstract;
