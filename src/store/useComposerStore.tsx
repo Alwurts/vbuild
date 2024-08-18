@@ -36,6 +36,28 @@ export const useComposerStore = create<ComposerStore>((set, get) => ({
       },
     });
   },
+  setNodeClassName: (nodeKey, group, type, value) => {
+    set((state) => {
+      const newNodes = { ...state.nodes };
+      const node = newNodes[nodeKey];
+      if (!node || typeof node !== "object") return state;
+      const newNode = {
+        ...node,
+        className: {
+          ...node.className,
+          [group]: { ...node.className[group], [type]: value },
+        },
+      };
+      newNodes[nodeKey] = newNode;
+      get().sendMessageToCanvas({
+        type: "UPDATE_SHADOW_STATE",
+        update: {
+          nodes: newNodes,
+        },
+      });
+      return { nodes: newNodes };
+    });
+  },
   deleteNode: (nodeKey) => {
     set((state) => {
       const newNodes = { ...state.nodes };

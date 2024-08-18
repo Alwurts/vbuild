@@ -45,11 +45,10 @@ export default function Preview() {
   }, [handleMessageFromCanvas]);
 
   return (
-    // biome-ignore lint/a11y/useKeyWithClickEvents: <explanation>
     <div
-      onClick={() => {
+      /* onClick={() => {
         setSelectedNode(null);
-      }}
+      }} */
       className="flex-1 relative py-3 pl-4 pr-1 bg-muted-editor flex flex-col gap-2"
     >
       <div className="flex items-center justify-start gap-2">

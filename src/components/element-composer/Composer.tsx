@@ -3,7 +3,7 @@
 import type React from "react";
 import TreeView from "@/components/element-composer/TreeView";
 import Preview from "@/components/element-composer/Preview";
-import NodeEditor from "@/components/element-composer/NodeEditor";
+import NodeEditor from "@/components/element-composer/node-editor/NodeEditor";
 
 export default function Composer() {
   return (

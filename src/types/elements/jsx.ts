@@ -1,4 +1,4 @@
-import type { TGenericComponentWithParent } from "./elements";
+import type { TGenericComponentsWithoutRoot } from "./elements";
 import type { TRootComponent } from "./layout";
 import type { TailwindClassName } from "./tailwind";
 
@@ -16,14 +16,16 @@ type TGenericComponentAbstract = {
 	className: TailwindClassName;
 };
 
-// Node abstract
-
-export type TNodeAbstract =
+export type TGenericComponentsAbstract =
 	| (TGenericComponentAbstract & TRootComponent)
 	| (TGenericComponentAbstract &
 			TGenericComponentParentAbstract &
-			TGenericComponentWithParent)
-	| TElementBasic;
+			TGenericComponentsWithoutRoot);
+
+// Node abstract
+export type TNodeAbstract = TGenericComponentsAbstract | TElementBasic;
+
+export type NonElementBasic<T> = T extends TElementBasic ? never : T;
 
 export type TNodesAbstract = {
 	[key: string]: TNodeAbstract;

@@ -2,9 +2,12 @@ import type { TGenericComponentRegistry } from "@/types/elements/elements";
 import { Button } from "../ui/button";
 import {
   PanelsTopLeft,
+  Square,
   SquareGanttChartIcon,
   SquareMousePointer,
   SquareSlash,
+  Text,
+  Type,
 } from "lucide-react";
 import {
   Card,
@@ -25,17 +28,40 @@ export const Registry: TGenericComponentRegistry = {
     draggable: false,
     droppable: true,
     editable: false,
-    classNameGroups: ["Size", "Layout"],
+    classNameGroups: {
+      Size: {
+        Height: "h-screen",
+        Width: "w-screen",
+      },
+      Layout: {
+        Padding: "p-0",
+        Margin: "m-0",
+      },
+    },
   },
   div: {
     type: "div",
-    icon: <SquareGanttChartIcon />,
+    icon: <Square />,
     component: <div />,
     dependencies: [],
     draggable: true,
     droppable: true,
     editable: false,
-    classNameGroups: ["Size", "Layout"],
+    classNameGroups: {
+      Size: {
+        Height: "h-auto",
+        Width: "w-full",
+      },
+      Layout: {
+        Display: "block",
+        Direction: "flex-row",
+        Justify: "justify-start",
+        Align: "items-start",
+        Gap: "gap-0",
+        Padding: "p-0",
+        Margin: "m-0",
+      },
+    },
   },
   span: {
     type: "span",
@@ -45,83 +71,127 @@ export const Registry: TGenericComponentRegistry = {
     draggable: true,
     droppable: true,
     editable: true,
-    classNameGroups: [],
+    classNameGroups: {
+      Size: {
+        Height: "h-auto",
+        Width: "w-auto",
+      },
+      Layout: {
+        Padding: "p-0",
+        Margin: "m-0",
+      },
+    },
   },
   h1: {
     type: "h1",
-    icon: <SquareGanttChartIcon />,
+    icon: <Type />,
     // biome-ignore lint/a11y/useHeadingContent: <explanation>
     component: <h1 />,
     dependencies: [],
     draggable: true,
     droppable: false,
     editable: true,
-    classNameGroups: [],
+    classNameGroups: {
+      Size: {
+        Height: "h-auto",
+        Width: "w-full",
+      },
+    },
   },
   h2: {
     type: "h2",
-    icon: <SquareGanttChartIcon />,
+    icon: <Type />,
     // biome-ignore lint/a11y/useHeadingContent: <explanation>
     component: <h2 />,
     dependencies: [],
     draggable: true,
     droppable: false,
     editable: true,
-    classNameGroups: [],
+    classNameGroups: {
+      Size: {
+        Height: "h-auto",
+        Width: "w-full",
+      },
+    },
   },
   h3: {
     type: "h3",
-    icon: <SquareGanttChartIcon />,
+    icon: <Type />,
     // biome-ignore lint/a11y/useHeadingContent: <explanation>
     component: <h3 />,
     dependencies: [],
     draggable: true,
     droppable: false,
     editable: true,
-    classNameGroups: [],
+    classNameGroups: {
+      Size: {
+        Height: "h-auto",
+        Width: "w-full",
+      },
+    },
   },
   h4: {
     type: "h4",
-    icon: <SquareGanttChartIcon />,
+    icon: <Type />,
     // biome-ignore lint/a11y/useHeadingContent: <explanation>
     component: <h4 />,
     dependencies: [],
     draggable: true,
     droppable: false,
     editable: true,
-    classNameGroups: [],
+    classNameGroups: {
+      Size: {
+        Height: "h-auto",
+        Width: "w-full",
+      },
+    },
   },
   h5: {
     type: "h5",
-    icon: <SquareGanttChartIcon />,
+    icon: <Type />,
     // biome-ignore lint/a11y/useHeadingContent: <explanation>
     component: <h5 />,
     dependencies: [],
     draggable: true,
     droppable: false,
     editable: true,
-    classNameGroups: [],
+    classNameGroups: {
+      Size: {
+        Height: "h-auto",
+        Width: "w-full",
+      },
+    },
   },
   h6: {
     type: "h6",
-    icon: <SquareGanttChartIcon />,
+    icon: <Type />,
     // biome-ignore lint/a11y/useHeadingContent: <explanation>
     component: <h6 />,
     dependencies: [],
     draggable: true,
     droppable: false,
     editable: true,
-    classNameGroups: [],
+    classNameGroups: {
+      Size: {
+        Height: "h-auto",
+        Width: "w-full",
+      },
+    },
   },
   p: {
     type: "p",
-    icon: <SquareGanttChartIcon />,
+    icon: <Text />,
     component: <p />,
     dependencies: [],
     draggable: true,
     droppable: false,
     editable: true,
-    classNameGroups: [],
+    classNameGroups: {
+      Size: {
+        Height: "h-auto",
+        Width: "w-full",
+      },
+    },
   },
   Card: {
     type: "Card",
@@ -131,7 +201,16 @@ export const Registry: TGenericComponentRegistry = {
     draggable: true,
     droppable: true,
     editable: false,
-    classNameGroups: [],
+    classNameGroups: {
+      Size: {
+        Height: "h-auto",
+        Width: "w-full",
+      },
+      Layout: {
+        Padding: "p-0",
+        Margin: "m-0",
+      },
+    },
   },
   CardContent: {
     type: "CardContent",
@@ -141,7 +220,16 @@ export const Registry: TGenericComponentRegistry = {
     draggable: true,
     droppable: true,
     editable: false,
-    classNameGroups: [],
+    classNameGroups: {
+      Size: {
+        Height: "h-auto",
+        Width: "w-full",
+      },
+      Layout: {
+        Padding: "p-6",
+        Margin: "m-0",
+      },
+    },
   },
   CardHeader: {
     type: "CardHeader",
@@ -151,7 +239,16 @@ export const Registry: TGenericComponentRegistry = {
     draggable: true,
     droppable: true,
     editable: false,
-    classNameGroups: [],
+    classNameGroups: {
+      Size: {
+        Height: "h-auto",
+        Width: "w-full",
+      },
+      Layout: {
+        Padding: "p-6",
+        Margin: "m-0",
+      },
+    },
   },
   CardFooter: {
     type: "CardFooter",
@@ -161,7 +258,16 @@ export const Registry: TGenericComponentRegistry = {
     draggable: true,
     droppable: true,
     editable: false,
-    classNameGroups: [],
+    classNameGroups: {
+      Size: {
+        Height: "h-auto",
+        Width: "w-full",
+      },
+      Layout: {
+        Padding: "p-6",
+        Margin: "m-0",
+      },
+    },
   },
   CardTitle: {
     type: "CardTitle",
@@ -171,7 +277,12 @@ export const Registry: TGenericComponentRegistry = {
     draggable: true,
     droppable: false,
     editable: true,
-    classNameGroups: [],
+    classNameGroups: {
+      Size: {
+        Height: "h-auto",
+        Width: "w-full",
+      },
+    },
   },
   CardDescription: {
     type: "CardDescription",
@@ -181,7 +292,12 @@ export const Registry: TGenericComponentRegistry = {
     draggable: true,
     droppable: false,
     editable: true,
-    classNameGroups: [],
+    classNameGroups: {
+      Size: {
+        Height: "h-auto",
+        Width: "w-full",
+      },
+    },
   },
   Button: {
     type: "Button",
@@ -191,6 +307,15 @@ export const Registry: TGenericComponentRegistry = {
     draggable: true,
     droppable: false,
     editable: true,
-    classNameGroups: [],
+    classNameGroups: {
+      Size: {
+        Height: "h-10",
+        Width: "w-auto",
+      },
+      Layout: {
+        Padding: "p-3",
+        Margin: "m-0",
+      },
+    },
   },
 } as const;

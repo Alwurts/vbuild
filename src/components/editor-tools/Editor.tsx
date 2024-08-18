@@ -1,10 +1,10 @@
 import {
 	fontSizesOptions,
-	paddingXOptions,
-	heightOptions,
+	PADDING_X_CLASSNAMES,
+	HEIGHT_OPTIONS,
 	roundedOptions,
 	opacityOptions,
-	paddingYOptions,
+	PADDING_Y_CLASSNAMES,
 } from "@/lib/tailwindClasses";
 import { Label } from "@/components/ui-editor/label";
 import {
@@ -246,7 +246,7 @@ export function Editor({
 								<GenericSliderSelector
 									isDisabled={!currentVariantStyle.size.isApplied}
 									label="Padding (X)"
-									options={paddingXOptions}
+									options={PADDING_X_CLASSNAMES}
 									value={currentVariantStyle.size.properties.paddingX}
 									onChange={(value) =>
 										setStyleProperty({
@@ -262,7 +262,7 @@ export function Editor({
 								<GenericSliderSelector
 									isDisabled={!currentVariantStyle.size.isApplied}
 									label="Padding (Y)"
-									options={paddingYOptions}
+									options={PADDING_Y_CLASSNAMES}
 									value={currentVariantStyle.size.properties.paddingY}
 									onChange={(value) =>
 										setStyleProperty({
@@ -296,7 +296,7 @@ export function Editor({
 								<GenericSliderSelector
 									isDisabled={!currentVariantStyle.padding.isApplied}
 									label="Padding (X)"
-									options={paddingXOptions}
+									options={PADDING_X_CLASSNAMES}
 									value={currentVariantStyle.padding.properties.paddingX}
 									onChange={(value) =>
 										setStyleProperty({
@@ -312,7 +312,7 @@ export function Editor({
 								<GenericSliderSelector
 									isDisabled={!currentVariantStyle.padding.isApplied}
 									label="Padding (Y)"
-									options={paddingYOptions}
+									options={PADDING_Y_CLASSNAMES}
 									value={currentVariantStyle.padding.properties.paddingY}
 									onChange={(value) =>
 										setStyleProperty({
@@ -505,7 +505,7 @@ export function Editor({
 									<GenericSliderSelector
 										isDisabled={!currentSizeStyle.size.isApplied}
 										label="Padding (X)"
-										options={paddingXOptions}
+										options={PADDING_X_CLASSNAMES}
 										value={currentSizeStyle.size.properties.paddingX}
 										onChange={(value) =>
 											setStyleProperty({
@@ -521,7 +521,7 @@ export function Editor({
 									<GenericSliderSelector
 										isDisabled={!currentSizeStyle.size.isApplied}
 										label="Height"
-										options={heightOptions}
+										options={HEIGHT_OPTIONS}
 										value={currentSizeStyle.size.properties.height}
 										onChange={(value) =>
 											setStyleProperty({

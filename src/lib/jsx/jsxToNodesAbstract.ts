@@ -7,7 +7,11 @@ import React from "react";
 import { v4 as uuidv4 } from "uuid";
 import { TAILWIND_CLASS_NAME_REGEX, TAILWIND_GROUPS } from "./tailwind";
 import { Registry } from "@/components/elements/Registry";
-import type { TailwindClassName } from "@/types/elements/tailwind";
+import type {
+	TailwindClassName,
+	TailwindGroupName,
+	TailwindType,
+} from "@/types/elements/tailwind";
 
 const jsxNodesToNodesAbstract = (
 	headReactNode: React.ReactNode,
@@ -52,28 +56,31 @@ const jsxNodesToNodesAbstract = (
 		const { children, className, ...props } = reactNodeClone.props;
 
 		const tailwindClassName: TailwindClassName = {};
-		if (className) {
-			const classNameSeparated = (className as string).trim().split(" ");
-			for (const group of componentClassNameGroups) {
-				const groupTypes = TAILWIND_GROUPS[group];
-				for (const type of groupTypes) {
-					const regex = TAILWIND_CLASS_NAME_REGEX[type];
-					const match = classNameSeparated.find((className) =>
-						regex.test(className),
-					);
-					if (match) {
-						if (!tailwindClassName[group]) {
-							tailwindClassName[group] = {};
-						}
-						if (tailwindClassName[group][type]) {
-							throw new Error(`Duplicate tailwind class name: ${type}`);
-						}
-						tailwindClassName[group][type] = match;
-					}
+
+		const classNameSeparated = className ? (className as string).trim().split(" ") : [];
+		for (const [group, groupTypes] of Object.entries(
+			componentClassNameGroups,
+		)) {
+			const groupName = group as TailwindGroupName;
+			for (const [type, typeValue] of Object.entries(groupTypes)) {
+				const typeName = type as TailwindType;
+				const regex = TAILWIND_CLASS_NAME_REGEX[typeName];
+				const match = classNameSeparated.find((className) =>
+					regex.test(className),
+				);
+				if (!tailwindClassName[groupName]) {
+					tailwindClassName[groupName] = {};
+				}
+				if (tailwindClassName[groupName][typeName]) {
+					throw new Error(`Duplicate tailwind class name: ${typeName}`);
+				}
+				if (match) {
+					tailwindClassName[groupName][typeName] = match;
+				} else {
+					tailwindClassName[groupName][typeName] = typeValue;
 				}
 			}
 		}
-		console.log("tailwindClassName", tailwindClassName);
 
 		let childrenKeys: string[] = [];
 		if ("children" in reactNodeClone.props && reactNodeClone.props.children) {

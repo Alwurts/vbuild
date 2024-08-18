@@ -21,7 +21,7 @@ import type {
 	TH6Component,
 	TPComponent,
 } from "@/types/elements/text";
-import type { TailwindGroupName } from "./tailwind";
+import type { TailwindClassName, TailwindGroupName } from "./tailwind";
 
 export type TGenericComponentInfer<T> = {
 	props: Omit<InferComponentProps<T>, "children" | "className">;
@@ -54,7 +54,7 @@ const GenericComponentsNames = {
 export type GenericComponentName =
 	(typeof GenericComponentsNames)[keyof typeof GenericComponentsNames];
 
-export type TGenericComponentWithParent =
+export type TGenericComponentsWithoutRoot =
 	| TDivComponent
 	| TSpanComponent
 	| TH1Component
@@ -73,7 +73,7 @@ export type TGenericComponentWithParent =
 	| TCardTitleComponent
 	| TCardDescriptionComponent;
 
-export type TGenericComponent = TRootComponent | TGenericComponentWithParent;
+export type TGenericComponents = TRootComponent | TGenericComponentsWithoutRoot;
 
 export function isValidComponentName(
 	name: unknown,
@@ -86,7 +86,7 @@ export function isValidComponentName(
 }
 
 export type TGenericComponentRegistryEntry = Omit<
-	TGenericComponent,
+	TGenericComponents,
 	"props"
 > & {
 	icon: React.ReactNode;
@@ -95,7 +95,7 @@ export type TGenericComponentRegistryEntry = Omit<
 	draggable: boolean;
 	droppable: boolean;
 	editable: boolean;
-	classNameGroups: TailwindGroupName[];
+	classNameGroups: TailwindClassName;
 };
 
 export type TGenericComponentRegistry = {

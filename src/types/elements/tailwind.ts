@@ -1,4 +1,4 @@
-export type TailwindType = "Width" | "Height" | "Padding" | "Margin";
+export type TailwindType = "Width" | "Height" | "Padding" | "Margin" | "Display" | "Direction" | "Justify" | "Align" | "Gap";
 
 export type TailwindClassNameRegex = {
 	[K in TailwindType]: RegExp;

@@ -1,27 +1,16 @@
-import { cloneElement, isValidElement, useEffect, useRef } from "react";
-import { useShadowComposerStore } from "@/store/useShadowComposerStore";
 import {
-  Boxes,
-  EllipsisVertical,
-  LoaderCircle,
-  MousePointer,
-  PlusIcon,
-} from "lucide-react";
+  cloneElement,
+  isValidElement,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+import { useShadowComposerStore } from "@/store/useShadowComposerStore";
+import { LoaderCircle } from "lucide-react";
 import { Registry } from "../elements/Registry";
 import { cn } from "@/lib/utils";
 import { createPortal } from "react-dom";
-import type { CanvasMessageEvent } from "@/types/shadow-composer-store";
-import { Button } from "../ui-editor/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuTrigger,
-} from "../ui-editor/dropdown-menu";
+import AddChildrenMenu from "./AddChildrenMenu";
 
 function CanvasNode({ nodeKey }: { nodeKey: string }) {
   const nodeRef = useRef<HTMLElement>(null);
@@ -34,33 +23,19 @@ function CanvasNode({ nodeKey }: { nodeKey: string }) {
     setContentEditable,
   } = useShadowComposerStore();
 
-  useEffect(() => {
-    if (
-      canvasHighlight?.nodeKey === nodeKey &&
-      !canvasHighlight.domRect &&
-      nodeRef.current
-    ) {
-      const rect = nodeRef.current.getBoundingClientRect();
-      setCanvasHighlight({
-        nodeKey: nodeKey,
-        domRect: rect,
-      });
-    }
-  }, [canvasHighlight, nodeKey, setCanvasHighlight]);
+  const [nodeDomRect, setNodeDomRect] = useState<DOMRect | null>(null);
 
   useEffect(() => {
     if (
-      selectedNode?.nodeKey === nodeKey &&
-      !selectedNode.domRect &&
-      nodeRef.current
+      nodeRef.current &&
+      nodes &&
+      (canvasHighlight?.nodeKey === nodeKey ||
+        selectedNode?.nodeKey === nodeKey)
     ) {
       const rect = nodeRef.current.getBoundingClientRect();
-      setSelectedNode({
-        nodeKey: nodeKey,
-        domRect: rect,
-      });
+      setNodeDomRect(rect);
     }
-  }, [selectedNode, nodeKey, setSelectedNode]);
+  }, [canvasHighlight, selectedNode, nodeKey, nodes]);
 
   if (!nodes) {
     return null;
@@ -86,7 +61,7 @@ function CanvasNode({ nodeKey }: { nodeKey: string }) {
     e.stopPropagation();
     const target = e.target as HTMLElement;
     const rect = target.getBoundingClientRect();
-    setCanvasHighlight({ nodeKey: nodeKey, domRect: rect });
+    setCanvasHighlight({ nodeKey: nodeKey });
   };
 
   const onMouseLeave = (e: React.MouseEvent<HTMLElement>, type: string) => {
@@ -131,18 +106,15 @@ function CanvasNode({ nodeKey }: { nodeKey: string }) {
   return (
     <>
       {clonedNodeComponent}
-      {selectedNode?.nodeKey === nodeKey && selectedNode.domRect
+      {selectedNode?.nodeKey === nodeKey && nodeDomRect
         ? createPortal(
-            <CanvasHighlight
-              domRect={selectedNode.domRect}
-              showActionButtons
-            />,
+            <CanvasHighlight domRect={nodeDomRect} showActionButtons />,
             document.body
           )
         : canvasHighlight?.nodeKey === nodeKey &&
-          canvasHighlight.domRect &&
+          nodeDomRect &&
           createPortal(
-            <CanvasHighlight domRect={canvasHighlight.domRect} />,
+            <CanvasHighlight domRect={nodeDomRect} />,
             document.body
           )}
     </>
@@ -170,48 +142,7 @@ function CanvasHighlight({
     >
       {showActionButtons && (
         <div className="absolute -top-5 rounded-t-sm -left-0.5 py-0.5 px-1 flex items-center gap-1 bg-primary-editor">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                onClick={(e) => {
-                  e.stopPropagation();
-                }}
-                onMouseOver={(e) => e.stopPropagation()}
-                variant="ghost"
-                size="icon"
-                className="h-4 w-4 pointer-events-auto bg-primary-editor hover:bg-primary-editor hover:text-primary-editor-foreground/50 text-primary-editor-foreground"
-              >
-                <PlusIcon className="w-4 h-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent
-              className="w-48"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <DropdownMenuLabel>Add child</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuGroup>
-                <DropdownMenuItem>
-                  <Boxes className="mr-2 h-4 w-4" />
-                  <span>Add child</span>
-                  <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
-                </DropdownMenuItem>
-              </DropdownMenuGroup>
-            </DropdownMenuContent>
-          </DropdownMenu>
-          <Button
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              console.log("Selecting");
-            }}
-            onMouseOver={(e) => e.stopPropagation()}
-            variant="ghost"
-            size="icon"
-            className="h-4 w-4 pointer-events-auto bg-primary-editor hover:bg-primary-editor hover:text-primary-editor-foreground/50 text-primary-editor-foreground"
-          >
-            <EllipsisVertical className="w-4 h-4" />
-          </Button>
+          <AddChildrenMenu />
         </div>
       )}
     </div>
