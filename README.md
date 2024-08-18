@@ -1,36 +1,57 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# VBuild
 
-## Getting Started
+<p align="center">
+  <img src="public/vbuild-logo.svg" alt="vbuild logo" width="200"/>
+</p>
 
-First, run the development server:
+![GitHub stars](https://img.shields.io/github/stars/alwurts/vbuild?style=social)
+![GitHub issues](https://img.shields.io/github/issues/alwurts/vbuild)
+![GitHub license](https://img.shields.io/github/license/alwurts/vbuild)
+![npm version](https://img.shields.io/npm/v/vbuild)
+
+VBuild is an Open Source Visual UI Builder for React and Tailwind CSS. Design your UI visually and copy the generated code directly into your app.
+
+## Features
+
+- Visual UI design interface
+- Tailwind first components
+- Shadcn/ui components
+- Real-time code preview
+- Easy copy-and-paste your code to your project
+
+<!-- ## Demo
+[Add a gif or link to a live demo here] -->
+
+## Quick Start
+
+To install and run vbuild, run the following command:
 
 ```bash
+git clone https://github.com/alwurts/vbuild.git
+cd vbuild
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open your browser and navigate to http://localhost:3000 (or the port specified in the console).
+Use the visual interface to design your UI components.
+Copy the generated code to use in your project.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Technologies Used
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+- Next.js
+- Typescript
+- Tailwind CSS
+- Shadcn/ui
 
-## Learn More
+## Contributing
 
-To learn more about Next.js, take a look at the following resources:
+We welcome contributions to vbuild! Please reach out to me on X [@Alwurts](https://x.com/Alwurts)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## License
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+See LICENSE file for details.
 
-## Deploy on Vercel
+## Support
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+If you encounter any issues or have questions, please file an issue.
