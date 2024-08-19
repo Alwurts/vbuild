@@ -24,6 +24,8 @@ import {
   DropdownMenuTrigger,
 } from "../ui-editor/dropdown-menu";
 import { Registry } from "../elements/Registry";
+import { Card } from "../ui-editor/card";
+import { Logo } from "../icons/Logo";
 
 interface TreeNodeProps {
   nodeKey: string;
@@ -295,8 +297,7 @@ function TreeNode({ nodeKey, depth = 0 }: TreeNodeProps) {
               selectedNode?.nodeKey !== node.key &&
               dragAndDropTreeNode?.draggingItem?.nodeKey !== node.key &&
               "border-primary-editor",
-            selectedNode?.nodeKey === node.key &&
-              "text-foreground-editor",
+            selectedNode?.nodeKey === node.key && "text-foreground-editor",
             nodeIsCurrentlyDropZone &&
               dragAndDropTreeNode?.dropZone?.type === "inside" &&
               "border-primary-editor bg-primary-editor/80"
@@ -419,7 +420,11 @@ export default function TreeView() {
   const { headNodeKey } = useComposerStore();
   return (
     <div className="border-r p-2 w-[240px]">
-      <div className="px-2 pb-2 pt-1 flex items-center gap-2">
+      <Card className="p-2 flex items-center justify-center gap-2">
+        <Logo className="w-5 h-5" />
+        <h2 className="text-base font-bold">VBuild</h2>
+      </Card>
+      <div className="px-2 pt-3 pb-2 flex items-center gap-2">
         <GitBranch className="w-4 h-4" />
         <h3 className="text-sm font-medium">Tree View</h3>
       </div>

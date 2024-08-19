@@ -1,5 +1,5 @@
 import type { TNodesAbstract } from "./elements/jsx";
-import type { TailwindGroupName, TailwindType } from "./elements/tailwind";
+import type { TailwindGroupName, TailwindStylePropertyName } from "./tailwind/tailwind";
 import type {
 	CanvasMessage,
 	CanvasMessageEvent,
@@ -15,8 +15,7 @@ export interface ComposerStore {
 	setContentEditable: (nodeKey: string, content: string) => void;
 	setNodeClassName: (
 		nodeKey: string,
-		group: TailwindGroupName,
-		type: TailwindType,
+		property: TailwindStylePropertyName,
 		value: string,
 	) => void;
 	moveNode: (

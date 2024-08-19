@@ -5,13 +5,13 @@ import {
 import type { TNodeAbstract, TNodesAbstract } from "@/types/elements/jsx";
 import React from "react";
 import { v4 as uuidv4 } from "uuid";
-import { TAILWIND_CLASS_NAME_REGEX, TAILWIND_GROUPS } from "./tailwind";
 import { Registry } from "@/components/elements/Registry";
 import type {
 	TailwindClassName,
 	TailwindGroupName,
-	TailwindType,
-} from "@/types/elements/tailwind";
+	TailwindStylePropertyName,
+} from "@/types/tailwind/tailwind";
+import { TAILWIND_DEFAULT_PROPERTY_VALUES, TAILWIND_REGEX } from "../tailwind/tailwind";
 
 const jsxNodesToNodesAbstract = (
 	headReactNode: React.ReactNode,
@@ -51,33 +51,31 @@ const jsxNodesToNodesAbstract = (
 					: reactNodeClone.type.name
 		) as GenericComponentName;
 
-		const { classNameGroups: componentClassNameGroups } = Registry[typeName];
+		const { defaultClassNameProperties: componentClassNameGroups } = Registry[typeName];
 
 		const { children, className, ...props } = reactNodeClone.props;
 
-		const tailwindClassName: TailwindClassName = {};
+		const tailwindClassName: TailwindClassName = {
+			...TAILWIND_DEFAULT_PROPERTY_VALUES,
+		};
 
-		const classNameSeparated = className ? (className as string).trim().split(" ") : [];
-		for (const [group, groupTypes] of Object.entries(
-			componentClassNameGroups,
-		)) {
-			const groupName = group as TailwindGroupName;
-			for (const [type, typeValue] of Object.entries(groupTypes)) {
-				const typeName = type as TailwindType;
-				const regex = TAILWIND_CLASS_NAME_REGEX[typeName];
-				const match = classNameSeparated.find((className) =>
-					regex.test(className),
-				);
-				if (!tailwindClassName[groupName]) {
-					tailwindClassName[groupName] = {};
-				}
-				if (tailwindClassName[groupName][typeName]) {
-					throw new Error(`Duplicate tailwind class name: ${typeName}`);
-				}
-				if (match) {
-					tailwindClassName[groupName][typeName] = match;
-				} else {
-					tailwindClassName[groupName][typeName] = typeValue;
+		const classNameSeparated = className
+			? (className as string).trim().split(" ")
+			: [];
+		for (const property of Object.keys(tailwindClassName)) {
+			const propertyName = property as TailwindStylePropertyName;
+			const propertyRegex = TAILWIND_REGEX[propertyName];
+			const propertyMatch = classNameSeparated.find((className) =>
+				propertyRegex.test(className),
+			);
+			if (propertyMatch) {
+				// A class was found on the parsed code
+				tailwindClassName[propertyName] = propertyMatch;
+			} else {
+				const componentDefaultValue = componentClassNameGroups[propertyName];
+				if (componentDefaultValue) {
+					// A class was not found on the parsed code lets use the component default value
+					tailwindClassName[propertyName] = componentDefaultValue;
 				}
 			}
 		}

@@ -59,12 +59,10 @@ export default function NodeEditor() {
     return noNodeSelectedContent;
   }
 
-  const { classNameGroups } = Registry[selectedNode.type];
-
   return (
     <Layout>
-      {classNameGroups.Size && <SizeGroup node={selectedNode} />}
-      {classNameGroups.Layout && <LayoutGroup node={selectedNode} />}
+      <SizeGroup node={selectedNode} />
+      {/* {classNameGroups.Layout && <LayoutGroup node={selectedNode} />} */}
     </Layout>
   );
 }

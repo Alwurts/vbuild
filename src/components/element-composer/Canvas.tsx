@@ -74,9 +74,7 @@ function CanvasNode({ nodeKey }: { nodeKey: string }) {
       ? cloneElement(nodeComponent as React.ReactElement, {
           ...node.props,
           key: nodeKey,
-          className: Object.values(node.className)
-            .map((group) => Object.values(group).join(" "))
-            .join(" "),
+          className: Object.values(node.className).join(" "),
           draggable: draggable,
           ref: nodeRef,
           children: nodeChildren,

@@ -1,6 +1,6 @@
 import type { TGenericComponentsWithoutRoot } from "./elements";
 import type { TRootComponent } from "./layout";
-import type { TailwindClassName } from "./tailwind";
+import type { TailwindClassName } from "../tailwind/tailwind";
 
 type TElementBasic = string | number | boolean;
 
