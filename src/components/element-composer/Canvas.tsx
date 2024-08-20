@@ -119,6 +119,7 @@ function CanvasNode({ nodeKey }: { nodeKey: string }) {
               nodeKey: nodeKey,
             });
           },
+          suppressContentEditableWarning: isEditable, 
         })
       : null;
 

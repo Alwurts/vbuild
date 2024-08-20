@@ -170,8 +170,26 @@ export const Registry: TGenericComponentRegistry = {
     draggable: true,
     droppable: true,
     editable: false,
-    classNameGroups: {},
-    defaultClassNameProperties: {},
+    classNameGroups: {
+      size: {
+        name: "size",
+      },
+      layout: {
+        name: "layout",
+      },
+    },
+    defaultClassNameProperties: {
+      height: "h-auto",
+      width: "w-full",
+      padding: "p-0",
+      gap: "gap-0",
+      display: "block",
+      flexDirection: "flex-row",
+      justifyContent: "justify-start",
+      alignItems: "items-start",
+      gridTemplateColumns: "grid-cols-1",
+      gridTemplateRows: "grid-rows-1",
+    },
   },
   CardContent: {
     type: "CardContent",
