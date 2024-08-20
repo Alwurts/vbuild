@@ -1,109 +1,147 @@
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui-editor/select";
 import GroupContainer from "./GroupContainer";
 import {
-  ToggleGroup,
-  ToggleGroupItem,
-} from "@/components/ui-editor/toggle-group";
-import {
-  AlignCenterHorizontal,
-  AlignEndHorizontal,
-  AlignStartHorizontal,
-  Grid2X2,
-  Maximize,
-  MoveHorizontal,
-  MoveVertical,
-  Rows2,
-  Square,
-} from "lucide-react";
-import { cloneElement, isValidElement } from "react";
-import {
+  ALIGN_ITEMS_OPTIONS,
+  DISPLAY_OPTIONS,
+  FLEX_DIRECTION_OPTIONS,
   GAP_CLASSNAMES,
+  GRID_TEMPLATE_COLUMNS_OPTIONS,
+  GRID_TEMPLATE_ROWS_OPTIONS,
+  JUSTIFY_CONTENT_OPTIONS,
+  MARGIN_CLASSNAMES,
   PADDING_CLASSNAMES,
-  WIDTH_CLASSNAMES,
 } from "@/lib/tailwindClasses";
-import { cn } from "@/lib/utils";
 import { useComposerStore } from "@/store/useComposerStore";
-import type { TGenericComponentsAbstract } from "@/types/elements/jsx";
+import type { tailwindClassNamesGroups } from "@/types/tailwind/tailwind";
+import { SelectList } from "@/components/ui-editor/select-list";
+import { SettingLabelContainer } from "@/components/layout/SettingLabelContainer";
 
 export default function LayoutGroup({
-  node,
+  layoutGroup,
+  nodeKey,
 }: {
-  node: TGenericComponentsAbstract;
+  layoutGroup: NonNullable<tailwindClassNamesGroups["layout"]>;
+  nodeKey: string;
 }) {
-  if (!node.className.Layout) return null;
-  const { Padding, Display, Direction, Justify, Align, Gap } =
-    node.className.Layout;
+  const setNodeClassName = useComposerStore((state) => state.setNodeClassName);
   return (
     <GroupContainer groupName="Layout">
-      {Display && (
-        <>
-          <h5 className="mt-2">Type</h5>
-          <DisplayControl
-            className="col-span-2"
-            value={Display}
-            nodeKey={node.key}
-          />
-        </>
-      )}
-      {Display === "flex" && Direction && (
-        <>
-          <h5 className="mt-2">Direction</h5>
-          <DirectionControl
-            className="col-span-2"
-            value={Direction}
-            nodeKey={node.key}
-          />
-        </>
-      )}
-      {Display === "flex" && Justify && (
-        <>
-          <h5 className="mt-2">Justify</h5>
-          <JustifyControl
-            className="col-span-2"
-            value={Justify}
-            nodeKey={node.key}
-          />
-        </>
-      )}
-      {Display === "flex" && Align && (
-        <>
-          <h5 className="mt-2">Align</h5>
-          <AlignControl
-            className="col-span-2"
-            value={Align}
-            nodeKey={node.key}
-          />
-        </>
-      )}
-      {Display === "flex" && Gap && (
-        <>
-          <h5 className="mt-2">Gap</h5>
-          <GapControl className="col-span-2" value={Gap} nodeKey={node.key} />
-        </>
-      )}
-      {Padding && (
-        <>
-          <h5 className="mt-2">Padding</h5>
-          <PaddingControl
-            nodeKey={node.key}
-            value={Padding}
+      {layoutGroup.display && (
+        <SettingLabelContainer label="Display">
+          <SelectList
+            value={layoutGroup.display}
+            onValueChange={(value) =>
+              setNodeClassName(nodeKey, "display", value)
+            }
+            options={DISPLAY_OPTIONS}
+            label="Width"
             className="col-span-2"
           />
+        </SettingLabelContainer>
+      )}
+      {layoutGroup.display === "flex" && (
+        <>
+          {layoutGroup.flexDirection && (
+            <SettingLabelContainer label="Direction">
+              <SelectList
+                value={layoutGroup.flexDirection}
+                onValueChange={(value) =>
+                  setNodeClassName(nodeKey, "flexDirection", value)
+                }
+                options={FLEX_DIRECTION_OPTIONS}
+                label="Direction"
+                className="col-span-2"
+              />
+            </SettingLabelContainer>
+          )}
+          {layoutGroup.justifyContent && (
+            <SettingLabelContainer label="Justify">
+              <SelectList
+                value={layoutGroup.justifyContent}
+                onValueChange={(value) =>
+                  setNodeClassName(nodeKey, "justifyContent", value)
+                }
+                options={JUSTIFY_CONTENT_OPTIONS}
+                label="Justify"
+                className="col-span-2"
+              />
+            </SettingLabelContainer>
+          )}
+          {layoutGroup.alignItems && (
+            <SettingLabelContainer label="Align">
+              <SelectList
+                value={layoutGroup.alignItems}
+                onValueChange={(value) =>
+                  setNodeClassName(nodeKey, "alignItems", value)
+                }
+                options={ALIGN_ITEMS_OPTIONS}
+                label="Align"
+                className="col-span-2"
+              />
+            </SettingLabelContainer>
+          )}
         </>
       )}
+      {layoutGroup.display === "grid" && (
+        <>
+          {layoutGroup.gridTemplateColumns && (
+            <SettingLabelContainer label="Columns">
+              <SelectList
+                value={layoutGroup.gridTemplateColumns}
+                onValueChange={(value) =>
+                  setNodeClassName(nodeKey, "gridTemplateColumns", value)
+                }
+                options={GRID_TEMPLATE_COLUMNS_OPTIONS}
+                label="Columns"
+                className="col-span-2"
+              />
+            </SettingLabelContainer>
+          )}
+          {layoutGroup.gridTemplateRows && (
+            <SettingLabelContainer label="Rows">
+              <SelectList
+                value={layoutGroup.gridTemplateRows}
+                onValueChange={(value) =>
+                  setNodeClassName(nodeKey, "gridTemplateRows", value)
+                }
+                options={GRID_TEMPLATE_ROWS_OPTIONS}
+                label="Rows"
+                className="col-span-2"
+              />
+            </SettingLabelContainer>
+          )}
+        </>
+      )}
+      {layoutGroup.display !== "hidden" && layoutGroup.padding && (
+        <SettingLabelContainer label="Padding">
+          <SelectList
+            value={layoutGroup.padding}
+            onValueChange={(value) =>
+              setNodeClassName(nodeKey, "padding", value)
+            }
+            options={PADDING_CLASSNAMES}
+            label="Padding"
+            className="col-span-2"
+          />
+        </SettingLabelContainer>
+      )}
+      {layoutGroup.display !== "hidden" &&
+        layoutGroup.display !== "block" &&
+        layoutGroup.gap && (
+          <SettingLabelContainer label="Gap">
+            <SelectList
+              value={layoutGroup.gap}
+              onValueChange={(value) => setNodeClassName(nodeKey, "gap", value)}
+              options={GAP_CLASSNAMES}
+              label="Gap"
+              className="col-span-2"
+            />
+          </SettingLabelContainer>
+        )}
     </GroupContainer>
   );
 }
 
-function DisplayControl({
+/* function DisplayControl({
   className,
   value,
   nodeKey,
@@ -145,9 +183,9 @@ function DisplayControl({
       ))}
     </ToggleGroup>
   );
-}
+} */
 
-function DirectionControl({
+/* function DirectionControl({
   className,
   value,
   nodeKey,
@@ -279,87 +317,4 @@ function AlignControl({
       ))}
     </ToggleGroup>
   );
-}
-
-function GapControl({
-  className,
-  value,
-  nodeKey,
-}: {
-  className?: string;
-  value: string;
-  nodeKey: string;
-}) {
-  const setNodeClassName = useComposerStore((state) => state.setNodeClassName);
-  return (
-    <Select
-      value={value}
-      onValueChange={(value) =>
-        setNodeClassName(nodeKey, "Layout", "Gap", value)
-      }
-    >
-      <SelectTrigger className={cn("h-9", className)}>
-        <SelectValue placeholder="None" />
-      </SelectTrigger>
-      <SelectContent>
-        <SelectGroup>
-          <SelectLabel>Gap</SelectLabel>
-          {GAP_CLASSNAMES.map((option) => (
-            <SelectItem value={option} key={option}>
-              {option}
-            </SelectItem>
-          ))}
-        </SelectGroup>
-      </SelectContent>
-    </Select>
-  );
-}
-
-function PaddingControl({
-  className,
-  nodeKey,
-  value,
-}: {
-  className?: string;
-  nodeKey: string;
-  value: string;
-}) {
-  const setNodeClassName = useComposerStore((state) => state.setNodeClassName);
-  return (
-    <div className={cn("flex flex-col items-stretch gap-2", className)}>
-      <Select
-        value={value}
-        onValueChange={(value) =>
-          setNodeClassName(nodeKey, "Layout", "Padding", value)
-        }
-      >
-        <SelectTrigger className="h-9">
-          <SelectValue placeholder="None" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectGroup>
-            <SelectLabel>Padding</SelectLabel>
-            {PADDING_CLASSNAMES.map((option) => (
-              <SelectItem value={option} key={option}>
-                {option}
-              </SelectItem>
-            ))}
-          </SelectGroup>
-        </SelectContent>
-      </Select>
-      {/* <ToggleGroup
-        type="single"
-        variant="outline"
-        size="sm"
-        className={className}
-      >
-        <ToggleGroupItem title="All" className="w-full" value="all">
-          <Square className="w-4 h-4" />
-        </ToggleGroupItem>
-        <ToggleGroupItem title="Separate" className="w-full" value="separate">
-          <Maximize className="w-4 h-4" />
-        </ToggleGroupItem>
-      </ToggleGroup> */}
-    </div>
-  );
-}
+} */

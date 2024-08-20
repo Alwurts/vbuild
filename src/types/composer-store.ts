@@ -1,11 +1,8 @@
 import type { TNodesAbstract } from "./elements/jsx";
-import type { TailwindGroupName, TailwindStylePropertyName } from "./tailwind/tailwind";
+import type { TailwindStylePropertyName } from "./tailwind/tailwind";
 import type {
 	CanvasMessage,
 	CanvasMessageEvent,
-	CanvasReadyMessage,
-	UpdateShadowState,
-	UpdateShadowStateMessage,
 } from "./shadow-composer-store";
 
 export interface ComposerStore {

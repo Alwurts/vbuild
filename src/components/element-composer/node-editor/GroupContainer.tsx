@@ -1,13 +1,12 @@
 import { Separator } from "@/components/ui-editor/separator";
 import { cn } from "@/lib/utils";
-import type { TailwindGroupName } from "@/types/elements/tailwind";
 
 export default function GroupContainer({
   groupName,
   children,
   className,
 }: {
-  groupName: TailwindGroupName;
+  groupName: string;
   children: React.ReactNode;
   className?: string;
 }) {

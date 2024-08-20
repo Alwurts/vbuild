@@ -10,100 +10,51 @@ import {
 import GroupContainer from "./GroupContainer";
 import { HEIGHT_OPTIONS, WIDTH_CLASSNAMES } from "@/lib/tailwindClasses";
 import { cn } from "@/lib/utils";
-import type { TGenericComponentsAbstract } from "@/types/elements/jsx";
 import { useComposerStore } from "@/store/useComposerStore";
+import type { tailwindClassNamesGroups } from "@/types/tailwind/tailwind";
+import { SelectList } from "@/components/ui-editor/select-list";
 
 export default function SizeGroup({
-  node,
+  sizeGroup,
+  nodeKey,
+  disabled,
 }: {
-  node: TGenericComponentsAbstract;
+  sizeGroup: NonNullable<tailwindClassNamesGroups["size"]>;
+  nodeKey: string;
+  disabled?: boolean;
 }) {
+  const setNodeClassName = useComposerStore((state) => state.setNodeClassName);
+
   return (
     <GroupContainer groupName="Size">
-      {node.className.width && (
+      {sizeGroup.width && (
         <>
           <h5 className="mt-2">Width</h5>
-          <WidthControl
-            value={node.className.width}
-            nodeKey={node.key}
+          <SelectList
+            value={sizeGroup.width}
+            onValueChange={(value) => setNodeClassName(nodeKey, "width", value)}
+            options={WIDTH_CLASSNAMES}
+            label="Width"
             className="col-span-2"
+            disabled={disabled}
           />
         </>
       )}
-      {node.className.height && (
+      {sizeGroup.height && (
         <>
           <h5 className="mt-2">Height</h5>
-          <HeightControl
-            value={node.className.height}
-            nodeKey={node.key}
+          <SelectList
+            value={sizeGroup.height}
+            onValueChange={(value) =>
+              setNodeClassName(nodeKey, "height", value)
+            }
+            options={HEIGHT_OPTIONS}
+            label="Height"
             className="col-span-2"
+            disabled={disabled}
           />
         </>
       )}
     </GroupContainer>
-  );
-}
-
-function WidthControl({
-  className,
-  value,
-  nodeKey,
-}: {
-  className?: string;
-  value: string;
-  nodeKey: string;
-}) {
-  const setNodeClassName = useComposerStore((state) => state.setNodeClassName);
-  return (
-    <Select
-      value={value}
-      onValueChange={(value) => setNodeClassName(nodeKey, "width", value)}
-    >
-      <SelectTrigger className={cn("h-9", className)}>
-        <SelectValue placeholder="None" />
-      </SelectTrigger>
-      <SelectContent>
-        <SelectGroup>
-          <SelectLabel>Width</SelectLabel>
-          {WIDTH_CLASSNAMES.map((option) => (
-            <SelectItem value={option} key={option}>
-              {option}
-            </SelectItem>
-          ))}
-        </SelectGroup>
-      </SelectContent>
-    </Select>
-  );
-}
-
-function HeightControl({
-  className,
-  value,
-  nodeKey,
-}: {
-  className?: string;
-  value: string | undefined;
-  nodeKey: string;
-}) {
-  const setNodeClassName = useComposerStore((state) => state.setNodeClassName);
-  return (
-    <Select
-      value={value}
-      onValueChange={(value) => setNodeClassName(nodeKey, "height", value)}
-    >
-      <SelectTrigger className={cn("h-9", className)}>
-        <SelectValue placeholder="None" />
-      </SelectTrigger>
-      <SelectContent>
-        <SelectGroup>
-          <SelectLabel>Height</SelectLabel>
-          {HEIGHT_OPTIONS.map((option) => (
-            <SelectItem value={option} key={option}>
-              {option}
-            </SelectItem>
-          ))}
-        </SelectGroup>
-      </SelectContent>
-    </Select>
   );
 }

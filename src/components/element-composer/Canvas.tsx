@@ -11,6 +11,14 @@ import { Registry } from "../elements/Registry";
 import { cn } from "@/lib/utils";
 import { createPortal } from "react-dom";
 import AddChildrenMenu from "./AddChildrenMenu";
+import {
+  schemaLayoutGroup,
+  schemaSizeGroup,
+  type TailwindGroupName,
+  type tailwindClassNamesGroups,
+  type TailwindClassName,
+} from "@/types/tailwind/tailwind";
+import { parseTailwindClassNameIntoGroups } from "@/lib/tailwind/tailwind";
 
 function CanvasNode({ nodeKey }: { nodeKey: string }) {
   const nodeRef = useRef<HTMLElement>(null);
@@ -51,6 +59,7 @@ function CanvasNode({ nodeKey }: { nodeKey: string }) {
     component: nodeComponent,
     editable: isEditable,
     draggable,
+    classNameGroups,
   } = Registry[node.type];
 
   const nodeChildren = node.children?.map((childKey) => (
@@ -59,8 +68,6 @@ function CanvasNode({ nodeKey }: { nodeKey: string }) {
 
   const onMouseOver = (e: React.MouseEvent<HTMLElement>, type: string) => {
     e.stopPropagation();
-    const target = e.target as HTMLElement;
-    const rect = target.getBoundingClientRect();
     setCanvasHighlight({ nodeKey: nodeKey });
   };
 
@@ -69,12 +76,28 @@ function CanvasNode({ nodeKey }: { nodeKey: string }) {
     setCanvasHighlight(null);
   };
 
+  const parseClassNameGroupsIntoString = (className: TailwindClassName) => {
+    const parsedGroups = parseTailwindClassNameIntoGroups(
+      className,
+      classNameGroups
+    );
+    let classNameString = "";
+    for (const group of Object.values(parsedGroups)) {
+      for (const propertyValue of Object.values(group)) {
+        classNameString += `${propertyValue} `;
+      }
+    }
+    return classNameString;
+  };
+
+  const nodeClassName = parseClassNameGroupsIntoString(node.className);
+
   const clonedNodeComponent =
     nodeComponent && isValidElement(nodeComponent)
       ? cloneElement(nodeComponent as React.ReactElement, {
           ...node.props,
           key: nodeKey,
-          className: Object.values(node.className).join(" "),
+          className: nodeClassName,
           draggable: draggable,
           ref: nodeRef,
           children: nodeChildren,
@@ -92,10 +115,8 @@ function CanvasNode({ nodeKey }: { nodeKey: string }) {
             onMouseLeave(e, node.type),
           onClick: (e: React.MouseEvent<HTMLElement>) => {
             e.stopPropagation();
-            const rect = nodeRef.current?.getBoundingClientRect();
             setSelectedNode({
               nodeKey: nodeKey,
-              domRect: rect,
             });
           },
         })

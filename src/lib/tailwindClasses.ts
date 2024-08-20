@@ -1022,6 +1022,44 @@ export const roundedOptions = [
 
 // Size
 
+export const MARGIN_CLASSNAMES = [
+	"m-0",
+	"m-px",
+	"m-0.5",
+	"m-1",
+	"m-1.5",
+	"m-2",
+	"m-2.5",
+	"m-3",
+	"m-3.5",
+	"m-4",
+	"m-5",
+	"m-6",
+	"m-7",
+	"m-8",
+	"m-9",
+	"m-10",
+	"m-11",
+	"m-12",
+	"m-14",
+	"m-16",
+	"m-20",
+	"m-24",
+	"m-28",
+	"m-32",
+	"m-36",
+	"m-40",
+	"m-44",
+	"m-48",
+	"m-52",
+	"m-56",
+	"m-60",
+	"m-64",
+	"m-72",
+	"m-80",
+	"m-96",
+];
+
 export const PADDING_CLASSNAMES = [
 	"p-0",
 	"p-px",
@@ -1135,7 +1173,6 @@ export const PADDING_Y_CLASSNAMES = [
 ];
 
 export const GAP_CLASSNAMES = [
-	// General gap classes
 	"gap-0",
 	"gap-px",
 	"gap-0.5",
@@ -1248,14 +1285,14 @@ export const GAP_CLASSNAMES = [
 ];
 
 export const HEIGHT_OPTIONS = [
-	"h-auto",
-	"h-full",
-	"h-screen",
 	/* "h-svh",
 	"h-lvh",
 	"h-dvh",
 	"h-min",
 	"h-max",*/
+	"h-auto",
+	"h-full",
+	"h-screen",
 	"h-fit",
 	"h-0",
 	"h-px",
@@ -1310,14 +1347,14 @@ export const HEIGHT_OPTIONS = [
 ];
 
 export const WIDTH_CLASSNAMES = [
-	"w-auto",
-	"w-full",
-	"w-screen",
 	/* "w-svw",
 	"w-lvw",
 	"w-dvw",
 	"w-min",
 	"w-max", */
+	"w-auto",
+	"w-full",
+	"w-screen",
 	"w-fit",
 	"w-0",
 	"w-px",
@@ -1380,6 +1417,76 @@ export const WIDTH_CLASSNAMES = [
 	"w-9/12",
 	"w-10/12",
 	"w-11/12",
+];
+
+export const DISPLAY_OPTIONS = [
+	"block",
+	"flex",
+	"grid",
+	"hidden",
+	/* "inline",
+	"inline-block",
+	"inline-flex",
+	"inline-grid",
+	"contents", */
+];
+
+export const FLEX_DIRECTION_OPTIONS = [
+	"flex-row",
+	"flex-col",
+	"flex-row-reverse",
+	"flex-col-reverse",
+];
+
+export const JUSTIFY_CONTENT_OPTIONS = [
+	"justify-start",
+	"justify-center",
+	"justify-end",
+	/* "justify-normal",
+	"justify-between",
+	"justify-around",
+	"justify-evenly",
+	"justify-stretch", */
+];
+
+export const ALIGN_ITEMS_OPTIONS = [
+	"items-start",
+	"items-center",
+	"items-end",
+	/* "items-baseline",
+	"items-stretch", */
+];
+
+export const GRID_TEMPLATE_COLUMNS_OPTIONS = [
+	/* "grid-cols-none", */
+	"grid-cols-1",
+	"grid-cols-2",
+	"grid-cols-3",
+	"grid-cols-4",
+	"grid-cols-5",
+	"grid-cols-6",
+	"grid-cols-7",
+	"grid-cols-8",
+	"grid-cols-9",
+	"grid-cols-10",
+	"grid-cols-11",
+	"grid-cols-12",
+];
+
+export const GRID_TEMPLATE_ROWS_OPTIONS = [
+	/* "grid-rows-none", */
+	"grid-rows-1",
+	"grid-rows-2",
+	"grid-rows-3",
+	"grid-rows-4",
+	"grid-rows-5",
+	"grid-rows-6",
+	"grid-rows-7",
+	"grid-rows-8",
+	"grid-rows-9",
+	"grid-rows-10",
+	"grid-rows-11",
+	"grid-rows-12",
 ];
 
 // Effects

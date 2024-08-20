@@ -8,10 +8,9 @@ import { v4 as uuidv4 } from "uuid";
 import { Registry } from "@/components/elements/Registry";
 import type {
 	TailwindClassName,
-	TailwindGroupName,
 	TailwindStylePropertyName,
 } from "@/types/tailwind/tailwind";
-import { TAILWIND_DEFAULT_PROPERTY_VALUES, TAILWIND_REGEX } from "../tailwind/tailwind";
+import { TAILWIND_REGEX } from "../tailwind/tailwind";
 
 const jsxNodesToNodesAbstract = (
 	headReactNode: React.ReactNode,
@@ -51,18 +50,18 @@ const jsxNodesToNodesAbstract = (
 					: reactNodeClone.type.name
 		) as GenericComponentName;
 
-		const { defaultClassNameProperties: componentClassNameGroups } = Registry[typeName];
+		const { defaultClassNameProperties } = Registry[typeName];
 
 		const { children, className, ...props } = reactNodeClone.props;
 
-		const tailwindClassName: TailwindClassName = {
-			...TAILWIND_DEFAULT_PROPERTY_VALUES,
-		};
+		const tailwindClassName: TailwindClassName = {};
 
 		const classNameSeparated = className
 			? (className as string).trim().split(" ")
 			: [];
-		for (const property of Object.keys(tailwindClassName)) {
+		for (const [property, value] of Object.entries(
+			defaultClassNameProperties,
+		)) {
 			const propertyName = property as TailwindStylePropertyName;
 			const propertyRegex = TAILWIND_REGEX[propertyName];
 			const propertyMatch = classNameSeparated.find((className) =>
@@ -72,11 +71,8 @@ const jsxNodesToNodesAbstract = (
 				// A class was found on the parsed code
 				tailwindClassName[propertyName] = propertyMatch;
 			} else {
-				const componentDefaultValue = componentClassNameGroups[propertyName];
-				if (componentDefaultValue) {
-					// A class was not found on the parsed code lets use the component default value
-					tailwindClassName[propertyName] = componentDefaultValue;
-				}
+				// A class was not found on the parsed code lets use the component default value
+				tailwindClassName[propertyName] = value;
 			}
 		}
 

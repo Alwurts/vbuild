@@ -98,6 +98,15 @@ export type TGenericComponentRegistryEntry = Omit<
 	draggable: boolean;
 	droppable: boolean;
 	editable: boolean;
+	classNameGroups: Partial<
+		Record<
+			TailwindGroupName,
+			{
+				name: TailwindGroupName;
+				disabled?: boolean;
+			}
+		>
+	>;
 	defaultClassNameProperties: Partial<TailwindClassName>;
 };
 

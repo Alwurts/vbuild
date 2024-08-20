@@ -1,17 +1,14 @@
 import { cn } from "@/lib/utils";
+import React from "react";
 
-const Root = ({
-  children,
-  className,
-  typeX = "Root",
-  ...props
-}: React.HTMLAttributes<HTMLDivElement> & {
-  typeX?: "Root";
-}) => (
-  <div className={cn(className)} {...props}>
+const Root = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ children, className, ...props }, ref) => (
+  <div ref={ref} className={cn(className)} {...props}>
     {children}
   </div>
-);
-Root.displayName = "Root"
+));
+Root.displayName = "Root";
 
 export default Root;

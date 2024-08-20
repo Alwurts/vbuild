@@ -174,15 +174,12 @@ function TreeNode({ nodeKey, depth = 0 }: TreeNodeProps) {
     e.preventDefault();
     e.stopPropagation();
 
-    console.log("Dropping");
-
     resetDragAndDropTreeNode();
 
     if (
       !dragAndDropTreeNode?.dropZone ||
       dragAndDropTreeNode?.startedOn !== "TreeView"
     ) {
-      console.log("Not a valid drop zone");
       return;
     }
 
@@ -195,13 +192,6 @@ function TreeNode({ nodeKey, depth = 0 }: TreeNodeProps) {
       );
       return;
     }
-
-    console.log(
-      "Dropping node",
-      node.key,
-      "into",
-      dragAndDropTreeNode.dropZone
-    );
 
     if (node.type === "Root") {
       throw new Error("Cannot drop after or before root node");
@@ -218,17 +208,6 @@ function TreeNode({ nodeKey, depth = 0 }: TreeNodeProps) {
     if (index === -1) {
       throw new Error("Node not found in parent");
     }
-
-    console.log(
-      "Moving node",
-      dragAndDropTreeNode.draggingItem.nodeKey,
-      "into",
-      newParentNode.key,
-      "at index",
-      index,
-      "with type",
-      dragAndDropTreeNode.dropZone.type
-    );
 
     moveNode(
       dragAndDropTreeNode.draggingItem.nodeKey,
