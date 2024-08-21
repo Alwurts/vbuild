@@ -27,6 +27,7 @@ import { Registry } from "../elements/Registry";
 import { Card } from "../ui-editor/card";
 import { Logo } from "../icons/Logo";
 import { useShallow } from "zustand/react/shallow";
+import { ScrollArea } from "../ui-editor/scroll-area";
 
 interface TreeNodeProps {
   nodeKey: string;
@@ -423,19 +424,19 @@ function TreeNodePlaceholder({
 export default function TreeView() {
   const headNodeKey = useComposerStore((state) => state.headNodeKey);
   return (
-    <div className="border-r p-2 w-[240px]">
-      <Card className="p-2 flex items-center justify-center gap-2">
+    <div className="border-r py-2 w-[240px] flex flex-col justify-start items-stretch">
+      <Card className="p-2 mx-2 flex items-center justify-center gap-2">
         <Logo className="w-5 h-5" />
         <h2 className="text-base font-bold">VBuild</h2>
       </Card>
-      <div className="px-2 pt-3 pb-2 flex items-center gap-2">
+      <div className="px-2 pt-3 pb-2 mx-2 flex items-center gap-2">
         <GitBranch className="w-4 h-4" />
         <h3 className="text-sm font-medium">Tree View</h3>
       </div>
       <Separator />
-      <div className="py-2 px-1">
+      <ScrollArea className="py-2 px-2 flex-1">
         <TreeNode key={headNodeKey} nodeKey={headNodeKey} />
-      </div>
+      </ScrollArea>
     </div>
   );
 }

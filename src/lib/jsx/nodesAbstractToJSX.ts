@@ -65,7 +65,7 @@ export function nodesAbstractToJSX(
 		.map((dep) => `import ${dep.split("/").pop()} from "${dep}";`)
 		.join("\n");
 
-	const customizedComponent = `function V1Component() {
+	const customizedComponent = `function VBuildComponent() {
   return (
 ${jsxString}
   );
