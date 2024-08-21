@@ -7,33 +7,45 @@ import {
   GRID_TEMPLATE_COLUMNS_OPTIONS,
   GRID_TEMPLATE_ROWS_OPTIONS,
   JUSTIFY_CONTENT_OPTIONS,
-  MARGIN_CLASSNAMES,
   PADDING_CLASSNAMES,
 } from "@/lib/tailwindClasses";
 import { useComposerStore } from "@/store/useComposerStore";
-import type { tailwindClassNamesGroups } from "@/types/tailwind/tailwind";
+import type { TailwindClassNamesGroups } from "@/types/tailwind/tailwind";
 import { SelectList } from "@/components/ui-editor/select-list";
 import { SettingLabelContainer } from "@/components/layout/SettingLabelContainer";
+import { Registry } from "@/components/elements/Registry";
+import type { TGenericComponentsAbstract } from "@/types/elements/jsx";
+import { parseTailwindClassNameIntoGroups } from "@/lib/tailwind/tailwind";
 
 export default function LayoutGroup({
   layoutGroup,
-  nodeKey,
+  node,
 }: {
-  layoutGroup: NonNullable<tailwindClassNamesGroups["layout"]>;
-  nodeKey: string;
+  layoutGroup: NonNullable<TailwindClassNamesGroups["layout"]>;
+  node: TGenericComponentsAbstract;
 }) {
-  const setNodeClassName = useComposerStore((state) => state.setNodeClassName);
+  const setClassNameGroup = useComposerStore(
+    (state) => state.setClassNameGroup
+  );
   return (
     <GroupContainer groupName="Layout">
       {layoutGroup.display && (
         <SettingLabelContainer label="Display">
           <SelectList
             value={layoutGroup.display}
-            onValueChange={(value) =>
-              setNodeClassName(nodeKey, "display", value)
-            }
+            onValueChange={(newValue) => {
+              const { defaultClassNameProperties, classNameGroups } =
+                Registry[node.type];
+              const parsedGroups = parseTailwindClassNameIntoGroups(
+                { ...defaultClassNameProperties, display: newValue },
+                classNameGroups
+              );
+              if (parsedGroups.layout) {
+                setClassNameGroup(node.key, "layout", parsedGroups.layout);
+              }
+            }}
             options={DISPLAY_OPTIONS}
-            label="Width"
+            label="Display"
             className="col-span-2"
           />
         </SettingLabelContainer>
@@ -45,7 +57,10 @@ export default function LayoutGroup({
               <SelectList
                 value={layoutGroup.flexDirection}
                 onValueChange={(value) =>
-                  setNodeClassName(nodeKey, "flexDirection", value)
+                  setClassNameGroup(node.key, "layout", {
+                    ...layoutGroup,
+                    flexDirection: value,
+                  })
                 }
                 options={FLEX_DIRECTION_OPTIONS}
                 label="Direction"
@@ -58,7 +73,10 @@ export default function LayoutGroup({
               <SelectList
                 value={layoutGroup.justifyContent}
                 onValueChange={(value) =>
-                  setNodeClassName(nodeKey, "justifyContent", value)
+                  setClassNameGroup(node.key, "layout", {
+                    ...layoutGroup,
+                    justifyContent: value,
+                  })
                 }
                 options={JUSTIFY_CONTENT_OPTIONS}
                 label="Justify"
@@ -71,7 +89,10 @@ export default function LayoutGroup({
               <SelectList
                 value={layoutGroup.alignItems}
                 onValueChange={(value) =>
-                  setNodeClassName(nodeKey, "alignItems", value)
+                  setClassNameGroup(node.key, "layout", {
+                    ...layoutGroup,
+                    alignItems: value,
+                  })
                 }
                 options={ALIGN_ITEMS_OPTIONS}
                 label="Align"
@@ -88,7 +109,10 @@ export default function LayoutGroup({
               <SelectList
                 value={layoutGroup.gridTemplateColumns}
                 onValueChange={(value) =>
-                  setNodeClassName(nodeKey, "gridTemplateColumns", value)
+                  setClassNameGroup(node.key, "layout", {
+                    ...layoutGroup,
+                    gridTemplateColumns: value,
+                  })
                 }
                 options={GRID_TEMPLATE_COLUMNS_OPTIONS}
                 label="Columns"
@@ -101,7 +125,10 @@ export default function LayoutGroup({
               <SelectList
                 value={layoutGroup.gridTemplateRows}
                 onValueChange={(value) =>
-                  setNodeClassName(nodeKey, "gridTemplateRows", value)
+                  setClassNameGroup(node.key, "layout", {
+                    ...layoutGroup,
+                    gridTemplateRows: value,
+                  })
                 }
                 options={GRID_TEMPLATE_ROWS_OPTIONS}
                 label="Rows"
@@ -116,7 +143,10 @@ export default function LayoutGroup({
           <SelectList
             value={layoutGroup.padding}
             onValueChange={(value) =>
-              setNodeClassName(nodeKey, "padding", value)
+              setClassNameGroup(node.key, "layout", {
+                ...layoutGroup,
+                padding: value,
+              })
             }
             options={PADDING_CLASSNAMES}
             label="Padding"
@@ -130,7 +160,12 @@ export default function LayoutGroup({
           <SettingLabelContainer label="Gap">
             <SelectList
               value={layoutGroup.gap}
-              onValueChange={(value) => setNodeClassName(nodeKey, "gap", value)}
+              onValueChange={(value) =>
+                setClassNameGroup(node.key, "layout", {
+                  ...layoutGroup,
+                  gap: value,
+                })
+              }
               options={GAP_CLASSNAMES}
               label="Gap"
               className="col-span-2"

@@ -1,7 +1,7 @@
 import GroupContainer from "./GroupContainer";
 import { HEIGHT_OPTIONS, WIDTH_CLASSNAMES } from "@/lib/tailwindClasses";
 import { useComposerStore } from "@/store/useComposerStore";
-import type { tailwindClassNamesGroups } from "@/types/tailwind/tailwind";
+import type { TailwindClassNamesGroups } from "@/types/tailwind/tailwind";
 import { SelectList } from "@/components/ui-editor/select-list";
 
 export default function SizeGroup({
@@ -9,11 +9,13 @@ export default function SizeGroup({
   nodeKey,
   disabled,
 }: {
-  sizeGroup: NonNullable<tailwindClassNamesGroups["size"]>;
+  sizeGroup: NonNullable<TailwindClassNamesGroups["size"]>;
   nodeKey: string;
   disabled?: boolean;
 }) {
-  const setNodeClassName = useComposerStore((state) => state.setNodeClassName);
+  const setClassNameGroup = useComposerStore(
+    (state) => state.setClassNameGroup
+  );
 
   return (
     <GroupContainer groupName="Size">
@@ -22,7 +24,12 @@ export default function SizeGroup({
           <h5 className="mt-2">Width</h5>
           <SelectList
             value={sizeGroup.width}
-            onValueChange={(value) => setNodeClassName(nodeKey, "width", value)}
+            onValueChange={(value) =>
+              setClassNameGroup(nodeKey, "size", {
+                ...sizeGroup,
+                width: value,
+              })
+            }
             options={WIDTH_CLASSNAMES}
             label="Width"
             className="col-span-2"
@@ -36,7 +43,10 @@ export default function SizeGroup({
           <SelectList
             value={sizeGroup.height}
             onValueChange={(value) =>
-              setNodeClassName(nodeKey, "height", value)
+              setClassNameGroup(nodeKey, "size", {
+                ...sizeGroup,
+                height: value,
+              })
             }
             options={HEIGHT_OPTIONS}
             label="Height"

@@ -63,25 +63,19 @@ function NodeEditorContent({
   nodeAbstract: TGenericComponentsAbstract;
 }) {
   const { classNameGroups } = Registry[nodeAbstract.type];
-  const parsedGroups = useMemo(() => {
-    return parseTailwindClassNameIntoGroups(
-      nodeAbstract.className,
-      classNameGroups
-    );
-  }, [nodeAbstract, classNameGroups]);
   return (
     <Layout>
-      {parsedGroups.size && (
+      {classNameGroups.size && nodeAbstract.className.size && (
         <SizeGroup
-          sizeGroup={parsedGroups.size}
+          sizeGroup={nodeAbstract.className.size}
           nodeKey={nodeAbstract.key}
           disabled={classNameGroups.size?.disabled}
         />
       )}
-      {parsedGroups.layout && (
+      {classNameGroups.layout && nodeAbstract.className.layout && (
         <LayoutGroup
-          layoutGroup={parsedGroups.layout}
-          nodeKey={nodeAbstract.key}
+          layoutGroup={nodeAbstract.className.layout}
+          node={nodeAbstract}
         />
       )}
     </Layout>

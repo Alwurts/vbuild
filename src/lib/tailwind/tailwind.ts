@@ -2,7 +2,7 @@ import type { TGenericComponentRegistryEntry } from "@/types/elements/elements";
 import {
 	schemaLayoutGroup,
 	schemaSizeGroup,
-	type tailwindClassNamesGroups,
+	type TailwindClassNamesGroups,
 	type TailwindClassName,
 	type TailwindClassNameRegex,
 	type TailwindGroupName,
@@ -31,7 +31,7 @@ export const parseTailwindClassNameIntoGroups = (
 	className: TailwindClassName,
 	groupsToInclude: TGenericComponentRegistryEntry["classNameGroups"],
 ) => {
-	const parsedGroups: tailwindClassNamesGroups = {};
+	const parsedGroups: TailwindClassNamesGroups = {};
 	if (groupsToInclude.size) {
 		const sizeGroup = schemaSizeGroup.parse(className);
 		parsedGroups.size = sizeGroup;

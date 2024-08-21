@@ -36,7 +36,7 @@ export const useComposerStore = create<ComposerStore>((set, get) => ({
       },
     });
   },
-  setNodeClassName: (nodeKey, property, value) => {
+  setClassNameGroup: (nodeKey, group, value) => {
     set((state) => {
       const newNodes = { ...state.nodes };
       const node = newNodes[nodeKey];
@@ -45,7 +45,7 @@ export const useComposerStore = create<ComposerStore>((set, get) => ({
         ...node,
         className: {
           ...node.className,
-          [property]: value,
+          [group]: value,
         },
       };
       newNodes[nodeKey] = newNode;

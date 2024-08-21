@@ -1,6 +1,6 @@
 import type { TGenericComponentsWithoutRoot } from "./elements";
 import type { TRootComponent } from "./layout";
-import type { TailwindClassName } from "../tailwind/tailwind";
+import type { TailwindClassName, TailwindClassNamesGroups } from "../tailwind/tailwind";
 
 type TElementBasic = string | number | boolean;
 
@@ -13,7 +13,7 @@ type TGenericComponentParentAbstract = {
 type TGenericComponentAbstract = {
 	key: string;
 	children: string[] | null;
-	className: TailwindClassName;
+	className: TailwindClassNamesGroups;
 };
 
 export type TGenericComponentsAbstract =

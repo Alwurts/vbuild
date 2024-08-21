@@ -15,7 +15,7 @@ import {
   schemaLayoutGroup,
   schemaSizeGroup,
   type TailwindGroupName,
-  type tailwindClassNamesGroups,
+  type TailwindClassNamesGroups,
   type TailwindClassName,
 } from "@/types/tailwind/tailwind";
 import { parseTailwindClassNameIntoGroups } from "@/lib/tailwind/tailwind";
@@ -84,13 +84,11 @@ function CanvasNode({ nodeKey }: { nodeKey: string }) {
     setCanvasHighlight(null);
   };
 
-  const parseClassNameGroupsIntoString = (className: TailwindClassName) => {
-    const parsedGroups = parseTailwindClassNameIntoGroups(
-      className,
-      classNameGroups
-    );
+  const parseClassNameGroupsIntoString = (
+    className: TailwindClassNamesGroups
+  ) => {
     let classNameString = "";
-    for (const group of Object.values(parsedGroups)) {
+    for (const group of Object.values(className)) {
       for (const propertyValue of Object.values(group)) {
         classNameString += `${propertyValue} `;
       }

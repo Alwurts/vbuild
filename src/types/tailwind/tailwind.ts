@@ -76,6 +76,6 @@ const tailwindClassNameGroupsSchema = z.object({
 	layout: schemaLayoutGroup.optional(),
 });
 
-export type tailwindClassNamesGroups = z.infer<
+export type TailwindClassNamesGroups = z.infer<
 	typeof tailwindClassNameGroupsSchema
 >;

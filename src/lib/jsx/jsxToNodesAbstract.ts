@@ -10,7 +10,7 @@ import type {
 	TailwindClassName,
 	TailwindStylePropertyName,
 } from "@/types/tailwind/tailwind";
-import { TAILWIND_REGEX } from "../tailwind/tailwind";
+import { parseTailwindClassNameIntoGroups, TAILWIND_REGEX } from "../tailwind/tailwind";
 
 const jsxNodesToNodesAbstract = (
 	headReactNode: React.ReactNode,
@@ -50,7 +50,7 @@ const jsxNodesToNodesAbstract = (
 					: reactNodeClone.type.name
 		) as GenericComponentName;
 
-		const { defaultClassNameProperties } = Registry[typeName];
+		const { defaultClassNameProperties, classNameGroups } = Registry[typeName];
 
 		const { children, className, ...props } = reactNodeClone.props;
 
@@ -75,6 +75,11 @@ const jsxNodesToNodesAbstract = (
 				tailwindClassName[propertyName] = value;
 			}
 		}
+
+		const parsedGroups = parseTailwindClassNameIntoGroups(
+      tailwindClassName,
+      classNameGroups
+    );
 
 		let childrenKeys: string[] = [];
 		if ("children" in reactNodeClone.props && reactNodeClone.props.children) {
@@ -101,7 +106,7 @@ const jsxNodesToNodesAbstract = (
 				props,
 				type: typeName, // Get correct type
 				children: childrenKeys,
-				className: tailwindClassName,
+				className: parsedGroups,
 			};
 
 			newNodesAbstract[newkey] = newNodeAbstract;
@@ -119,7 +124,7 @@ const jsxNodesToNodesAbstract = (
 			props,
 			type: typeName, // Get correct type
 			children: childrenKeys,
-			className: tailwindClassName,
+			className: parsedGroups,
 		};
 
 		newNodesAbstract[newkey] = newNodeAbstract;

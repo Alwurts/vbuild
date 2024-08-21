@@ -81,7 +81,7 @@ function TreeNode({ nodeKey, depth = 0 }: TreeNodeProps) {
 
   const node = nodes[nodeKey];
 
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
 
   if (typeof node !== "object") {
     return (
