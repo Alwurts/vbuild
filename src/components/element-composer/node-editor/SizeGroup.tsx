@@ -1,15 +1,5 @@
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui-editor/select";
 import GroupContainer from "./GroupContainer";
 import { HEIGHT_OPTIONS, WIDTH_CLASSNAMES } from "@/lib/tailwindClasses";
-import { cn } from "@/lib/utils";
 import { useComposerStore } from "@/store/useComposerStore";
 import type { tailwindClassNamesGroups } from "@/types/tailwind/tailwind";
 import { SelectList } from "@/components/ui-editor/select-list";

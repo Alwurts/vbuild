@@ -11,7 +11,8 @@ import LayoutGroup from "./LayoutGroup";
 import { Registry } from "@/components/elements/Registry";
 
 export default function NodeEditor() {
-  const { selectedNode: selectedNodeKey, nodes } = useComposerStore();
+  const nodes = useComposerStore((state) => state.nodes);
+  const selectedNodeKey = useComposerStore((state) => state.selectedNode);
 
   const selectedNode = useMemo(
     () => (selectedNodeKey ? nodes[selectedNodeKey.nodeKey] : null),

@@ -19,17 +19,25 @@ import {
   type TailwindClassName,
 } from "@/types/tailwind/tailwind";
 import { parseTailwindClassNameIntoGroups } from "@/lib/tailwind/tailwind";
+import { useShallow } from "zustand/react/shallow";
 
 function CanvasNode({ nodeKey }: { nodeKey: string }) {
   const nodeRef = useRef<HTMLElement>(null);
-  const {
-    canvasHighlight,
-    nodes,
-    selectedNode,
-    setCanvasHighlight,
-    setSelectedNode,
-    setContentEditable,
-  } = useShadowComposerStore();
+  const nodes = useShadowComposerStore((state) => state.nodes);
+  const { canvasHighlight, setCanvasHighlight } = useShadowComposerStore(
+    useShallow((state) => ({
+      canvasHighlight: state.canvasHighlight,
+      setCanvasHighlight: state.setCanvasHighlight,
+    }))
+  );
+  const { selectedNode, setSelectedNode, setContentEditable } =
+    useShadowComposerStore(
+      useShallow((state) => ({
+        selectedNode: state.selectedNode,
+        setSelectedNode: state.setSelectedNode,
+        setContentEditable: state.setContentEditable,
+      }))
+    );
 
   const [nodeDomRect, setNodeDomRect] = useState<DOMRect | null>(null);
 
@@ -119,7 +127,7 @@ function CanvasNode({ nodeKey }: { nodeKey: string }) {
               nodeKey: nodeKey,
             });
           },
-          suppressContentEditableWarning: isEditable, 
+          suppressContentEditableWarning: isEditable,
         })
       : null;
 
@@ -170,12 +178,19 @@ function CanvasHighlight({
 }
 
 export default function Canvas() {
-  const {
-    nodes,
-    headNodeKey,
-    sendMessageToCanvasParent,
-    handleMessageFromCanvasParent,
-  } = useShadowComposerStore();
+  const { nodes, headNodeKey } = useShadowComposerStore(
+    useShallow((state) => ({
+      nodes: state.nodes,
+      headNodeKey: state.headNodeKey,
+    }))
+  );
+  const { sendMessageToCanvasParent, handleMessageFromCanvasParent } =
+    useShadowComposerStore(
+      useShallow((state) => ({
+        sendMessageToCanvasParent: state.sendMessageToCanvasParent,
+        handleMessageFromCanvasParent: state.handleMessageFromCanvasParent,
+      }))
+    );
 
   useEffect(() => {
     window.addEventListener("message", handleMessageFromCanvasParent);

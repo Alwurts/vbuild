@@ -26,6 +26,7 @@ import {
 import { Registry } from "../elements/Registry";
 import { Card } from "../ui-editor/card";
 import { Logo } from "../icons/Logo";
+import { useShallow } from "zustand/react/shallow";
 
 interface TreeNodeProps {
   nodeKey: string;
@@ -34,22 +35,46 @@ interface TreeNodeProps {
 
 // TreeNode component
 function TreeNode({ nodeKey, depth = 0 }: TreeNodeProps) {
+  const nodes = useComposerStore((state) => state.nodes);
+  const { selectedNode, setSelectedNode } = useComposerStore(
+    useShallow((state) => ({
+      selectedNode: state.selectedNode,
+      setSelectedNode: state.setSelectedNode,
+    }))
+  );
+  const { canvasHighlight, setCanvasHighlight } = useComposerStore(
+    useShallow((state) => ({
+      canvasHighlight: state.canvasHighlight,
+      setCanvasHighlight: state.setCanvasHighlight,
+    }))
+  );
   const {
-    moveNode,
-    deleteNode,
-    nodes,
-    selectedNode,
-    setSelectedNode,
-    setCanvasHighlight,
-    canvasHighlight,
     dragAndDropTreeNode,
     setDraggingTreeNode,
     setTreeNodeDropZone,
     resetDragAndDropTreeNode,
-    setCopyNodeKey,
-    copyNodeKey,
-    copyNode,
-  } = useComposerStore();
+  } = useComposerStore(
+    useShallow((state) => ({
+      dragAndDropTreeNode: state.dragAndDropTreeNode,
+      setDraggingTreeNode: state.setDraggingTreeNode,
+      setTreeNodeDropZone: state.setTreeNodeDropZone,
+      resetDragAndDropTreeNode: state.resetDragAndDropTreeNode,
+    }))
+  );
+  const { copyNodeKey, setCopyNodeKey, copyNode } = useComposerStore(
+    useShallow((state) => ({
+      copyNodeKey: state.copyNodeKey,
+      setCopyNodeKey: state.setCopyNodeKey,
+      copyNode: state.copyNode,
+    }))
+  );
+
+  const { moveNode, deleteNode } = useComposerStore(
+    useShallow((state) => ({
+      moveNode: state.moveNode,
+      deleteNode: state.deleteNode,
+    }))
+  );
 
   const parentRef = useRef<HTMLDivElement>(null);
 
@@ -396,7 +421,7 @@ function TreeNodePlaceholder({
 
 // TreeView component
 export default function TreeView() {
-  const { headNodeKey } = useComposerStore();
+  const headNodeKey = useComposerStore((state) => state.headNodeKey);
   return (
     <div className="border-r p-2 w-[240px]">
       <Card className="p-2 flex items-center justify-center gap-2">

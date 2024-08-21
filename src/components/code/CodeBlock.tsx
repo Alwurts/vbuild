@@ -7,9 +7,15 @@ import { CheckIcon, CopyIcon, EyeIcon } from "lucide-react";
 import { Dialog, DialogContent, DialogTrigger } from "../ui-editor/dialog";
 import { useComposerStore } from "@/store/useComposerStore";
 import { nodesAbstractToJSX } from "@/lib/jsx/nodesAbstractToJSX";
+import { useShallow } from "zustand/react/shallow";
 
 export function CodeBlock({ button }: { button?: React.ReactNode }) {
-  const { nodes, headNodeKey } = useComposerStore();
+  const { nodes, headNodeKey } = useComposerStore(
+    useShallow((state) => ({
+      nodes: state.nodes,
+      headNodeKey: state.headNodeKey,
+    }))
+  );
   const [copied, setCopied] = useState(false);
   const [open, setOnOpen] = useState(false);
 
