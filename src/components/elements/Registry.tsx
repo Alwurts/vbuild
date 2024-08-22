@@ -34,7 +34,7 @@ export const Registry: TGenericComponentRegistry = {
         height: "h-screen",
       },
       style: {
-        backgroundColor: "bg-white",
+        backgroundColor: "bg-background",
       },
     },
   },

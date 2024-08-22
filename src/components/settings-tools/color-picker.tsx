@@ -114,7 +114,11 @@ export const ColorPicker = ({
                       key={color.name}
                       variant="ghost"
                       size="sm"
-                      className="flex gap-2 justify-start h-8 px-2"
+                      className={cn(
+                        "flex gap-2 justify-start h-8 px-2",
+                        value === color.class &&
+                          "border-2 border-primary-editor"
+                      )}
                       onClick={() => handleColorChange(color.class)}
                     >
                       <div
@@ -130,7 +134,7 @@ export const ColorPicker = ({
               <AccordionTrigger>Tailwind Colors</AccordionTrigger>
               <AccordionContent>
                 <div className="flex flex-col gap-1 ">
-                  {BACKGROUND_COLOR_CLASSNAMES_SWATCHES.map(
+                  {BACKGROUND_COLOR_CLASSNAMES_SWATCHES.slice(1).map(
                     (colorGroup, index) => (
                       <div key={colorGroup[0]} className="flex flex-row gap-1">
                         {colorGroup.map((color) => (
@@ -138,7 +142,11 @@ export const ColorPicker = ({
                             type="button"
                             title={bgToType(color)}
                             key={color}
-                            className={`w-4 h-4 rounded-sm ${color} border border-stone-300`}
+                            className={cn(
+                              `w-4 h-4 rounded-sm ${color} border border-stone-300`,
+                              value === color &&
+                                "border-2 border-primary-editor"
+                            )}
                             onClick={() => handleColorChange(color)}
                           />
                         ))}
