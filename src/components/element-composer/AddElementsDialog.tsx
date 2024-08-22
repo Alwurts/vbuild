@@ -1,4 +1,4 @@
-import { cloneElement, isValidElement, useState } from "react";
+import { cloneElement, isValidElement } from "react";
 import {
   CommandDialog,
   CommandEmpty,
@@ -17,6 +17,7 @@ export function AddElementsDialog() {
   const setChildrenMenuKey = useComposerStore(
     (state) => state.setChildrenMenuKey
   );
+  const addElementAsChild = useComposerStore((state) => state.addElementAsChild);
 
   const availableComponents: {
     [key: string]: GenericComponentName[];
@@ -34,6 +35,13 @@ export function AddElementsDialog() {
     ],
   };
 
+  const handleAddElement = (component: GenericComponentName) => {
+    if (childrenMenuKey) {
+      addElementAsChild(childrenMenuKey, component);
+      setChildrenMenuKey(null);
+    }
+  };
+
   return (
     <CommandDialog
       open={!!childrenMenuKey}
@@ -49,7 +57,10 @@ export function AddElementsDialog() {
                 const componentConfig = Registry[component];
                 const nodeIcon = componentConfig.icon;
                 return (
-                  <CommandItem key={component}>
+                  <CommandItem
+                    key={component}
+                    onSelect={() => handleAddElement(component)}
+                  >
                     {nodeIcon &&
                       isValidElement(nodeIcon) &&
                       cloneElement(nodeIcon as React.ReactElement, {

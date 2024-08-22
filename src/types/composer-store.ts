@@ -7,6 +7,7 @@ import type {
 	CanvasMessage,
 	CanvasMessageEvent,
 } from "./shadow-composer-store";
+import type { GenericComponentName } from "./elements/elements";
 
 export interface ComposerStore {
 	iframeRef: React.MutableRefObject<HTMLIFrameElement | null>;
@@ -70,4 +71,5 @@ export interface ComposerStore {
 	sendUpdateOfWholeStateToCanvas: () => void;
 	handleMessageFromCanvas: (message: CanvasMessageEvent) => void;
 	sendMessageToCanvas: (message: CanvasMessage) => void;
+	addElementAsChild: (parentKey: string, elementType: GenericComponentName) => void;
 }

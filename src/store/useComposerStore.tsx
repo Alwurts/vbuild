@@ -8,7 +8,8 @@ import { v4 as uuidv4 } from "uuid";
 
 import { createRef } from "react";
 import { create } from "zustand";
-import type { UpdateShadowStateMessage } from "@/types/shadow-composer-store";
+import { createNodeAbstract } from "@/lib/jsx/createNodeAbstract";
+import { Registry } from "@/components/elements/Registry";
 
 export const useComposerStore = create<ComposerStore>((set, get) => ({
   iframeRef: createRef(),
@@ -365,6 +366,50 @@ export const useComposerStore = create<ComposerStore>((set, get) => ({
         canvasHighlight,
         selectedNode,
       },
+    });
+  },
+  addElementAsChild: (parentKey, elementType) => {
+    set((state) => {
+      const newNodes = { ...state.nodes };
+      const parentNode = newNodes[parentKey];
+
+      if (!parentNode || typeof parentNode !== "object") {
+        throw Error("Parent node not found or not droppable");
+      }
+
+      const { editable } = Registry[elementType];
+
+      const childrenKeys: string[] = [];
+      if (editable) {
+        const contentKey = uuidv4();
+        childrenKeys.push(contentKey);
+        newNodes[contentKey] = "Lorem ipsum";
+      }
+
+      const newKey = uuidv4();
+      const newNode = createNodeAbstract(
+        newKey,
+        elementType,
+        {},
+        childrenKeys,
+        undefined,
+        parentKey
+      );
+
+      newNodes[newKey] = newNode;
+      if (!parentNode.children) {
+        parentNode.children = [];
+      }
+      parentNode.children.push(newKey);
+
+      get().sendMessageToCanvas({
+        type: "UPDATE_SHADOW_STATE",
+        update: {
+          nodes: newNodes,
+        },
+      });
+
+      return { nodes: newNodes };
     });
   },
 }));
