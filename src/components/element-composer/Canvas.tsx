@@ -11,14 +11,7 @@ import { Registry } from "../elements/Registry";
 import { cn } from "@/lib/utils";
 import { createPortal } from "react-dom";
 import AddChildrenMenu from "./AddChildrenMenu";
-import {
-  schemaLayoutGroup,
-  schemaSizeGroup,
-  type TailwindGroupName,
-  type TailwindClassNamesGroups,
-  type TailwindClassName,
-} from "@/types/tailwind/tailwind";
-import { parseTailwindClassNameIntoGroups } from "@/lib/tailwind/tailwind";
+import type { TailwindClassNamesGroups } from "@/types/tailwind/tailwind";
 import { useShallow } from "zustand/react/shallow";
 
 function CanvasNode({ nodeKey }: { nodeKey: string }) {
@@ -67,7 +60,6 @@ function CanvasNode({ nodeKey }: { nodeKey: string }) {
     component: nodeComponent,
     editable: isEditable,
     draggable,
-    classNameGroups,
   } = Registry[node.type];
 
   const nodeChildren = node.children?.map((childKey) => (

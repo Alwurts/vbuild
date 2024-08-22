@@ -5,7 +5,6 @@ import { Separator } from "@/components/ui-editor/separator";
 import { CircleSlash, Settings2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import SizeGroup from "./SizeGroup";
-import { parseTailwindClassNameIntoGroups } from "@/lib/tailwind/tailwind";
 import type { TGenericComponentsAbstract } from "@/types/elements/jsx";
 import LayoutGroup from "./LayoutGroup";
 import { Registry } from "@/components/elements/Registry";
@@ -62,17 +61,16 @@ function NodeEditorContent({
 }: {
   nodeAbstract: TGenericComponentsAbstract;
 }) {
-  const { classNameGroups } = Registry[nodeAbstract.type];
+  const { classNameGroupsdefaults } = Registry[nodeAbstract.type];
   return (
     <Layout>
-      {classNameGroups.size && nodeAbstract.className.size && (
+      {classNameGroupsdefaults.size && nodeAbstract.className.size && (
         <SizeGroup
           sizeGroup={nodeAbstract.className.size}
           nodeKey={nodeAbstract.key}
-          disabled={classNameGroups.size?.disabled}
         />
       )}
-      {classNameGroups.layout && nodeAbstract.className.layout && (
+      {classNameGroupsdefaults.layout && nodeAbstract.className.layout && (
         <LayoutGroup
           layoutGroup={nodeAbstract.className.layout}
           node={nodeAbstract}

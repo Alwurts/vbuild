@@ -28,15 +28,11 @@ export const Registry: TGenericComponentRegistry = {
     draggable: false,
     droppable: true,
     editable: false,
-    classNameGroups: {
+    classNameGroupsdefaults: {
       size: {
-        name: "size",
-        disabled: true,
+        width: "w-screen",
+        height: "h-screen",
       },
-    },
-    defaultClassNameProperties: {
-      height: "h-screen",
-      width: "w-screen",
     },
   },
   div: {
@@ -47,25 +43,35 @@ export const Registry: TGenericComponentRegistry = {
     draggable: true,
     droppable: true,
     editable: false,
-    classNameGroups: {
+    classNameGroupsdefaults: {
       size: {
-        name: "size",
+        width: "w-full",
+        height: "h-auto",
       },
-      layout: {
-        name: "layout",
-      },
-    },
-    defaultClassNameProperties: {
-      height: "h-auto",
-      width: "w-full",
-      padding: "p-0",
-      gap: "gap-0",
-      display: "block",
-      flexDirection: "flex-row",
-      justifyContent: "justify-start",
-      alignItems: "items-start",
-      gridTemplateColumns: "grid-cols-1",
-      gridTemplateRows: "grid-rows-1",
+      layout: [
+        {
+          display: "block",
+          padding: "p-0",
+        },
+        {
+          display: "flex",
+          flexDirection: "flex-row",
+          justifyContent: "justify-start",
+          alignItems: "items-start",
+          gap: "gap-0",
+          padding: "p-0",
+        },
+        {
+          display: "grid",
+          gridTemplateColumns: "grid-cols-1",
+          gridTemplateRows: "grid-rows-1",
+          gap: "gap-0",
+          padding: "p-0",
+        },
+        {
+          display: "hidden",
+        },
+      ],
     },
   },
   span: {
@@ -76,8 +82,7 @@ export const Registry: TGenericComponentRegistry = {
     draggable: true,
     droppable: true,
     editable: true,
-    classNameGroups: {},
-    defaultClassNameProperties: {},
+    classNameGroupsdefaults: {},
   },
   h1: {
     type: "h1",
@@ -88,8 +93,7 @@ export const Registry: TGenericComponentRegistry = {
     draggable: true,
     droppable: false,
     editable: true,
-    classNameGroups: {},
-    defaultClassNameProperties: {},
+    classNameGroupsdefaults: {},
   },
   h2: {
     type: "h2",
@@ -100,8 +104,7 @@ export const Registry: TGenericComponentRegistry = {
     draggable: true,
     droppable: false,
     editable: true,
-    classNameGroups: {},
-    defaultClassNameProperties: {},
+    classNameGroupsdefaults: {},
   },
   h3: {
     type: "h3",
@@ -112,8 +115,7 @@ export const Registry: TGenericComponentRegistry = {
     draggable: true,
     droppable: false,
     editable: true,
-    classNameGroups: {},
-    defaultClassNameProperties: {},
+    classNameGroupsdefaults: {},
   },
   h4: {
     type: "h4",
@@ -124,8 +126,7 @@ export const Registry: TGenericComponentRegistry = {
     draggable: true,
     droppable: false,
     editable: true,
-    classNameGroups: {},
-    defaultClassNameProperties: {},
+    classNameGroupsdefaults: {},
   },
   h5: {
     type: "h5",
@@ -136,8 +137,7 @@ export const Registry: TGenericComponentRegistry = {
     draggable: true,
     droppable: false,
     editable: true,
-    classNameGroups: {},
-    defaultClassNameProperties: {},
+    classNameGroupsdefaults: {},
   },
   h6: {
     type: "h6",
@@ -148,8 +148,7 @@ export const Registry: TGenericComponentRegistry = {
     draggable: true,
     droppable: false,
     editable: true,
-    classNameGroups: {},
-    defaultClassNameProperties: {},
+    classNameGroupsdefaults: {},
   },
   p: {
     type: "p",
@@ -159,8 +158,7 @@ export const Registry: TGenericComponentRegistry = {
     draggable: true,
     droppable: false,
     editable: true,
-    classNameGroups: {},
-    defaultClassNameProperties: {},
+    classNameGroupsdefaults: {},
   },
   Card: {
     type: "Card",
@@ -170,26 +168,7 @@ export const Registry: TGenericComponentRegistry = {
     draggable: true,
     droppable: true,
     editable: false,
-    classNameGroups: {
-      size: {
-        name: "size",
-      },
-      layout: {
-        name: "layout",
-      },
-    },
-    defaultClassNameProperties: {
-      height: "h-auto",
-      width: "w-full",
-      padding: "p-0",
-      gap: "gap-0",
-      display: "block",
-      flexDirection: "flex-row",
-      justifyContent: "justify-start",
-      alignItems: "items-start",
-      gridTemplateColumns: "grid-cols-1",
-      gridTemplateRows: "grid-rows-1",
-    },
+    classNameGroupsdefaults: {},
   },
   CardContent: {
     type: "CardContent",
@@ -199,8 +178,7 @@ export const Registry: TGenericComponentRegistry = {
     draggable: true,
     droppable: true,
     editable: false,
-    classNameGroups: {},
-    defaultClassNameProperties: {},
+    classNameGroupsdefaults: {},
   },
   CardHeader: {
     type: "CardHeader",
@@ -210,8 +188,7 @@ export const Registry: TGenericComponentRegistry = {
     draggable: true,
     droppable: true,
     editable: false,
-    classNameGroups: {},
-    defaultClassNameProperties: {},
+    classNameGroupsdefaults: {},
   },
   CardFooter: {
     type: "CardFooter",
@@ -221,8 +198,7 @@ export const Registry: TGenericComponentRegistry = {
     draggable: true,
     droppable: true,
     editable: false,
-    classNameGroups: {},
-    defaultClassNameProperties: {},
+    classNameGroupsdefaults: {},
   },
   CardTitle: {
     type: "CardTitle",
@@ -232,8 +208,7 @@ export const Registry: TGenericComponentRegistry = {
     draggable: true,
     droppable: false,
     editable: true,
-    classNameGroups: {},
-    defaultClassNameProperties: {},
+    classNameGroupsdefaults: {},
   },
   CardDescription: {
     type: "CardDescription",
@@ -243,8 +218,7 @@ export const Registry: TGenericComponentRegistry = {
     draggable: true,
     droppable: false,
     editable: true,
-    classNameGroups: {},
-    defaultClassNameProperties: {},
+    classNameGroupsdefaults: {},
   },
   Button: {
     type: "Button",
@@ -254,7 +228,6 @@ export const Registry: TGenericComponentRegistry = {
     draggable: true,
     droppable: false,
     editable: true,
-    classNameGroups: {},
-    defaultClassNameProperties: {},
+    classNameGroupsdefaults: {},
   },
 } as const;

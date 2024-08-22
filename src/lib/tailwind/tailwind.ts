@@ -7,7 +7,7 @@ import {
 	schemaTextGroup,
 } from "@/types/tailwind/tailwind";
 
-export const parseTailwindClassNameIntoGroups = (
+/* export const parseTailwindClassNameIntoGroups = (
 	className: TailwindClassName,
 	groupsToInclude: TGenericComponentRegistryEntry["classNameGroups"],
 ) => {
@@ -25,4 +25,4 @@ export const parseTailwindClassNameIntoGroups = (
 		parsedGroups.text = textGroup;
 	}
 	return parsedGroups;
-};
+}; */

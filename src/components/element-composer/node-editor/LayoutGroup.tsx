@@ -10,12 +10,14 @@ import {
   PADDING_CLASSNAMES,
 } from "@/lib/tailwindClasses";
 import { useComposerStore } from "@/store/useComposerStore";
-import type { TailwindClassNamesGroups } from "@/types/tailwind/tailwind";
+import {
+  schemaLayoutGroup,
+  type TailwindClassNamesGroups,
+} from "@/types/tailwind/tailwind";
 import { SelectList } from "@/components/ui-editor/select-list";
 import { SettingLabelContainer } from "@/components/layout/SettingLabelContainer";
 import { Registry } from "@/components/elements/Registry";
 import type { TGenericComponentsAbstract } from "@/types/elements/jsx";
-import { parseTailwindClassNameIntoGroups } from "@/lib/tailwind/tailwind";
 
 export default function LayoutGroup({
   layoutGroup,
@@ -34,15 +36,16 @@ export default function LayoutGroup({
           <SelectList
             value={layoutGroup.display}
             onValueChange={(newValue) => {
-              const { defaultClassNameProperties, classNameGroups } =
-                Registry[node.type];
-              const parsedGroups = parseTailwindClassNameIntoGroups(
-                { ...defaultClassNameProperties, display: newValue },
-                classNameGroups
+              const { classNameGroupsdefaults } = Registry[node.type];
+              const newGroupDefaults = classNameGroupsdefaults.layout?.find(
+                (group) => group.display === newValue
               );
-              if (parsedGroups.layout) {
-                setClassNameGroup(node.key, "layout", parsedGroups.layout);
-              }
+              const parsedLayoutGroup = schemaLayoutGroup.parse({
+                ...newGroupDefaults,
+                ...layoutGroup,
+                display: newValue,
+              });
+              setClassNameGroup(node.key, "layout", parsedLayoutGroup);
             }}
             options={DISPLAY_CLASSNAMES}
             label="Display"

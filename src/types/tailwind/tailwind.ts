@@ -91,3 +91,13 @@ const tailwindClassNameGroupsSchema = z.object({
 export type TailwindClassNamesGroups = z.infer<
 	typeof tailwindClassNameGroupsSchema
 >;
+
+const tailwindClassNameGroupsDefaultSchema = z.object({
+	size: schemaSizeGroup.optional(),
+	layout: schemaLayoutGroup.array().optional(),
+	text: schemaTextGroup.optional(),
+});
+
+export type TailwindClassNamesGroupsDefault = z.infer<
+	typeof tailwindClassNameGroupsDefaultSchema
+>;

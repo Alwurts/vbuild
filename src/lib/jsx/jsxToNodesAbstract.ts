@@ -7,10 +7,10 @@ import React from "react";
 import { v4 as uuidv4 } from "uuid";
 import { Registry } from "@/components/elements/Registry";
 import type {
-	TailwindClassName,
+	TailwindClassNamesGroups,
+	TailwindGroupName,
 	TailwindStylePropertyName,
 } from "@/types/tailwind/tailwind";
-import { parseTailwindClassNameIntoGroups } from "../tailwind/tailwind";
 import { PROPERTIES_CLASSNAMES } from "../tailwindClasses";
 
 const jsxNodesToNodesAbstract = (
@@ -51,38 +51,75 @@ const jsxNodesToNodesAbstract = (
 					: reactNodeClone.type.name
 		) as GenericComponentName;
 
-		const { defaultClassNameProperties, classNameGroups } = Registry[typeName];
+		const { classNameGroupsdefaults } = Registry[typeName];
 
 		const { children, className, ...props } = reactNodeClone.props;
 
-		const tailwindClassName: TailwindClassName = {};
+		const tailwindClassName: TailwindClassNamesGroups = {};
 
 		const classNameSeparated = className
 			? (className as string).trim().split(" ")
 			: [];
-		for (const [property, value] of Object.entries(
-			defaultClassNameProperties,
-		)) {
-			const propertyName = property as TailwindStylePropertyName;
-			const propertyListClassNames = PROPERTIES_CLASSNAMES[propertyName];
-			const propertyMatch = classNameSeparated.find((className) =>
-				propertyListClassNames.some(
-					(propertyClassName) => className === propertyClassName,
-				),
-			);
-			if (propertyMatch) {
-				// A class was found on the parsed code
-				tailwindClassName[propertyName] = propertyMatch;
-			} else {
-				// A class was not found on the parsed code lets use the component default value
-				tailwindClassName[propertyName] = value;
+
+		for (const [groupKey, group] of Object.entries(classNameGroupsdefaults)) {
+			const groupName = groupKey as TailwindGroupName;
+			if (groupName === "size" || groupName === "text") {
+				// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+				const groupTemp: any = {};
+				for (const [propertyKey, propertyValue] of Object.entries(group)) {
+					const propertyName = propertyKey as TailwindStylePropertyName;
+					const propertyListClassNames = PROPERTIES_CLASSNAMES[propertyName];
+					const propertyMatch = classNameSeparated.find((className) =>
+						propertyListClassNames.some(
+							(propertyClassName) => className === propertyClassName,
+						),
+					);
+					if (propertyMatch) {
+						// A class was found on the parsed code
+						groupTemp[propertyName] = propertyMatch;
+					} else {
+						// A class was not found on the parsed code lets use the component default value
+						groupTemp[propertyName] = propertyValue;
+					}
+				}
+				tailwindClassName[groupName] = groupTemp;
+			}
+			if (groupName === "layout") {
+				const displayOptions = PROPERTIES_CLASSNAMES.display;
+				let displayMatch = classNameSeparated.find((className) =>
+					displayOptions.some(
+						(displayClassName) => className === displayClassName,
+					),
+				);
+				if (!displayMatch) {
+					displayMatch = "block";
+				}
+				const layoutGroup = classNameGroupsdefaults.layout?.find(
+					(layout) => layout.display === displayMatch,
+				);
+				if (layoutGroup) {
+					// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+					const groupTemp: any = {};
+					for (const [propertyKey, propertyValue] of Object.entries(
+						layoutGroup,
+					)) {
+						const propertyName = propertyKey as TailwindStylePropertyName;
+						const propertyListClassNames = PROPERTIES_CLASSNAMES[propertyName];
+						const propertyMatch = classNameSeparated.find((className) =>
+							propertyListClassNames.some(
+								(propertyClassName) => className === propertyClassName,
+							),
+						);
+						if (propertyMatch) {
+							groupTemp[propertyName] = propertyMatch;
+						} else {
+							groupTemp[propertyName] = propertyValue;
+						}
+					}
+					tailwindClassName[groupName] = groupTemp;
+				}
 			}
 		}
-
-		const parsedGroups = parseTailwindClassNameIntoGroups(
-			tailwindClassName,
-			classNameGroups,
-		);
 
 		let childrenKeys: string[] = [];
 		if ("children" in reactNodeClone.props && reactNodeClone.props.children) {
@@ -109,7 +146,7 @@ const jsxNodesToNodesAbstract = (
 				props,
 				type: typeName, // Get correct type
 				children: childrenKeys,
-				className: parsedGroups,
+				className: tailwindClassName,
 			};
 
 			newNodesAbstract[newkey] = newNodeAbstract;
@@ -127,7 +164,7 @@ const jsxNodesToNodesAbstract = (
 			props,
 			type: typeName, // Get correct type
 			children: childrenKeys,
-			className: parsedGroups,
+			className: tailwindClassName,
 		};
 
 		newNodesAbstract[newkey] = newNodeAbstract;
