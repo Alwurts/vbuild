@@ -14,9 +14,7 @@ export default function GroupContainer({
     <div className="text-sm">
       <div className="p-2 flex flex-col gap-2">
         <h4 className="text-sm font-semibold">{groupName}</h4>
-        <div className={cn("grid grid-cols-3 items-start gap-2", className)}>
-          {children}
-        </div>
+        <div className={cn("space-y-2", className)}>{children}</div>
       </div>
       <Separator />
     </div>

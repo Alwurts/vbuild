@@ -7,7 +7,10 @@ import {
 } from "@/lib/tailwindClasses";
 import { useComposerStore } from "@/store/useComposerStore";
 import type { TailwindClassNamesGroups } from "@/types/tailwind/tailwind";
-import { SelectList } from "@/components/ui-editor/select-list";
+import { SelectList } from "@/components/settings-tools/select-list";
+import { SettingLabelContainer } from "@/components/layout/SettingLabelContainer";
+import { ColorPicker } from "@/components/settings-tools/color-picker";
+import TextAlignToggle from "@/components/settings-tools/text-align";
 
 export default function TextGroup({
   textGroup,
@@ -25,9 +28,13 @@ export default function TextGroup({
   return (
     <GroupContainer groupName="Text">
       {textGroup.textAlign && (
-        <>
-          <h5 className="mt-2">Text Align</h5>
-          <SelectList
+        <SettingLabelContainer
+          htmlFor="textAlign"
+          label="Alignment"
+          className="grid-cols-1 gap-1 pb-1"
+        >
+          <TextAlignToggle
+            id="textAlign"
             value={textGroup.textAlign}
             onValueChange={(value) =>
               setClassNameGroup(nodeKey, "text", {
@@ -35,35 +42,32 @@ export default function TextGroup({
                 textAlign: value,
               })
             }
-            options={TEXT_ALIGN_CLASSNAMES}
-            label="Text Align"
-            className="col-span-2"
+            /* className="col-span-2" */
             disabled={disabled}
           />
-        </>
+        </SettingLabelContainer>
       )}
       {textGroup.textColor && (
-        <>
-          <h5 className="mt-2">Text Color</h5>
-          <SelectList
+        <SettingLabelContainer htmlFor="textColor" label="Color">
+          <ColorPicker
+            id="textColor"
+            label="Text Color"
             value={textGroup.textColor}
-            onValueChange={(value) =>
+            onChange={(value) =>
               setClassNameGroup(nodeKey, "text", {
                 ...textGroup,
                 textColor: value,
               })
             }
-            options={TEXT_COLOR_CLASSNAMES}
-            label="Text Color"
+            isDisabled={disabled}
             className="col-span-2"
-            disabled={disabled}
           />
-        </>
+        </SettingLabelContainer>
       )}
       {textGroup.fontSize && (
-        <>
-          <h5 className="mt-2">Font Size</h5>
+        <SettingLabelContainer htmlFor="fontSize" label="Size">
           <SelectList
+            id="fontSize"
             value={textGroup.fontSize}
             onValueChange={(value) =>
               setClassNameGroup(nodeKey, "text", {
@@ -76,12 +80,12 @@ export default function TextGroup({
             className="col-span-2"
             disabled={disabled}
           />
-        </>
+        </SettingLabelContainer>
       )}
       {textGroup.fontWeight && (
-        <>
-          <h5 className="mt-2">Font Weight</h5>
+        <SettingLabelContainer htmlFor="fontWeight" label="Weight">
           <SelectList
+            id="fontWeight"
             value={textGroup.fontWeight}
             onValueChange={(value) =>
               setClassNameGroup(nodeKey, "text", {
@@ -92,9 +96,12 @@ export default function TextGroup({
             options={FONT_WEIGHT_CLASSNAMES}
             label="Font Weight"
             className="col-span-2"
+            itemClassName={(value) => {
+              return value;
+            }}
             disabled={disabled}
           />
-        </>
+        </SettingLabelContainer>
       )}
     </GroupContainer>
   );

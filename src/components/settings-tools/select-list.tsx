@@ -7,17 +7,21 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "./select";
+} from "../ui-editor/select";
 
 export function SelectList({
+  id,
   className,
+  itemClassName,
   value,
   onValueChange,
   options,
   label,
   disabled,
 }: {
+  id: string;
   className?: string;
+  itemClassName?: (value: string) => string;
   value: string;
   onValueChange: (value: string) => void;
   options: string[];
@@ -26,14 +30,18 @@ export function SelectList({
 }) {
   return (
     <Select value={value} onValueChange={onValueChange} disabled={disabled}>
-      <SelectTrigger className={cn("h-9 text-start", className)}>
+      <SelectTrigger id={id} className={cn("h-9 text-start", className)}>
         <SelectValue placeholder="None" />
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
           <SelectLabel>{label}</SelectLabel>
           {options.map((option) => (
-            <SelectItem value={option} key={option}>
+            <SelectItem
+              value={option}
+              key={option}
+              className={itemClassName ? itemClassName(option) : ""}
+            >
               {option}
             </SelectItem>
           ))}

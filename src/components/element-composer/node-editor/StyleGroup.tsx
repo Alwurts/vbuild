@@ -1,14 +1,10 @@
 import GroupContainer from "./GroupContainer";
-import {
-  BACKGROUND_COLOR_CLASSNAMES,
-  FONT_SIZE_CLASSNAMES,
-  FONT_WEIGHT_CLASSNAMES,
-  TEXT_ALIGN_CLASSNAMES,
-  TEXT_COLOR_CLASSNAMES,
-} from "@/lib/tailwindClasses";
+import { BACKGROUND_COLOR_CLASSNAMES } from "@/lib/tailwindClasses";
 import { useComposerStore } from "@/store/useComposerStore";
 import type { TailwindClassNamesGroups } from "@/types/tailwind/tailwind";
-import { SelectList } from "@/components/ui-editor/select-list";
+import { SettingLabelContainer } from "@/components/layout/SettingLabelContainer";
+import { ColorPicker } from "@/components/settings-tools/color-picker";
+
 export default function StyleGroup({
   styleGroup,
   nodeKey,
@@ -23,24 +19,23 @@ export default function StyleGroup({
   );
 
   return (
-    <GroupContainer groupName="Text">
+    <GroupContainer groupName="Style">
       {styleGroup.backgroundColor && (
-        <>
-          <h5 className="mt-2">Background Color</h5>
-          <SelectList
+        <SettingLabelContainer label="Background" htmlFor="backgroundColor">
+          <ColorPicker
+            id="backgroundColor"
+            label="Background Color"
             value={styleGroup.backgroundColor}
-            onValueChange={(value) =>
+            onChange={(value) =>
               setClassNameGroup(nodeKey, "style", {
                 ...styleGroup,
                 backgroundColor: value,
               })
             }
-            options={BACKGROUND_COLOR_CLASSNAMES}
-            label="Background Color"
+            isDisabled={disabled}
             className="col-span-2"
-            disabled={disabled}
           />
-        </>
+        </SettingLabelContainer>
       )}
     </GroupContainer>
   );

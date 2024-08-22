@@ -10,6 +10,7 @@ import LayoutGroup from "./LayoutGroup";
 import { Registry } from "@/components/elements/Registry";
 import TextGroup from "./TextGroup";
 import StyleGroup from "./StyleGroup";
+import { ScrollArea } from "@/components/ui-editor/scroll-area";
 
 export default function NodeEditor() {
   const nodes = useComposerStore((state) => state.nodes);
@@ -22,9 +23,11 @@ export default function NodeEditor() {
 
   if (!selectedNode || typeof selectedNode !== "object") {
     return (
-      <Layout className="items-center justify-center gap-2 text-muted-editor-foreground">
-        <CircleSlash className="w-8 h-8" />
-        <span>No node selected</span>
+      <Layout className="text-muted-editor-foreground">
+        <div className="flex flex-col items-center justify-center gap-2 py-10">
+          <CircleSlash className="w-8 h-8" />
+          <span>No node selected</span>
+        </div>
       </Layout>
     );
   }
@@ -46,14 +49,14 @@ const Layout = ({
         <h3 className="text-sm font-medium">Settings Panel</h3>
       </div>
       <Separator />
-      <div
+      <ScrollArea
         className={cn(
           "flex-1 flex flex-col items-stretch justify-start",
           className
         )}
       >
         {children}
-      </div>
+      </ScrollArea>
     </div>
   );
 };

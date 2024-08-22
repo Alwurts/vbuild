@@ -291,7 +291,7 @@ export const FONT_WEIGHT_CLASSNAMES = [
 	"font-black",
 ];
 
-const BACKGROUND_COLOR_CLASSNAMES_SEPARATED = [
+export const BACKGROUND_COLOR_CLASSNAMES_SWATCHES = [
 	[
 		"bg-primary",
 		"bg-secondary",
@@ -590,7 +590,7 @@ const BACKGROUND_COLOR_CLASSNAMES_SEPARATED = [
 ];
 
 export const BACKGROUND_COLOR_CLASSNAMES = [
-	...BACKGROUND_COLOR_CLASSNAMES_SEPARATED.flat(),
+	...BACKGROUND_COLOR_CLASSNAMES_SWATCHES.flat(),
 ];
 
 // Size
@@ -1081,14 +1081,4 @@ export const PROPERTIES_CLASSNAMES: {
 	fontSize: FONT_SIZE_CLASSNAMES,
 	fontWeight: FONT_WEIGHT_CLASSNAMES,
 	backgroundColor: BACKGROUND_COLOR_CLASSNAMES,
-};
-
-export const textToBgColor = (textColor: string) => {
-	if (textColor.startsWith("text-")) {
-		return textColor.replace("text-", "bg-");
-	}
-	if (textColor.startsWith("border-")) {
-		return textColor.replace("border-", "bg-");
-	}
-	return textColor;
 };

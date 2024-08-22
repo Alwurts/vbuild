@@ -2,7 +2,8 @@ import GroupContainer from "./GroupContainer";
 import { HEIGHT_CLASSNAMES, WIDTH_CLASSNAMES } from "@/lib/tailwindClasses";
 import { useComposerStore } from "@/store/useComposerStore";
 import type { TailwindClassNamesGroups } from "@/types/tailwind/tailwind";
-import { SelectList } from "@/components/ui-editor/select-list";
+import { SelectList } from "@/components/settings-tools/select-list";
+import { SettingLabelContainer } from "@/components/layout/SettingLabelContainer";
 
 export default function SizeGroup({
   sizeGroup,
@@ -20,9 +21,9 @@ export default function SizeGroup({
   return (
     <GroupContainer groupName="Size">
       {sizeGroup.width && (
-        <>
-          <h5 className="mt-2">Width</h5>
+        <SettingLabelContainer htmlFor="width" label="Width">
           <SelectList
+            id="width"
             value={sizeGroup.width}
             onValueChange={(value) =>
               setClassNameGroup(nodeKey, "size", {
@@ -35,17 +36,17 @@ export default function SizeGroup({
             className="col-span-2"
             disabled={disabled}
           />
-        </>
+        </SettingLabelContainer>
       )}
       {sizeGroup.height && (
-        <>
-          <h5 className="mt-2">Height</h5>
+        <SettingLabelContainer htmlFor="height" label="Height">
           <SelectList
+            id="height"
             value={sizeGroup.height}
             onValueChange={(value) =>
               setClassNameGroup(nodeKey, "size", {
                 ...sizeGroup,
-                height: value,
+                width: value,
               })
             }
             options={HEIGHT_CLASSNAMES}
@@ -53,7 +54,7 @@ export default function SizeGroup({
             className="col-span-2"
             disabled={disabled}
           />
-        </>
+        </SettingLabelContainer>
       )}
     </GroupContainer>
   );
