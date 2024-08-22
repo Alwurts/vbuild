@@ -33,6 +33,9 @@ export const Registry: TGenericComponentRegistry = {
         width: "w-screen",
         height: "h-screen",
       },
+      style: {
+        backgroundColor: "bg-white",
+      },
     },
   },
   div: {
@@ -47,6 +50,9 @@ export const Registry: TGenericComponentRegistry = {
       size: {
         width: "w-full",
         height: "h-auto",
+      },
+      style: {
+        backgroundColor: "bg-transparent",
       },
       layout: [
         {
@@ -100,6 +106,9 @@ export const Registry: TGenericComponentRegistry = {
         textAlign: "text-left",
         textColor: "text-black",
       },
+      style: {
+        backgroundColor: "bg-transparent",
+      },
     },
   },
   h2: {
@@ -111,7 +120,17 @@ export const Registry: TGenericComponentRegistry = {
     draggable: true,
     droppable: false,
     editable: true,
-    classNameGroupsdefaults: {},
+    classNameGroupsdefaults: {
+      text: {
+        fontSize: "text-3xl",
+        fontWeight: "font-bold",
+        textAlign: "text-left",
+        textColor: "text-black",
+      },
+      style: {
+        backgroundColor: "bg-transparent",
+      },
+    },
   },
   h3: {
     type: "h3",
@@ -123,15 +142,14 @@ export const Registry: TGenericComponentRegistry = {
     droppable: false,
     editable: true,
     classNameGroupsdefaults: {
-      size: {
-        width: "w-auto",
-        height: "h-auto",
-      },
       text: {
         fontSize: "text-2xl",
         fontWeight: "font-bold",
         textAlign: "text-left",
         textColor: "text-black",
+      },
+      style: {
+        backgroundColor: "bg-transparent",
       },
     },
   },

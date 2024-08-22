@@ -17,6 +17,7 @@ const tailwindStylePropertyNames = [
 	"textColor",
 	"fontSize",
 	"fontWeight",
+	"backgroundColor",
 ] as const;
 
 export type TailwindStylePropertyName =
@@ -31,7 +32,7 @@ export type TailwindClassNameRegex = {
 };
 
 // Groups
-const tailwindGroupName = ["size", "layout", "text"] as const;
+const tailwindGroupName = ["size", "layout", "text", "style"] as const;
 
 export type TailwindGroupName = (typeof tailwindGroupName)[number];
 
@@ -82,10 +83,15 @@ export const schemaTextGroup = z.object({
 	fontWeight: z.string(),
 });
 
+export const schemaStyleGroup = z.object({
+	backgroundColor: z.string(),
+});
+
 const tailwindClassNameGroupsSchema = z.object({
 	size: schemaSizeGroup.optional(),
 	layout: schemaLayoutGroup.optional(),
 	text: schemaTextGroup.optional(),
+	style: schemaStyleGroup.optional(),
 });
 
 export type TailwindClassNamesGroups = z.infer<
@@ -96,6 +102,7 @@ const tailwindClassNameGroupsDefaultSchema = z.object({
 	size: schemaSizeGroup.optional(),
 	layout: schemaLayoutGroup.array().optional(),
 	text: schemaTextGroup.optional(),
+	style: schemaStyleGroup.optional(),
 });
 
 export type TailwindClassNamesGroupsDefault = z.infer<

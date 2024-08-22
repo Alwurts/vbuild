@@ -89,10 +89,7 @@ const jsxNodesToNodesAbstract = (
 		for (const [groupKey, group] of Object.entries(classNameGroupsdefaults)) {
 			const groupName = groupKey as TailwindGroupName;
 
-			if (
-				(groupName === "size" || groupName === "text") &&
-				!Array.isArray(group)
-			) {
+			if (!Array.isArray(group)) {
 				tailwindClassName[groupName] = processGroup(group, classNameSeparated);
 			} else if (groupName === "layout") {
 				const displayOptions = PROPERTIES_CLASSNAMES.display;

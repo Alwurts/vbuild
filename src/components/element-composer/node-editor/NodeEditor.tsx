@@ -9,6 +9,7 @@ import type { TGenericComponentsAbstract } from "@/types/elements/jsx";
 import LayoutGroup from "./LayoutGroup";
 import { Registry } from "@/components/elements/Registry";
 import TextGroup from "./TextGroup";
+import StyleGroup from "./StyleGroup";
 
 export default function NodeEditor() {
   const nodes = useComposerStore((state) => state.nodes);
@@ -80,6 +81,12 @@ function NodeEditorContent({
       {classNameGroupsdefaults.text && nodeAbstract.className.text && (
         <TextGroup
           textGroup={nodeAbstract.className.text}
+          nodeKey={nodeAbstract.key}
+        />
+      )}
+      {classNameGroupsdefaults.style && nodeAbstract.className.style && (
+        <StyleGroup
+          styleGroup={nodeAbstract.className.style}
           nodeKey={nodeAbstract.key}
         />
       )}
