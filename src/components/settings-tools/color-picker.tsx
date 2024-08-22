@@ -7,13 +7,33 @@ import {
 import { Button } from "@/components/ui-editor/button";
 import { BACKGROUND_COLOR_CLASSNAMES_SWATCHES } from "@/lib/tailwindClasses";
 import { Separator } from "@/components/ui-editor/separator";
-import { Label } from "@/components/ui-editor/label";
 import { cn } from "@/lib/utils";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "../ui-editor/accordion";
+import { ScrollArea } from "../ui-editor/scroll-area";
+
+const THEME_COLORS = [
+  { name: "Primary", class: "bg-primary" },
+  { name: "Secondary", class: "bg-secondary" },
+  { name: "Accent", class: "bg-accent" },
+  { name: "Background", class: "bg-background" },
+  { name: "Foreground", class: "bg-foreground" },
+  { name: "Muted", class: "bg-muted" },
+  { name: "Card", class: "bg-card" },
+  { name: "Popover", class: "bg-popover" },
+  { name: "Border", class: "bg-border" },
+  { name: "Input", class: "bg-input" },
+  { name: "Ring", class: "bg-ring" },
+];
 
 export const ColorPicker = ({
   id,
   label,
-  value, // Can be bg- or text- or border-
+  value,
   onChange,
   isDisabled,
   className,
@@ -35,10 +55,7 @@ export const ColorPicker = ({
 
   let bgParsedValue = value;
 
-  // From bg- or text- or border- to bg-
-  if (type === "bg") {
-    bgParsedValue = value;
-  } else if (type === "text") {
+  if (type === "text") {
     bgParsedValue = value.replace("text-", "bg-");
   } else if (type === "border") {
     bgParsedValue = value.replace("border-", "bg-");
@@ -54,7 +71,6 @@ export const ColorPicker = ({
     return color;
   };
 
-  // From bg- to desired value bg- or text- or border-
   const handleColorChange = (color: string) => {
     onChange(bgToType(color));
     setIsOpen(false);
@@ -78,26 +94,62 @@ export const ColorPicker = ({
           />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-64 h-96 p-2 space-y-2 overflow-y-auto">
-        <p className="text-sm text-stone-500">{label}</p>
-        <Separator />
-        <div className="flex flex-col gap-1 ">
-          {BACKGROUND_COLOR_CLASSNAMES_SWATCHES.map((colorGroup) => (
-            <div key={colorGroup[0]} className="flex flex-row gap-1">
-              {colorGroup.map((color) => (
-                <button
-                  type="button"
-                  title={bgToType(color)}
-                  key={color}
-                  className={`w-4 h-4 rounded-sm ${color} border border-stone-300`}
-                  onClick={() => {
-                    handleColorChange(color);
-                  }}
-                />
-              ))}
-            </div>
-          ))}
-        </div>
+      <PopoverContent align="end" className="w-64 h-96 p-0">
+        <ScrollArea className="h-full w-full p-4">
+          <p className="text-sm font-semibold text-foreground-editor">
+            {label}
+          </p>
+          <Separator className="mt-3" />
+          <Accordion
+            defaultValue={["theme-colors", "tailwind-colors"]}
+            type="multiple"
+            className="w-full text-sm"
+          >
+            <AccordionItem value="theme-colors">
+              <AccordionTrigger>Theme Colors</AccordionTrigger>
+              <AccordionContent>
+                <div className="grid grid-cols-2 gap-x-2">
+                  {THEME_COLORS.map((color) => (
+                    <Button
+                      key={color.name}
+                      variant="ghost"
+                      size="sm"
+                      className="flex gap-2 justify-start h-8 px-2"
+                      onClick={() => handleColorChange(color.class)}
+                    >
+                      <div
+                        className={`w-5 h-5 rounded shrink-0 border border-stone-300 ${color.class}`}
+                      />
+                      <span className="text-xs">{color.name}</span>
+                    </Button>
+                  ))}
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="tailwind-colors">
+              <AccordionTrigger>Tailwind Colors</AccordionTrigger>
+              <AccordionContent>
+                <div className="flex flex-col gap-1 ">
+                  {BACKGROUND_COLOR_CLASSNAMES_SWATCHES.map(
+                    (colorGroup, index) => (
+                      <div key={colorGroup[0]} className="flex flex-row gap-1">
+                        {colorGroup.map((color) => (
+                          <button
+                            type="button"
+                            title={bgToType(color)}
+                            key={color}
+                            className={`w-4 h-4 rounded-sm ${color} border border-stone-300`}
+                            onClick={() => handleColorChange(color)}
+                          />
+                        ))}
+                      </div>
+                    )
+                  )}
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        </ScrollArea>
       </PopoverContent>
     </Popover>
   );

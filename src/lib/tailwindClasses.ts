@@ -292,15 +292,7 @@ export const FONT_WEIGHT_CLASSNAMES = [
 ];
 
 export const BACKGROUND_COLOR_CLASSNAMES_SWATCHES = [
-	[
-		"bg-primary",
-		"bg-secondary",
-		"bg-accent",
-		"bg-transparent",
-		"bg-black",
-		"bg-white",
-		"bg-background",
-	],
+	["bg-transparent", "bg-black", "bg-white"],
 	[
 		"bg-slate-50",
 		"bg-slate-100",
