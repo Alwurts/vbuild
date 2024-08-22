@@ -93,7 +93,14 @@ export const Registry: TGenericComponentRegistry = {
     draggable: true,
     droppable: false,
     editable: true,
-    classNameGroupsdefaults: {},
+    classNameGroupsdefaults: {
+      text: {
+        fontSize: "text-4xl",
+        fontWeight: "font-bold",
+        textAlign: "text-left",
+        textColor: "text-black",
+      },
+    },
   },
   h2: {
     type: "h2",
@@ -115,7 +122,18 @@ export const Registry: TGenericComponentRegistry = {
     draggable: true,
     droppable: false,
     editable: true,
-    classNameGroupsdefaults: {},
+    classNameGroupsdefaults: {
+      size: {
+        width: "w-auto",
+        height: "h-auto",
+      },
+      text: {
+        fontSize: "text-2xl",
+        fontWeight: "font-bold",
+        textAlign: "text-left",
+        textColor: "text-black",
+      },
+    },
   },
   h4: {
     type: "h4",
@@ -208,7 +226,18 @@ export const Registry: TGenericComponentRegistry = {
     draggable: true,
     droppable: false,
     editable: true,
-    classNameGroupsdefaults: {},
+    classNameGroupsdefaults: {
+      size: {
+        width: "w-auto",
+        height: "h-auto",
+      },
+      text: {
+        fontSize: "text-2xl",
+        fontWeight: "font-bold",
+        textAlign: "text-left",
+        textColor: "text-black",
+      },
+    },
   },
   CardDescription: {
     type: "CardDescription",
@@ -218,7 +247,18 @@ export const Registry: TGenericComponentRegistry = {
     draggable: true,
     droppable: false,
     editable: true,
-    classNameGroupsdefaults: {},
+    classNameGroupsdefaults: {
+      size: {
+        width: "w-auto",
+        height: "h-auto",
+      },
+      text: {
+        fontSize: "text-base",
+        fontWeight: "font-normal",
+        textAlign: "text-left",
+        textColor: "text-black",
+      },
+    },
   },
   Button: {
     type: "Button",

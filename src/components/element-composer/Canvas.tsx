@@ -60,6 +60,7 @@ function CanvasNode({ nodeKey }: { nodeKey: string }) {
     component: nodeComponent,
     editable: isEditable,
     draggable,
+    droppable,
   } = Registry[node.type];
 
   const nodeChildren = node.children?.map((childKey) => (
@@ -126,7 +127,7 @@ function CanvasNode({ nodeKey }: { nodeKey: string }) {
       {clonedNodeComponent}
       {selectedNode?.nodeKey === nodeKey && nodeDomRect
         ? createPortal(
-            <CanvasHighlight domRect={nodeDomRect} showActionButtons />,
+            <CanvasHighlight domRect={nodeDomRect} showActionButtons={droppable} />,
             document.body
           )
         : canvasHighlight?.nodeKey === nodeKey &&
