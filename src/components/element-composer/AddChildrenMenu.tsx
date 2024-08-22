@@ -16,7 +16,7 @@ import { cloneElement, isValidElement } from "react";
 
 export default function AddChildrenMenu() {
   const availableComponents: GenericComponentName[][] = [
-    ["div", "span"],
+    ["div"],
     ["Button"],
     [
       "Card",
