@@ -1,5 +1,5 @@
 import GroupContainer from "./GroupContainer";
-import { HEIGHT_OPTIONS, WIDTH_CLASSNAMES } from "@/lib/tailwindClasses";
+import { HEIGHT_CLASSNAMES, WIDTH_CLASSNAMES } from "@/lib/tailwindClasses";
 import { useComposerStore } from "@/store/useComposerStore";
 import type { TailwindClassNamesGroups } from "@/types/tailwind/tailwind";
 import { SelectList } from "@/components/ui-editor/select-list";
@@ -48,7 +48,7 @@ export default function SizeGroup({
                 height: value,
               })
             }
-            options={HEIGHT_OPTIONS}
+            options={HEIGHT_CLASSNAMES}
             label="Height"
             className="col-span-2"
             disabled={disabled}

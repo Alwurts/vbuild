@@ -1,12 +1,12 @@
 import GroupContainer from "./GroupContainer";
 import {
-  ALIGN_ITEMS_OPTIONS,
-  DISPLAY_OPTIONS,
-  FLEX_DIRECTION_OPTIONS,
+  ALIGN_ITEMS_CLASSNAMES,
+  DISPLAY_CLASSNAMES,
+  FLEX_DIRECTION_CLASSNAMES,
   GAP_CLASSNAMES,
-  GRID_TEMPLATE_COLUMNS_OPTIONS,
-  GRID_TEMPLATE_ROWS_OPTIONS,
-  JUSTIFY_CONTENT_OPTIONS,
+  GRID_TEMPLATE_COLUMNS_CLASSNAMES,
+  GRID_TEMPLATE_ROWS_CLASSNAMES,
+  JUSTIFY_CONTENT_CLASSNAMES,
   PADDING_CLASSNAMES,
 } from "@/lib/tailwindClasses";
 import { useComposerStore } from "@/store/useComposerStore";
@@ -44,7 +44,7 @@ export default function LayoutGroup({
                 setClassNameGroup(node.key, "layout", parsedGroups.layout);
               }
             }}
-            options={DISPLAY_OPTIONS}
+            options={DISPLAY_CLASSNAMES}
             label="Display"
             className="col-span-2"
           />
@@ -62,7 +62,7 @@ export default function LayoutGroup({
                     flexDirection: value,
                   })
                 }
-                options={FLEX_DIRECTION_OPTIONS}
+                options={FLEX_DIRECTION_CLASSNAMES}
                 label="Direction"
                 className="col-span-2"
               />
@@ -78,7 +78,7 @@ export default function LayoutGroup({
                     justifyContent: value,
                   })
                 }
-                options={JUSTIFY_CONTENT_OPTIONS}
+                options={JUSTIFY_CONTENT_CLASSNAMES}
                 label="Justify"
                 className="col-span-2"
               />
@@ -94,7 +94,7 @@ export default function LayoutGroup({
                     alignItems: value,
                   })
                 }
-                options={ALIGN_ITEMS_OPTIONS}
+                options={ALIGN_ITEMS_CLASSNAMES}
                 label="Align"
                 className="col-span-2"
               />
@@ -114,7 +114,7 @@ export default function LayoutGroup({
                     gridTemplateColumns: value,
                   })
                 }
-                options={GRID_TEMPLATE_COLUMNS_OPTIONS}
+                options={GRID_TEMPLATE_COLUMNS_CLASSNAMES}
                 label="Columns"
                 className="col-span-2"
               />
@@ -130,7 +130,7 @@ export default function LayoutGroup({
                     gridTemplateRows: value,
                   })
                 }
-                options={GRID_TEMPLATE_ROWS_OPTIONS}
+                options={GRID_TEMPLATE_ROWS_CLASSNAMES}
                 label="Rows"
                 className="col-span-2"
               />

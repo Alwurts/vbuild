@@ -13,6 +13,10 @@ const tailwindStylePropertyNames = [
 	"gridTemplateColumns",
 	"gridTemplateRows",
 	"gap",
+	"textAlign",
+	"textColor",
+	"fontSize",
+	"fontWeight",
 ] as const;
 
 export type TailwindStylePropertyName =
@@ -27,7 +31,7 @@ export type TailwindClassNameRegex = {
 };
 
 // Groups
-const tailwindGroupName = ["size", "layout"] as const;
+const tailwindGroupName = ["size", "layout", "text"] as const;
 
 export type TailwindGroupName = (typeof tailwindGroupName)[number];
 
@@ -71,9 +75,17 @@ export const schemaLayoutGroup = z.union([
 	schemaLayoutHiddenGroup,
 ]);
 
+export const schemaTextGroup = z.object({
+	textAlign: z.string(),
+	textColor: z.string(),
+	fontSize: z.string(),
+	fontWeight: z.string(),
+});
+
 const tailwindClassNameGroupsSchema = z.object({
 	size: schemaSizeGroup.optional(),
 	layout: schemaLayoutGroup.optional(),
+	text: schemaTextGroup.optional(),
 });
 
 export type TailwindClassNamesGroups = z.infer<

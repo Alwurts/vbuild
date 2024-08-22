@@ -1,5 +1,16 @@
+import type { TailwindStylePropertyName } from "@/types/tailwind/tailwind";
+
 // Text
-export const textColorsOptions = [
+export const TEXT_ALIGN_CLASSNAMES = [
+	"text-left",
+	"text-center",
+	"text-right",
+	"text-justify",
+	"text-start",
+	"text-end",
+];
+
+export const TEXT_COLOR_CLASSNAMES = [
 	"text-primary",
 	"text-secondary",
 	"text-accent",
@@ -252,7 +263,7 @@ export const textColorsOptions = [
 	"text-rose-950",
 ];
 
-export const fontSizesOptions = [
+export const FONT_SIZE_CLASSNAMES = [
 	"text-xs",
 	"text-sm",
 	"text-base",
@@ -268,7 +279,7 @@ export const fontSizesOptions = [
 	"text-9xl",
 ];
 
-export const fontWeightsOptions = [
+export const FONT_WEIGHT_CLASSNAMES = [
 	"font-thin",
 	"font-extralight",
 	"font-light",
@@ -1284,7 +1295,7 @@ export const GAP_CLASSNAMES = [
 	"gap-y-96", */
 ];
 
-export const HEIGHT_OPTIONS = [
+export const HEIGHT_CLASSNAMES = [
 	/* "h-svh",
 	"h-lvh",
 	"h-dvh",
@@ -1419,7 +1430,7 @@ export const WIDTH_CLASSNAMES = [
 	"w-11/12",
 ];
 
-export const DISPLAY_OPTIONS = [
+export const DISPLAY_CLASSNAMES = [
 	"block",
 	"flex",
 	"grid",
@@ -1431,14 +1442,14 @@ export const DISPLAY_OPTIONS = [
 	"contents", */
 ];
 
-export const FLEX_DIRECTION_OPTIONS = [
+export const FLEX_DIRECTION_CLASSNAMES = [
 	"flex-row",
 	"flex-col",
 	"flex-row-reverse",
 	"flex-col-reverse",
 ];
 
-export const JUSTIFY_CONTENT_OPTIONS = [
+export const JUSTIFY_CONTENT_CLASSNAMES = [
 	"justify-start",
 	"justify-center",
 	"justify-end",
@@ -1449,7 +1460,7 @@ export const JUSTIFY_CONTENT_OPTIONS = [
 	"justify-stretch", */
 ];
 
-export const ALIGN_ITEMS_OPTIONS = [
+export const ALIGN_ITEMS_CLASSNAMES = [
 	"items-start",
 	"items-center",
 	"items-end",
@@ -1457,7 +1468,7 @@ export const ALIGN_ITEMS_OPTIONS = [
 	"items-stretch", */
 ];
 
-export const GRID_TEMPLATE_COLUMNS_OPTIONS = [
+export const GRID_TEMPLATE_COLUMNS_CLASSNAMES = [
 	/* "grid-cols-none", */
 	"grid-cols-1",
 	"grid-cols-2",
@@ -1473,7 +1484,7 @@ export const GRID_TEMPLATE_COLUMNS_OPTIONS = [
 	"grid-cols-12",
 ];
 
-export const GRID_TEMPLATE_ROWS_OPTIONS = [
+export const GRID_TEMPLATE_ROWS_CLASSNAMES = [
 	/* "grid-rows-none", */
 	"grid-rows-1",
 	"grid-rows-2",
@@ -1489,40 +1500,25 @@ export const GRID_TEMPLATE_ROWS_OPTIONS = [
 	"grid-rows-12",
 ];
 
-// Effects
-export const shadowOptions = [
-	"shadow-sm",
-	"shadow",
-	"shadow-md",
-	"shadow-lg",
-	"shadow-xl",
-	"shadow-2xl",
-	"shadow-inner",
-	"shadow-none",
-];
-export const opacityOptions = [
-	"opacity-0",
-	"opacity-5",
-	"opacity-10",
-	"opacity-15",
-	"opacity-20",
-	"opacity-25",
-	"opacity-30",
-	"opacity-35",
-	"opacity-40",
-	"opacity-45",
-	"opacity-50",
-	"opacity-55",
-	"opacity-60",
-	"opacity-65",
-	"opacity-70",
-	"opacity-75",
-	"opacity-80",
-	"opacity-85",
-	"opacity-90",
-	"opacity-95",
-	"opacity-100",
-];
+export const PROPERTIES_CLASSNAMES: {
+	[key in TailwindStylePropertyName]: string[];
+} = {
+	width: WIDTH_CLASSNAMES,
+	height: HEIGHT_CLASSNAMES,
+	padding: PADDING_CLASSNAMES,
+	margin: MARGIN_CLASSNAMES,
+	display: DISPLAY_CLASSNAMES,
+	flexDirection: FLEX_DIRECTION_CLASSNAMES,
+	justifyContent: JUSTIFY_CONTENT_CLASSNAMES,
+	alignItems: ALIGN_ITEMS_CLASSNAMES,
+	gridTemplateColumns: GRID_TEMPLATE_COLUMNS_CLASSNAMES,
+	gridTemplateRows: GRID_TEMPLATE_ROWS_CLASSNAMES,
+	gap: GAP_CLASSNAMES,
+	textAlign: TEXT_ALIGN_CLASSNAMES,
+	textColor: TEXT_COLOR_CLASSNAMES,
+	fontSize: FONT_SIZE_CLASSNAMES,
+	fontWeight: FONT_WEIGHT_CLASSNAMES,
+};
 
 export const textToBgColor = (textColor: string) => {
 	if (textColor.startsWith("text-")) {

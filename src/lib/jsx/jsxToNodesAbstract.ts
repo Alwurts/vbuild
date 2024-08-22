@@ -10,7 +10,8 @@ import type {
 	TailwindClassName,
 	TailwindStylePropertyName,
 } from "@/types/tailwind/tailwind";
-import { parseTailwindClassNameIntoGroups, TAILWIND_REGEX } from "../tailwind/tailwind";
+import { parseTailwindClassNameIntoGroups } from "../tailwind/tailwind";
+import { PROPERTIES_CLASSNAMES } from "../tailwindClasses";
 
 const jsxNodesToNodesAbstract = (
 	headReactNode: React.ReactNode,
@@ -63,9 +64,11 @@ const jsxNodesToNodesAbstract = (
 			defaultClassNameProperties,
 		)) {
 			const propertyName = property as TailwindStylePropertyName;
-			const propertyRegex = TAILWIND_REGEX[propertyName];
+			const propertyListClassNames = PROPERTIES_CLASSNAMES[propertyName];
 			const propertyMatch = classNameSeparated.find((className) =>
-				propertyRegex.test(className),
+				propertyListClassNames.some(
+					(propertyClassName) => className === propertyClassName,
+				),
 			);
 			if (propertyMatch) {
 				// A class was found on the parsed code
@@ -77,9 +80,9 @@ const jsxNodesToNodesAbstract = (
 		}
 
 		const parsedGroups = parseTailwindClassNameIntoGroups(
-      tailwindClassName,
-      classNameGroups
-    );
+			tailwindClassName,
+			classNameGroups,
+		);
 
 		let childrenKeys: string[] = [];
 		if ("children" in reactNodeClone.props && reactNodeClone.props.children) {
