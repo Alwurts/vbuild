@@ -51,6 +51,11 @@ type TSetContentEditable = InferComposerFunctionCall<
 	ComposerStore
 >;
 
+type TSetChildrenMenuKey = InferComposerFunctionCall<
+	"setChildrenMenuKey",
+	ComposerStore
+>;
+
 export type UpdateShadowState = Partial<
 	Pick<
 		ShadowComposerStore,
@@ -67,6 +72,7 @@ export interface ShadowComposerStore {
 	setCanvasHighlight: (...args: TSetCanvasHighlight["args"]) => void;
 	setSelectedNode: (...args: TSetSelectedNode["args"]) => void;
 	setContentEditable: (...args: TSetContentEditable["args"]) => void;
+	setChildrenMenuKey: (...args: TSetChildrenMenuKey["args"]) => void;
 	// Communication with the parent canvas
 	handleMessageFromCanvasParent: (message: CanvasMessageEvent) => void;
 	sendMessageToCanvasParent: (message: CanvasMessage) => void;

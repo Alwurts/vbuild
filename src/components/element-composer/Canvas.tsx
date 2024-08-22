@@ -6,7 +6,7 @@ import {
   useState,
 } from "react";
 import { useShadowComposerStore } from "@/store/useShadowComposerStore";
-import { LoaderCircle } from "lucide-react";
+import { LoaderCircle, PlusIcon } from "lucide-react";
 import { Registry } from "../elements/Registry";
 import { cn } from "@/lib/utils";
 import { createPortal } from "react-dom";
@@ -14,6 +14,7 @@ import AddChildrenMenu from "./AddChildrenMenu";
 import type { TailwindClassNamesGroups } from "@/types/tailwind/tailwind";
 import { useShallow } from "zustand/react/shallow";
 import { parseClassNameGroupsIntoString } from "@/lib/tailwind/tailwind";
+import { Button } from "../ui-editor/button";
 
 function CanvasNode({ nodeKey }: { nodeKey: string }) {
   const nodeRef = useRef<HTMLElement>(null);
@@ -117,6 +118,7 @@ function CanvasNode({ nodeKey }: { nodeKey: string }) {
       {selectedNode?.nodeKey === nodeKey && nodeDomRect
         ? createPortal(
             <CanvasHighlight
+              nodeKey={nodeKey}
               domRect={nodeDomRect}
               showActionButtons={droppable}
             />,
@@ -125,7 +127,10 @@ function CanvasNode({ nodeKey }: { nodeKey: string }) {
         : canvasHighlight?.nodeKey === nodeKey &&
           nodeDomRect &&
           createPortal(
-            <CanvasHighlight domRect={nodeDomRect} />,
+            <CanvasHighlight
+              nodeKey={nodeKey}
+              domRect={nodeDomRect}
+            />,
             document.body
           )}
     </>
@@ -133,12 +138,17 @@ function CanvasNode({ nodeKey }: { nodeKey: string }) {
 }
 
 function CanvasHighlight({
+  nodeKey,
   domRect,
   showActionButtons = false,
 }: {
+  nodeKey: string;
   domRect: DOMRect;
   showActionButtons?: boolean;
 }) {
+  const setChildrenMenuKey = useShadowComposerStore(
+    (state) => state.setChildrenMenuKey
+  );
   return (
     <div
       style={{
@@ -153,7 +163,18 @@ function CanvasHighlight({
     >
       {showActionButtons && (
         <div className="absolute -top-5 rounded-t-sm -left-0.5 py-0.5 px-1 flex items-center gap-1 bg-primary-editor">
-          <AddChildrenMenu />
+          <Button
+            onClick={(e) => {
+              e.stopPropagation();
+              setChildrenMenuKey(nodeKey);
+            }}
+            onMouseOver={(e) => e.stopPropagation()}
+            variant="ghost"
+            size="icon"
+            className="h-4 w-4 pointer-events-auto bg-primary-editor hover:bg-primary-editor hover:text-primary-editor-foreground/50 text-primary-editor-foreground"
+          >
+            <PlusIcon className="w-4 h-4" />
+          </Button>
         </div>
       )}
     </div>

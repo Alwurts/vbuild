@@ -111,6 +111,8 @@ export const useComposerStore = create<ComposerStore>((set, get) => ({
       return { nodes: newNodes };
     });
   },
+  childrenMenuKey: null,
+  setChildrenMenuKey: (nodeKey) => set({ childrenMenuKey: nodeKey }),
   copyNodeKey: null,
   setCopyNodeKey: (nodeKey) => set({ copyNodeKey: nodeKey }),
   copyNode: (

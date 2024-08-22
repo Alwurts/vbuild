@@ -77,6 +77,10 @@ function TreeNode({ nodeKey, depth = 0 }: TreeNodeProps) {
     }))
   );
 
+  const setChildrenMenuKey = useComposerStore(
+    (state) => state.setChildrenMenuKey
+  );
+
   const parentRef = useRef<HTMLDivElement>(null);
 
   const node = nodes[nodeKey];
@@ -336,7 +340,7 @@ function TreeNode({ nodeKey, depth = 0 }: TreeNodeProps) {
             <DropdownMenuLabel>{node.type}</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setChildrenMenuKey(node.key)}>
                 <Boxes className="mr-2 h-4 w-4" />
                 <span>Add child</span>
                 <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>

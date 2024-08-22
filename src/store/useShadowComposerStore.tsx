@@ -40,6 +40,15 @@ export const useShadowComposerStore = create<ShadowComposerStore>(
         },
       });
     },
+    setChildrenMenuKey: (nodeKey) => {
+      get().sendMessageToCanvasParent({
+        type: "FUNCTION_CALL",
+        function: {
+          name: "setChildrenMenuKey",
+          args: [nodeKey],
+        },
+      });
+    },
     // Communication with the canvas
     handleMessageFromCanvasParent: (message) => {
       if (message.origin !== window.location.origin) {

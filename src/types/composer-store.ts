@@ -25,6 +25,8 @@ export interface ComposerStore {
 		indexBeforeOrAfter: "before" | "after",
 	) => void;
 	deleteNode: (nodeKey: string) => void;
+	childrenMenuKey: string | null;
+	setChildrenMenuKey: (nodeKey: string | null) => void;
 	copyNodeKey: string | null;
 	setCopyNodeKey: (nodeKey: string | null) => void;
 	copyNode: (
