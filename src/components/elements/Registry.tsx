@@ -80,16 +80,6 @@ export const Registry: TGenericComponentRegistry = {
       ],
     },
   },
-  span: {
-    type: "span",
-    icon: <SquareGanttChartIcon />,
-    component: <span />,
-    dependencies: [],
-    draggable: true,
-    droppable: true,
-    editable: true,
-    classNameGroupsdefaults: {},
-  },
   h1: {
     type: "h1",
     icon: <Type />,

@@ -34,7 +34,6 @@ type InferComponentProps<T> = T extends React.ComponentType<infer P>
 const GenericComponentsNames = {
 	Root: "Root",
 	div: "div",
-	span: "span",
 	h1: "h1",
 	h2: "h2",
 	h3: "h3",
@@ -56,7 +55,6 @@ export type GenericComponentName =
 
 export type TGenericComponentsWithoutRoot =
 	| TDivComponent
-	| TSpanComponent
 	| TH1Component
 	| TH2Component
 	| TH3Component

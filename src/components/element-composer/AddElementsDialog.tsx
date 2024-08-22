@@ -22,7 +22,7 @@ export function AddElementsDialog() {
   const availableComponents: {
     [key: string]: GenericComponentName[];
   } = {
-    Basic: ["div", "span"],
+    Basic: ["div"],
     Text: ["h1", "h2", "h3", "h4", "h5", "h6", "p"],
     Actions: ["Button"],
     Card: [

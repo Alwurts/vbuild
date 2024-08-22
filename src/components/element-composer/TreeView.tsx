@@ -340,11 +340,13 @@ function TreeNode({ nodeKey, depth = 0 }: TreeNodeProps) {
             <DropdownMenuLabel>{node.type}</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem onClick={() => setChildrenMenuKey(node.key)}>
-                <Boxes className="mr-2 h-4 w-4" />
-                <span>Add child</span>
-                <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
-              </DropdownMenuItem>
+              {droppable && (
+                <DropdownMenuItem onClick={() => setChildrenMenuKey(node.key)}>
+                  <Boxes className="mr-2 h-4 w-4" />
+                  <span>Add child</span>
+                  <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
+                </DropdownMenuItem>
+              )}
               {node.type !== "Root" && (
                 <DropdownMenuItem onClick={() => setCopyNodeKey(node.key)}>
                   <CopyIcon className="mr-2 h-4 w-4" />
@@ -352,18 +354,20 @@ function TreeNode({ nodeKey, depth = 0 }: TreeNodeProps) {
                   <DropdownMenuShortcut>⇧⌘C</DropdownMenuShortcut>
                 </DropdownMenuItem>
               )}
-              <DropdownMenuItem
-                disabled={!copyNodeKey}
-                onClick={() => {
-                  if (copyNodeKey) {
-                    copyNode(copyNodeKey, node.key, 0, "before");
-                  }
-                }}
-              >
-                <PointerIcon className="mr-2 h-4 w-4" />
-                <span>Paste</span>
-                <DropdownMenuShortcut>⇧⌘V</DropdownMenuShortcut>
-              </DropdownMenuItem>
+              {droppable && (
+                <DropdownMenuItem
+                  disabled={!copyNodeKey}
+                  onClick={() => {
+                    if (copyNodeKey) {
+                      copyNode(copyNodeKey, node.key, 0, "before");
+                    }
+                  }}
+                >
+                  <PointerIcon className="mr-2 h-4 w-4" />
+                  <span>Paste</span>
+                  <DropdownMenuShortcut>⇧⌘V</DropdownMenuShortcut>
+                </DropdownMenuItem>
+              )}
               {node.type !== "Root" && (
                 <DropdownMenuItem onClick={() => deleteNode(node.key)}>
                   <TrashIcon className="mr-2 h-4 w-4" />
