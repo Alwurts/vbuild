@@ -1,11 +1,16 @@
-import type { TGenericComponentRegistryEntry } from "@/types/elements/elements";
-import {
-	schemaLayoutGroup,
-	schemaSizeGroup,
-	type TailwindClassNamesGroups,
-	type TailwindClassName,
-	schemaTextGroup,
-} from "@/types/tailwind/tailwind";
+import type { TailwindClassNamesGroups } from "@/types/tailwind/tailwind";
+
+export const parseClassNameGroupsIntoString = (
+	className: TailwindClassNamesGroups,
+) => {
+	let classNameString = "";
+	for (const group of Object.values(className)) {
+		for (const propertyValue of Object.values(group)) {
+			classNameString += `${propertyValue} `;
+		}
+	}
+	return classNameString;
+};
 
 /* export const parseTailwindClassNameIntoGroups = (
 	className: TailwindClassName,

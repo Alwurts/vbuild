@@ -1,6 +1,7 @@
 import type { TNodesAbstract, TNodeAbstract } from "@/types/elements/jsx";
 import type { GenericComponentName } from "@/types/elements/elements";
 import { Registry } from "@/components/elements/Registry";
+import { parseClassNameGroupsIntoString } from "../tailwind/tailwind";
 
 function nodeAbstractToJSX(
 	node: TNodeAbstract,
@@ -15,7 +16,7 @@ function nodeAbstractToJSX(
 
 	const { dependencies: componentDependencies } = Registry[node.type];
 
-	const { type, props, children } = node;
+	const { type, props, children, className } = node;
 	let componentName: string = type;
 
 	switch (type) {
@@ -24,7 +25,10 @@ function nodeAbstractToJSX(
 			break;
 	}
 
-	const propsString = Object.entries(props)
+	const propsString = Object.entries({
+		...props,
+		className: parseClassNameGroupsIntoString(className),
+	})
 		.map(([key, value]) => `${key}="${value}"`)
 		.join(" ");
 

@@ -13,6 +13,7 @@ import { createPortal } from "react-dom";
 import AddChildrenMenu from "./AddChildrenMenu";
 import type { TailwindClassNamesGroups } from "@/types/tailwind/tailwind";
 import { useShallow } from "zustand/react/shallow";
+import { parseClassNameGroupsIntoString } from "@/lib/tailwind/tailwind";
 
 function CanvasNode({ nodeKey }: { nodeKey: string }) {
   const nodeRef = useRef<HTMLElement>(null);
@@ -77,18 +78,6 @@ function CanvasNode({ nodeKey }: { nodeKey: string }) {
     setCanvasHighlight(null);
   };
 
-  const parseClassNameGroupsIntoString = (
-    className: TailwindClassNamesGroups
-  ) => {
-    let classNameString = "";
-    for (const group of Object.values(className)) {
-      for (const propertyValue of Object.values(group)) {
-        classNameString += `${propertyValue} `;
-      }
-    }
-    return classNameString;
-  };
-
   const nodeClassName = parseClassNameGroupsIntoString(node.className);
 
   const clonedNodeComponent =
@@ -127,7 +116,10 @@ function CanvasNode({ nodeKey }: { nodeKey: string }) {
       {clonedNodeComponent}
       {selectedNode?.nodeKey === nodeKey && nodeDomRect
         ? createPortal(
-            <CanvasHighlight domRect={nodeDomRect} showActionButtons={droppable} />,
+            <CanvasHighlight
+              domRect={nodeDomRect}
+              showActionButtons={droppable}
+            />,
             document.body
           )
         : canvasHighlight?.nodeKey === nodeKey &&
