@@ -61,62 +61,57 @@ const jsxNodesToNodesAbstract = (
 			? (className as string).trim().split(" ")
 			: [];
 
-		for (const [groupKey, group] of Object.entries(classNameGroupsdefaults)) {
-			const groupName = groupKey as TailwindGroupName;
-			if (groupName === "size" || groupName === "text") {
-				// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-				const groupTemp: any = {};
-				for (const [propertyKey, propertyValue] of Object.entries(group)) {
-					const propertyName = propertyKey as TailwindStylePropertyName;
-					const propertyListClassNames = PROPERTIES_CLASSNAMES[propertyName];
-					const propertyMatch = classNameSeparated.find((className) =>
-						propertyListClassNames.some(
-							(propertyClassName) => className === propertyClassName,
-						),
-					);
-					if (propertyMatch) {
-						// A class was found on the parsed code
-						groupTemp[propertyName] = propertyMatch;
-					} else {
-						// A class was not found on the parsed code lets use the component default value
-						groupTemp[propertyName] = propertyValue;
-					}
-				}
-				tailwindClassName[groupName] = groupTemp;
+		const processGroup = (
+			group: TailwindClassNamesGroups[TailwindGroupName],
+			classNameSeparated: string[],
+		) => {
+			if (!group) {
+				return {};
 			}
-			if (groupName === "layout") {
-				const displayOptions = PROPERTIES_CLASSNAMES.display;
-				let displayMatch = classNameSeparated.find((className) =>
-					displayOptions.some(
-						(displayClassName) => className === displayClassName,
+			// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+			const groupTemp: any = {};
+			const entries = Object.entries(group);
+
+			for (const [propertyKey, propertyValue] of entries) {
+				const propertyName = propertyKey as TailwindStylePropertyName;
+				const propertyListClassNames = PROPERTIES_CLASSNAMES[propertyName];
+				const propertyMatch = classNameSeparated.find((className) =>
+					propertyListClassNames.some(
+						(propertyClassName) => className === propertyClassName,
 					),
 				);
-				if (!displayMatch) {
-					displayMatch = "block";
-				}
+				groupTemp[propertyName] = propertyMatch || propertyValue;
+			}
+
+			return groupTemp;
+		};
+
+		for (const [groupKey, group] of Object.entries(classNameGroupsdefaults)) {
+			const groupName = groupKey as TailwindGroupName;
+
+			if (
+				(groupName === "size" || groupName === "text") &&
+				!Array.isArray(group)
+			) {
+				tailwindClassName[groupName] = processGroup(group, classNameSeparated);
+			} else if (groupName === "layout") {
+				const displayOptions = PROPERTIES_CLASSNAMES.display;
+				const displayMatch =
+					classNameSeparated.find((className) =>
+						displayOptions.some(
+							(displayClassName) => className === displayClassName,
+						),
+					) || "block";
+
 				const layoutGroup = classNameGroupsdefaults.layout?.find(
 					(layout) => layout.display === displayMatch,
 				);
+
 				if (layoutGroup) {
-					// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-					const groupTemp: any = {};
-					for (const [propertyKey, propertyValue] of Object.entries(
+					tailwindClassName[groupName] = processGroup(
 						layoutGroup,
-					)) {
-						const propertyName = propertyKey as TailwindStylePropertyName;
-						const propertyListClassNames = PROPERTIES_CLASSNAMES[propertyName];
-						const propertyMatch = classNameSeparated.find((className) =>
-							propertyListClassNames.some(
-								(propertyClassName) => className === propertyClassName,
-							),
-						);
-						if (propertyMatch) {
-							groupTemp[propertyName] = propertyMatch;
-						} else {
-							groupTemp[propertyName] = propertyValue;
-						}
-					}
-					tailwindClassName[groupName] = groupTemp;
+						classNameSeparated,
+					);
 				}
 			}
 		}
