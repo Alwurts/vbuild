@@ -42,29 +42,19 @@ const defaultAutoSize: TailwindSizeGroup = {
 	height: "h-auto",
 };
 
-const defaultLayout: TailwindLayoutGroup[] = [
-	{
-		display: "block",
-	},
-	{
-		display: "flex",
-		flexDirection: "flex-row",
-		justifyContent: "justify-start",
-		alignItems: "items-start",
-		gap: "gap-0",
-	},
-	{
-		display: "grid",
-		gridTemplateColumns: "grid-cols-1",
-		gridTemplateRows: "grid-rows-1",
-		gap: "gap-0",
-	},
-	{
-		display: "hidden",
-	},
-];
+const defaultLayout: TailwindLayoutGroup = {
+	display: "block",
+};
 
 const defaultPadding: TailwindPaddingGroup = { padding: "p-0" };
+
+const defaultLayoutAndPadding: {
+	layout: TailwindLayoutGroup;
+	padding: TailwindPaddingGroup;
+} = {
+	layout: defaultLayout,
+	padding: defaultPadding,
+};
 
 export const Registry: TGenericComponentRegistry = {
 	Root: {
@@ -83,6 +73,7 @@ export const Registry: TGenericComponentRegistry = {
 			style: {
 				backgroundColor: "bg-background",
 			},
+			...defaultLayoutAndPadding,
 		},
 	},
 	div: {
@@ -99,10 +90,7 @@ export const Registry: TGenericComponentRegistry = {
 				height: "h-auto",
 			},
 			style: defaultStyle,
-			layout: {
-				display: "block",
-			},
-			padding: defaultPadding,
+			...defaultLayoutAndPadding,
 		},
 	},
 	h1: {
@@ -177,42 +165,6 @@ export const Registry: TGenericComponentRegistry = {
 			style: defaultStyle,
 		},
 	},
-	h5: {
-		type: "h5",
-		icon: <Type />,
-		// biome-ignore lint/a11y/useHeadingContent: <explanation>
-		component: <h5 />,
-		dependencies: [],
-		draggable: true,
-		droppable: false,
-		editable: true,
-		classNameGroupsdefaults: {
-			size: defaultAutoSize,
-			text: {
-				...defaultText,
-				fontSize: "text-lg",
-			},
-			style: defaultStyle,
-		},
-	},
-	h6: {
-		type: "h6",
-		icon: <Type />,
-		// biome-ignore lint/a11y/useHeadingContent: <explanation>
-		component: <h6 />,
-		dependencies: [],
-		draggable: true,
-		droppable: false,
-		editable: true,
-		classNameGroupsdefaults: {
-			size: defaultAutoSize,
-			text: {
-				...defaultText,
-				fontSize: "text-base",
-			},
-			style: defaultStyle,
-		},
-	},
 	p: {
 		type: "p",
 		icon: <Text />,
@@ -238,6 +190,7 @@ export const Registry: TGenericComponentRegistry = {
 		classNameGroupsdefaults: {
 			size: defaultAutoSize,
 			style: defaultStyle,
+			...defaultLayoutAndPadding,
 		},
 	},
 	CardContent: {
@@ -249,9 +202,15 @@ export const Registry: TGenericComponentRegistry = {
 		droppable: true,
 		editable: false,
 		classNameGroupsdefaults: {
-			/* size: defaultAutoSize,
-      layout: defaultLayout,
-      style: defaultStyle, */
+			size: defaultAutoSize,
+			style: defaultStyle,
+			layout: defaultLayout,
+			padding: {
+				paddingTop: "pt-0",
+				paddingLeft: "pl-6",
+				paddingRight: "pr-6",
+				paddingBottom: "pb-6",
+			},
 		},
 	},
 	CardHeader: {
@@ -263,9 +222,18 @@ export const Registry: TGenericComponentRegistry = {
 		droppable: true,
 		editable: false,
 		classNameGroupsdefaults: {
-			/* size: defaultAutoSize,
-      layout: defaultLayout,
-      style: defaultStyle, */
+			size: defaultAutoSize,
+			style: defaultStyle,
+			layout: {
+				display: "flex",
+				flexDirection: "flex-col",
+				justifyContent: "justify-start",
+				alignItems: "items-start",
+				gap: "gap-0",
+			},
+			padding: {
+				padding: "p-6",
+			},
 		},
 	},
 	CardFooter: {
@@ -277,9 +245,15 @@ export const Registry: TGenericComponentRegistry = {
 		droppable: true,
 		editable: false,
 		classNameGroupsdefaults: {
-			/* size: defaultAutoSize,
-      layout: defaultLayout,
-      style: defaultStyle, */
+			size: defaultAutoSize,
+			style: defaultStyle,
+			layout: defaultLayout,
+			padding: {
+				paddingTop: "pt-0",
+				paddingLeft: "pl-6",
+				paddingRight: "pr-6",
+				paddingBottom: "pb-6",
+			},
 		},
 	},
 	CardTitle: {
@@ -295,6 +269,7 @@ export const Registry: TGenericComponentRegistry = {
 			text: {
 				...defaultText,
 				fontSize: "text-2xl",
+				fontWeight: "font-semibold",
 			},
 			style: defaultStyle,
 		},
@@ -311,7 +286,7 @@ export const Registry: TGenericComponentRegistry = {
 			size: defaultAutoSize,
 			text: {
 				...defaultText,
-				fontSize: "text-base",
+				fontSize: "text-sm",
 			},
 			style: defaultStyle,
 		},
@@ -324,6 +299,25 @@ export const Registry: TGenericComponentRegistry = {
 		draggable: true,
 		droppable: false,
 		editable: true,
-		classNameGroupsdefaults: {},
+		classNameGroupsdefaults: {
+			size: {
+				width: "w-auto",
+				height: "h-10",
+			},
+			style: {
+				backgroundColor: "bg-primary",
+			},
+			text: {
+				textColor: "text-primary-foreground",
+				fontSize: "text-sm",
+				fontWeight: "font-medium",
+				textAlign: "text-center",
+			},
+			layout: defaultLayout,
+			padding: {
+				paddingX: "px-4",
+				paddingY: "py-2",
+			},
+		},
 	},
 } as const;

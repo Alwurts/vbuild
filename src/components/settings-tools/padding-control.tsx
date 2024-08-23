@@ -1,6 +1,5 @@
 import React from "react";
 import { SelectList } from "./select-list";
-import { SettingLabelContainer } from "@/components/layout/SettingLabelContainer";
 import {
 	PADDING_CLASSNAMES,
 	PADDING_X_CLASSNAMES,
@@ -13,6 +12,13 @@ import {
 import type { TailwindPaddingGroup } from "@/types/tailwind/tailwind";
 import GroupContainer from "@/components/element-composer/node-editor/GroupContainer";
 import { useComposerStore } from "@/store/useComposerStore";
+import {
+	ToggleGroup,
+	ToggleGroupItem,
+} from "@/components/ui-editor/toggle-group";
+import { cn } from "@/lib/utils";
+import { Label } from "../ui-editor/label";
+import { Square, ArrowLeftRight, ArrowUpDown, Maximize2 } from "lucide-react";
 
 type PaddingControlProps = {
 	value: TailwindPaddingGroup;
@@ -99,32 +105,46 @@ export function PaddingControl({ value, nodeKey }: PaddingControlProps) {
 	};
 
 	return (
-		<GroupContainer groupName="Padding">
-			<SettingLabelContainer htmlFor="paddingType" label="Padding Type">
-				<SelectList
+		<div className="flex flex-col gap-3">
+			<div className="grid grid-cols-3 gap-2">
+				<Label htmlFor="paddingType" className="text-sm font-medium col-span-1 py-1">
+					Padding
+				</Label>
+				<ToggleGroup
 					id="paddingType"
+					type="single"
+					variant="outline"
+					size="sm"
+					className="gap-2 col-span-2"
 					value={paddingType}
 					onValueChange={(v) =>
 						handleTypeChange(v as "single" | "xy" | "sides")
 					}
-					options={["single", "xy", "sides"]}
-					label="Padding Type"
-				/>
-			</SettingLabelContainer>
-			{paddingType === "single" && (
-				<SettingLabelContainer htmlFor="padding" label="Padding">
+				>
+					<ToggleGroupItem value="single" aria-label="Single padding">
+						<Square className="w-4 h-4" />
+					</ToggleGroupItem>
+					<ToggleGroupItem value="xy" aria-label="X and Y padding">
+						<ArrowLeftRight className="w-4 h-4" />
+					</ToggleGroupItem>
+					<ToggleGroupItem value="sides" aria-label="All sides padding">
+						<Maximize2 className="w-4 h-4" />
+					</ToggleGroupItem>
+				</ToggleGroup>
+			</div>
+			<div className="grid grid-cols-2 gap-2">
+				{paddingType === "single" && (
 					<SelectList
 						id="padding"
 						value={"padding" in value ? value.padding : "p-0"}
 						onValueChange={(v) => handlePaddingChange({ padding: v })}
 						options={PADDING_CLASSNAMES}
 						label="Padding"
+						className="col-span-2"
 					/>
-				</SettingLabelContainer>
-			)}
-			{paddingType === "xy" && (
-				<>
-					<SettingLabelContainer htmlFor="paddingX" label="Padding X">
+				)}
+				{paddingType === "xy" && (
+					<>
 						<SelectList
 							id="paddingX"
 							value={"paddingX" in value ? value.paddingX : "px-0"}
@@ -132,8 +152,6 @@ export function PaddingControl({ value, nodeKey }: PaddingControlProps) {
 							options={PADDING_X_CLASSNAMES}
 							label="Padding X"
 						/>
-					</SettingLabelContainer>
-					<SettingLabelContainer htmlFor="paddingY" label="Padding Y">
 						<SelectList
 							id="paddingY"
 							value={"paddingY" in value ? value.paddingY : "py-0"}
@@ -141,18 +159,13 @@ export function PaddingControl({ value, nodeKey }: PaddingControlProps) {
 							options={PADDING_Y_CLASSNAMES}
 							label="Padding Y"
 						/>
-					</SettingLabelContainer>
-				</>
-			)}
-			{paddingType === "sides" && (
-				<>
-					{(["Left", "Right", "Top", "Bottom"] as const).map((side) => (
-						<SettingLabelContainer
-							key={side}
-							htmlFor={`padding${side}`}
-							label={`Padding ${side}`}
-						>
+					</>
+				)}
+				{paddingType === "sides" && (
+					<>
+						{(["Left", "Right", "Top", "Bottom"] as const).map((side) => (
 							<SelectList
+								key={side}
 								id={`padding${side}`}
 								value={getSideValue(side)}
 								onValueChange={(v) =>
@@ -171,10 +184,10 @@ export function PaddingControl({ value, nodeKey }: PaddingControlProps) {
 								}
 								label={`Padding ${side}`}
 							/>
-						</SettingLabelContainer>
-					))}
-				</>
-			)}
-		</GroupContainer>
+						))}
+					</>
+				)}
+			</div>
+		</div>
 	);
 }

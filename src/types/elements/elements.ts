@@ -21,7 +21,7 @@ import type {
 	TH6Component,
 	TPComponent,
 } from "@/types/elements/text";
-import type { TailwindClassNamesGroupsDefault } from "../tailwind/tailwind";
+import type { TailwindClassNamesGroups } from "../tailwind/tailwind";
 
 export type TGenericComponentInfer<T> = {
 	props: Omit<InferComponentProps<T>, "children" | "className">;
@@ -38,8 +38,6 @@ const GenericComponentsNames = {
 	h2: "h2",
 	h3: "h3",
 	h4: "h4",
-	h5: "h5",
-	h6: "h6",
 	p: "p",
 	Button: "Button",
 	Card: "Card",
@@ -59,8 +57,6 @@ export type TGenericComponentsWithoutRoot =
 	| TH2Component
 	| TH3Component
 	| TH4Component
-	| TH5Component
-	| TH6Component
 	| TPComponent
 	| TButtonComponent
 	| TDivComponent
@@ -93,7 +89,7 @@ export type TGenericComponentRegistryEntry = Omit<
 	draggable: boolean;
 	droppable: boolean;
 	editable: boolean;
-	classNameGroupsdefaults: TailwindClassNamesGroupsDefault;
+	classNameGroupsdefaults: Partial<TailwindClassNamesGroups>;
 };
 
 export type TGenericComponentRegistry = {

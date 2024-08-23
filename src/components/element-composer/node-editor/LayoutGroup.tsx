@@ -20,12 +20,15 @@ import type { TGenericComponentsAbstract } from "@/types/elements/jsx";
 import DisplayToggle from "@/components/settings-tools/display-toggle";
 import FlexDirectionToggle from "@/components/settings-tools/flex-direction-toggle";
 import { defaultLayoutGroups } from "@/lib/tailwind/tailwind";
+import { PaddingControl } from "@/components/settings-tools/padding-control";
 
 export default function LayoutGroup({
 	layoutGroup,
+	paddingGroup,
 	node,
 }: {
 	layoutGroup: NonNullable<TailwindClassNamesGroups["layout"]>;
+	paddingGroup: NonNullable<TailwindClassNamesGroups["padding"]>;
 	node: TGenericComponentsAbstract;
 }) {
 	const setClassNameGroup = useComposerStore(
@@ -169,6 +172,9 @@ export default function LayoutGroup({
 						/>
 					</SettingLabelContainer>
 				)}
+			{layoutGroup.display !== "hidden" && paddingGroup && (
+				<PaddingControl value={paddingGroup} nodeKey={node.key} />
+			)}
 		</GroupContainer>
 	);
 }

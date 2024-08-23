@@ -77,18 +77,16 @@ function NodeEditorContent({
 					nodeKey={nodeAbstract.key}
 				/>
 			)}
-			{classNameGroupsdefaults.layout && nodeAbstract.className.layout && (
-				<LayoutGroup
-					layoutGroup={nodeAbstract.className.layout}
-					node={nodeAbstract}
-				/>
-			)}
-			{classNameGroupsdefaults.padding && nodeAbstract.className.padding && (
-				<PaddingControl
-					value={nodeAbstract.className.padding}
-					nodeKey={nodeAbstract.key}
-				/>
-			)}
+			{classNameGroupsdefaults.layout &&
+				nodeAbstract.className.layout &&
+				classNameGroupsdefaults.padding &&
+				nodeAbstract.className.padding && (
+					<LayoutGroup
+						layoutGroup={nodeAbstract.className.layout}
+						paddingGroup={nodeAbstract.className.padding}
+						node={nodeAbstract}
+					/>
+				)}
 			{classNameGroupsdefaults.text && nodeAbstract.className.text && (
 				<TextGroup
 					textGroup={nodeAbstract.className.text}
