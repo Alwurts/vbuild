@@ -1,10 +1,7 @@
-import {
-	type GenericComponentName,
-	isValidComponentName,
-} from "@/types/elements/elements";
+import { isValidComponentName } from "@/types/elements/elements";
 import type { TNodeAbstract } from "@/types/elements/jsx";
 import { Registry } from "@/components/elements/Registry";
-import { PROPERTIES_CLASSNAMES } from "../tailwindClasses";
+import { PROPERTIES_CLASSNAMES } from "../tailwind/tailwindClasses";
 import type {
 	TailwindClassNamesGroups,
 	TailwindGroupName,

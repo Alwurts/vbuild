@@ -7,7 +7,7 @@ import {
 	GRID_TEMPLATE_COLUMNS_CLASSNAMES,
 	GRID_TEMPLATE_ROWS_CLASSNAMES,
 	JUSTIFY_CONTENT_CLASSNAMES,
-} from "@/lib/tailwindClasses";
+} from "@/lib/tailwind/tailwindClasses/index";
 import { useComposerStore } from "@/store/useComposerStore";
 import {
 	schemaLayoutGroup,

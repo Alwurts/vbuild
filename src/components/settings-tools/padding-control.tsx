@@ -9,7 +9,7 @@ import {
 	PADDING_RIGHT_CLASSNAMES,
 	PADDING_TOP_CLASSNAMES,
 	PADDING_BOTTOM_CLASSNAMES,
-} from "@/lib/tailwindClasses";
+} from "@/lib/tailwind/tailwindClasses/index";
 import type { TailwindPaddingGroup } from "@/types/tailwind/tailwind";
 import GroupContainer from "@/components/element-composer/node-editor/GroupContainer";
 import { useComposerStore } from "@/store/useComposerStore";

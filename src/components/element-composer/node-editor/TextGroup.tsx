@@ -4,7 +4,7 @@ import {
   FONT_WEIGHT_CLASSNAMES,
   TEXT_ALIGN_CLASSNAMES,
   TEXT_COLOR_CLASSNAMES,
-} from "@/lib/tailwindClasses";
+} from "@/lib/tailwind/tailwindClasses/index";
 import { useComposerStore } from "@/store/useComposerStore";
 import type { TailwindClassNamesGroups } from "@/types/tailwind/tailwind";
 import { SelectList } from "@/components/settings-tools/select-list";

@@ -4,7 +4,6 @@ import { z } from "zod";
 const tailwindStylePropertyNames = [
 	"width",
 	"height",
-	"margin",
 	"display",
 	"flexDirection",
 	"justifyContent",
@@ -24,6 +23,13 @@ const tailwindStylePropertyNames = [
 	"paddingRight",
 	"paddingTop",
 	"paddingBottom",
+	"margin",
+	"marginX",
+	"marginY",
+	"marginLeft",
+	"marginRight",
+	"marginTop",
+	"marginBottom",
 ] as const;
 
 export type TailwindStylePropertyName =
@@ -38,7 +44,13 @@ export type TailwindClassNameRegex = {
 };
 
 // Groups
-const tailwindGroupName = ["size", "layout", "text", "style", "padding"] as const;
+const tailwindGroupName = [
+	"size",
+	"layout",
+	"text",
+	"style",
+	"padding",
+] as const;
 
 export type TailwindGroupName = (typeof tailwindGroupName)[number];
 
@@ -97,26 +109,26 @@ export const schemaStyleGroup = z.object({
 export type TailwindStyleGroup = z.infer<typeof schemaStyleGroup>;
 
 export const schemaPaddingGroup = z.union([
-  z.object({ padding: z.string() }),
-  z.object({ paddingX: z.string(), paddingY: z.string() }),
-  z.object({
-    paddingLeft: z.string(),
-    paddingRight: z.string(),
-    paddingTop: z.string(),
-    paddingBottom: z.string(),
-  }),
+	z.object({ padding: z.string() }),
+	z.object({ paddingX: z.string(), paddingY: z.string() }),
+	z.object({
+		paddingLeft: z.string(),
+		paddingRight: z.string(),
+		paddingTop: z.string(),
+		paddingBottom: z.string(),
+	}),
 ]);
 
 export type TailwindPaddingGroup = z.infer<typeof schemaPaddingGroup>;
 
 export const tailwindClassNameGroupsSchema = z.object({
-  size: schemaSizeGroup.optional(),
-  layout: schemaLayoutGroup.optional(),
-  text: schemaTextGroup.optional(),
-  style: schemaStyleGroup.optional(),
-  padding: schemaPaddingGroup.optional(),
+	size: schemaSizeGroup.optional(),
+	layout: schemaLayoutGroup.optional(),
+	text: schemaTextGroup.optional(),
+	style: schemaStyleGroup.optional(),
+	padding: schemaPaddingGroup.optional(),
 });
 
 export type TailwindClassNamesGroups = z.infer<
-  typeof tailwindClassNameGroupsSchema
+	typeof tailwindClassNameGroupsSchema
 >;
