@@ -4,7 +4,6 @@ import { z } from "zod";
 const tailwindStylePropertyNames = [
 	"width",
 	"height",
-	"padding",
 	"margin",
 	"display",
 	"flexDirection",
@@ -18,6 +17,13 @@ const tailwindStylePropertyNames = [
 	"fontSize",
 	"fontWeight",
 	"backgroundColor",
+	"padding",
+	"paddingX",
+	"paddingY",
+	"paddingLeft",
+	"paddingRight",
+	"paddingTop",
+	"paddingBottom",
 ] as const;
 
 export type TailwindStylePropertyName =
@@ -32,7 +38,7 @@ export type TailwindClassNameRegex = {
 };
 
 // Groups
-const tailwindGroupName = ["size", "layout", "text", "style"] as const;
+const tailwindGroupName = ["size", "layout", "text", "style", "padding"] as const;
 
 export type TailwindGroupName = (typeof tailwindGroupName)[number];
 
@@ -45,7 +51,6 @@ export type TailwindSizeGroup = z.infer<typeof schemaSizeGroup>;
 
 const schemaLayoutBlockGroup = z.object({
 	display: z.literal("block"),
-	padding: z.string(),
 });
 
 const schemaLayoutFlexGroup = z.object({
@@ -53,7 +58,6 @@ const schemaLayoutFlexGroup = z.object({
 	flexDirection: z.string(),
 	justifyContent: z.string(),
 	alignItems: z.string(),
-	padding: z.string(),
 	gap: z.string(),
 });
 
@@ -61,7 +65,6 @@ const schemaLayoutGridGroup = z.object({
 	display: z.literal("grid"),
 	gridTemplateColumns: z.string(),
 	gridTemplateRows: z.string(),
-	padding: z.string(),
 	gap: z.string(),
 });
 
@@ -93,11 +96,25 @@ export const schemaStyleGroup = z.object({
 
 export type TailwindStyleGroup = z.infer<typeof schemaStyleGroup>;
 
+export const schemaPaddingGroup = z.union([
+  z.object({ padding: z.string() }),
+  z.object({ paddingX: z.string(), paddingY: z.string() }),
+  z.object({
+    paddingLeft: z.string(),
+    paddingRight: z.string(),
+    paddingTop: z.string(),
+    paddingBottom: z.string(),
+  }),
+]);
+
+export type TailwindPaddingGroup = z.infer<typeof schemaPaddingGroup>;
+
 const tailwindClassNameGroupsSchema = z.object({
 	size: schemaSizeGroup.optional(),
 	layout: schemaLayoutGroup.optional(),
 	text: schemaTextGroup.optional(),
 	style: schemaStyleGroup.optional(),
+	padding: schemaPaddingGroup.optional(),
 });
 
 export type TailwindClassNamesGroups = z.infer<
@@ -109,6 +126,7 @@ const tailwindClassNameGroupsDefaultSchema = z.object({
 	layout: schemaLayoutGroup.array().optional(),
 	text: schemaTextGroup.optional(),
 	style: schemaStyleGroup.optional(),
+	padding: schemaPaddingGroup.array().optional(),
 });
 
 export type TailwindClassNamesGroupsDefault = z.infer<

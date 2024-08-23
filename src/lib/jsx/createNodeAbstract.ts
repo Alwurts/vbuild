@@ -9,6 +9,9 @@ import type {
 	TailwindClassNamesGroups,
 	TailwindGroupName,
 	TailwindStylePropertyName,
+	TailwindPaddingGroup,
+	TailwindLayoutGroup,
+	TailwindClassNamesGroupsDefault,
 } from "@/types/tailwind/tailwind";
 
 export function createNodeAbstract(
@@ -25,64 +28,12 @@ export function createNodeAbstract(
 	}
 
 	const { classNameGroupsdefaults } = Registry[typeName];
+	const classNameSeparated = className ? className.trim().split(" ") : [];
 
-	const tailwindClassName: TailwindClassNamesGroups = {};
-
-	const classNameSeparated = className
-		? (className as string).trim().split(" ")
-		: [];
-
-	const processGroup = (
-		group: TailwindClassNamesGroups[TailwindGroupName],
-		classNameSeparated: string[],
-	) => {
-		if (!group) {
-			return {};
-		}
-		// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-		const groupTemp: any = {};
-		const entries = Object.entries(group);
-
-		for (const [propertyKey, propertyValue] of entries) {
-			const propertyName = propertyKey as TailwindStylePropertyName;
-			const propertyListClassNames = PROPERTIES_CLASSNAMES[propertyName];
-			const propertyMatch = classNameSeparated.find((className) =>
-				propertyListClassNames.some(
-					(propertyClassName) => className === propertyClassName,
-				),
-			);
-			groupTemp[propertyName] = propertyMatch || propertyValue;
-		}
-
-		return groupTemp;
-	};
-
-	for (const [groupKey, group] of Object.entries(classNameGroupsdefaults)) {
-		const groupName = groupKey as TailwindGroupName;
-
-		if (!Array.isArray(group)) {
-			tailwindClassName[groupName] = processGroup(group, classNameSeparated);
-		} else if (groupName === "layout") {
-			const displayOptions = PROPERTIES_CLASSNAMES.display;
-			const displayMatch =
-				classNameSeparated.find((className) =>
-					displayOptions.some(
-						(displayClassName) => className === displayClassName,
-					),
-				) ?? "block";
-
-			const layoutGroup = classNameGroupsdefaults.layout?.find(
-				(layout) => layout.display === displayMatch,
-			);
-
-			if (layoutGroup) {
-				tailwindClassName[groupName] = processGroup(
-					layoutGroup,
-					classNameSeparated,
-				);
-			}
-		}
-	}
+	const tailwindClassName: TailwindClassNamesGroups = processGroups(
+		classNameGroupsdefaults,
+		classNameSeparated,
+	);
 
 	if (typeName === "Root") {
 		return {
@@ -106,4 +57,126 @@ export function createNodeAbstract(
 		children: childrenKeys,
 		className: tailwindClassName,
 	};
+}
+
+function processGroups(
+	classNameGroupsdefaults: TailwindClassNamesGroupsDefault,
+	classNameSeparated: string[],
+): TailwindClassNamesGroups {
+	const result: TailwindClassNamesGroups = {};
+
+	for (const [groupKey, group] of Object.entries(classNameGroupsdefaults)) {
+		const groupName = groupKey as TailwindGroupName;
+
+		if (Array.isArray(group)) {
+			if (groupName === "layout") {
+				result[groupName] = processLayoutGroup(
+					group as TailwindLayoutGroup[],
+					classNameSeparated,
+				);
+			} else if (groupName === "padding") {
+				result[groupName] = processPaddingGroup(
+					group as TailwindPaddingGroup[],
+					classNameSeparated,
+				);
+			}
+		} else if (group) {
+			// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+			result[groupName] = processSimpleGroup(group, classNameSeparated) as any;
+		}
+	}
+
+	return result;
+}
+
+function processLayoutGroup(
+	layoutGroups: TailwindLayoutGroup[],
+	classNameSeparated: string[],
+): TailwindLayoutGroup {
+	const displayOptions = PROPERTIES_CLASSNAMES.display;
+	const displayMatch =
+		classNameSeparated.find((className) =>
+			displayOptions.includes(className),
+		) ?? "block";
+
+	const layoutGroup = layoutGroups.find(
+		(layout) => layout.display === displayMatch,
+	);
+
+	if (!layoutGroup) {
+		return layoutGroups[0]; // Default to first layout if no match found
+	}
+
+	return processSimpleGroup(
+		layoutGroup,
+		classNameSeparated,
+	) as TailwindLayoutGroup;
+}
+
+function processPaddingGroup(
+	paddingGroups: TailwindPaddingGroup[],
+	classNameSeparated: string[],
+): TailwindPaddingGroup {
+	const paddingMatch = classNameSeparated.find((className) =>
+		PROPERTIES_CLASSNAMES.padding.includes(className),
+	);
+	if (paddingMatch) return { padding: paddingMatch };
+
+	const paddingXMatch = classNameSeparated.find((className) =>
+		PROPERTIES_CLASSNAMES.paddingX.includes(className),
+	);
+	const paddingYMatch = classNameSeparated.find((className) =>
+		PROPERTIES_CLASSNAMES.paddingY.includes(className),
+	);
+	if (paddingXMatch && paddingYMatch)
+		return { paddingX: paddingXMatch, paddingY: paddingYMatch };
+
+	const paddingLeftMatch = classNameSeparated.find((className) =>
+		PROPERTIES_CLASSNAMES.paddingLeft.includes(className),
+	);
+	const paddingRightMatch = classNameSeparated.find((className) =>
+		PROPERTIES_CLASSNAMES.paddingRight.includes(className),
+	);
+	const paddingTopMatch = classNameSeparated.find((className) =>
+		PROPERTIES_CLASSNAMES.paddingTop.includes(className),
+	);
+	const paddingBottomMatch = classNameSeparated.find((className) =>
+		PROPERTIES_CLASSNAMES.paddingBottom.includes(className),
+	);
+	if (
+		paddingLeftMatch &&
+		paddingRightMatch &&
+		paddingTopMatch &&
+		paddingBottomMatch
+	) {
+		return {
+			paddingLeft: paddingLeftMatch,
+			paddingRight: paddingRightMatch,
+			paddingTop: paddingTopMatch,
+			paddingBottom: paddingBottomMatch,
+		};
+	}
+
+	return paddingGroups[0]; // Default to first default padding group if no match found
+}
+
+function processSimpleGroup(
+	group: TailwindClassNamesGroups[TailwindGroupName],
+	classNameSeparated: string[],
+): TailwindClassNamesGroups[TailwindGroupName] {
+	if (!group) return {} as TailwindClassNamesGroups[TailwindGroupName];
+
+	const result: Record<string, string> = {};
+	const entries = Object.entries(group);
+
+	for (const [propertyKey, propertyValue] of entries) {
+		const propertyName = propertyKey as TailwindStylePropertyName;
+		const propertyListClassNames = PROPERTIES_CLASSNAMES[propertyName];
+		const propertyMatch = classNameSeparated.find((className) =>
+			propertyListClassNames.includes(className),
+		);
+		result[propertyName] = propertyMatch || propertyValue;
+	}
+
+	return result as TailwindClassNamesGroups[TailwindGroupName];
 }
