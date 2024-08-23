@@ -10,7 +10,7 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from "../ui-editor/resizable";
-import { Code, Monitor, Smartphone, Tablet } from "lucide-react";
+import { Code, Monitor, Smartphone, Tablet, Undo, Redo } from "lucide-react";
 import { ToggleGroup, ToggleGroupItem } from "../ui-editor/toggle-group";
 import { Button } from "../ui-editor/button";
 import { useComposerStore } from "@/store/useComposerStore";
@@ -28,10 +28,11 @@ export default function Preview() {
   const handleMessageFromCanvas = useComposerStore(
     (state) => state.handleMessageFromCanvas
   );
-  /* const receiveUpdateFromShadow = useComposerStore(
-    (state) => state.receiveUpdateFromShadow
-  ); */
   const setSelectedNode = useComposerStore((state) => state.setSelectedNode);
+  const undo = useComposerStore((state) => state.undo);
+  const redo = useComposerStore((state) => state.redo);
+  const historyIndex = useComposerStore((state) => state.historyIndex);
+  const historyLength = useComposerStore((state) => state.history.length);
 
   useEffect(() => {
     sendUpdateOfWholeStateToCanvas();
@@ -75,6 +76,27 @@ export default function Preview() {
             <Smartphone className="h-3.5 w-3.5" />
           </ToggleGroupItem>
         </ToggleGroup>
+
+        <div className="flex items-center gap-1">
+          <Button
+            size="icon"
+            variant="outline"
+            onClick={undo}
+            disabled={historyIndex <= 0}
+            className="flex items-center gap-1"
+          >
+            <Undo className="h-4 w-4" />
+          </Button>
+          <Button
+            size="icon"
+            variant="outline"
+            onClick={redo}
+            disabled={historyIndex >= historyLength - 1}
+            className="flex items-center gap-1"
+          >
+            <Redo className="h-4 w-4" />
+          </Button>
+        </div>
 
         <CodeBlock
           button={

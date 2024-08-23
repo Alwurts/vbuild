@@ -46,7 +46,7 @@ export default function SizeGroup({
             onValueChange={(value) =>
               setClassNameGroup(nodeKey, "size", {
                 ...sizeGroup,
-                width: value,
+                height: value,
               })
             }
             options={HEIGHT_CLASSNAMES}
