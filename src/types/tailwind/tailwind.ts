@@ -30,6 +30,7 @@ const tailwindStylePropertyNames = [
 	"marginRight",
 	"marginTop",
 	"marginBottom",
+	"borderRadius", // Added this line
 ] as const;
 
 export type TailwindStylePropertyName =
@@ -104,6 +105,7 @@ export type TailwindTextGroup = z.infer<typeof schemaTextGroup>;
 
 export const schemaStyleGroup = z.object({
 	backgroundColor: z.string(),
+	borderRadius: z.string().optional(), // Changed this line
 });
 
 export type TailwindStyleGroup = z.infer<typeof schemaStyleGroup>;

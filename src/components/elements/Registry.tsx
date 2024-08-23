@@ -89,7 +89,10 @@ export const Registry: TGenericComponentRegistry = {
 				width: "w-full",
 				height: "h-auto",
 			},
-			style: defaultStyle,
+			style: {
+				backgroundColor: "bg-transparent",
+				borderRadius: "rounded-none",
+			},
 			...defaultLayoutAndPadding,
 		},
 	},
@@ -189,7 +192,10 @@ export const Registry: TGenericComponentRegistry = {
 		editable: false,
 		classNameGroupsdefaults: {
 			size: defaultAutoSize,
-			style: defaultStyle,
+			style: {
+				backgroundColor: "bg-card",
+				borderRadius: "rounded-lg",
+			},
 			...defaultLayoutAndPadding,
 		},
 	},

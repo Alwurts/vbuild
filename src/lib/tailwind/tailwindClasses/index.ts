@@ -6,7 +6,7 @@ import {
 	TEXT_COLOR_CLASSNAMES,
 } from "./text";
 import { BACKGROUND_COLOR_CLASSNAMES } from "./background";
-import { WIDTH_CLASSNAMES, HEIGHT_CLASSNAMES } from "./size";
+import { WIDTH_CLASSNAMES, HEIGHT_CLASSNAMES, BORDER_RADIUS_CLASSNAMES } from "./size";
 import {
 	DISPLAY_CLASSNAMES,
 	FLEX_DIRECTION_CLASSNAMES,
@@ -34,6 +34,7 @@ import {
 	MARGIN_TOP_CLASSNAMES,
 	MARGIN_BOTTOM_CLASSNAMES,
 } from "./margin";
+
 export const PROPERTIES_CLASSNAMES: {
 	[key in TailwindStylePropertyName]: string[];
 } = {
@@ -65,6 +66,7 @@ export const PROPERTIES_CLASSNAMES: {
 	marginRight: MARGIN_RIGHT_CLASSNAMES,
 	marginTop: MARGIN_TOP_CLASSNAMES,
 	marginBottom: MARGIN_BOTTOM_CLASSNAMES,
+	borderRadius: BORDER_RADIUS_CLASSNAMES,
 };
 
 export * from "./text";

@@ -122,3 +122,15 @@ export const WIDTH_CLASSNAMES = [
 	"w-10/12",
 	"w-11/12",
 ];
+
+export const BORDER_RADIUS_CLASSNAMES = [
+  "rounded-none",
+  "rounded-sm",
+  "rounded",
+  "rounded-md",
+  "rounded-lg",
+  "rounded-xl",
+  "rounded-2xl",
+  "rounded-3xl",
+  "rounded-full",
+];
