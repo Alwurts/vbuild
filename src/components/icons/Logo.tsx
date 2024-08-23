@@ -10,7 +10,7 @@ export function Logo(props: SVGProps<SVGSVGElement>) {
       xmlns="http://www.w3.org/2000/svg"
       {...props}
     >
-      <title>VBuild</title>
+      <title style={{ display: "none" }}>VBuild</title>
       <path
         d="M610.675 476L761.201 209L835.557 209C983.113 209 977.151 476 835.557 476H610.675Z"
         fill="#F3A012"
