@@ -41,7 +41,7 @@ export const schemaSizeGroup = z.object({
 	height: z.string(),
 });
 
-type SizeGroup = z.infer<typeof schemaSizeGroup>;
+export type TailwindSizeGroup = z.infer<typeof schemaSizeGroup>;
 
 const schemaLayoutBlockGroup = z.object({
 	display: z.literal("block"),
@@ -76,6 +76,8 @@ export const schemaLayoutGroup = z.union([
 	schemaLayoutHiddenGroup,
 ]);
 
+export type TailwindLayoutGroup = z.infer<typeof schemaLayoutGroup>;
+
 export const schemaTextGroup = z.object({
 	textAlign: z.string(),
 	textColor: z.string(),
@@ -83,9 +85,13 @@ export const schemaTextGroup = z.object({
 	fontWeight: z.string(),
 });
 
+export type TailwindTextGroup = z.infer<typeof schemaTextGroup>;
+
 export const schemaStyleGroup = z.object({
 	backgroundColor: z.string(),
 });
+
+export type TailwindStyleGroup = z.infer<typeof schemaStyleGroup>;
 
 const tailwindClassNameGroupsSchema = z.object({
 	size: schemaSizeGroup.optional(),

@@ -18,6 +18,53 @@ import {
   CardTitle,
 } from "../ui/card";
 import Root from "./Root";
+import type {
+  TailwindLayoutGroup,
+  TailwindSizeGroup,
+  TailwindStyleGroup,
+  TailwindTextGroup,
+} from "@/types/tailwind/tailwind";
+
+const defaultStyle: TailwindStyleGroup = {
+  backgroundColor: "bg-transparent",
+};
+
+const defaultText: TailwindTextGroup = {
+  fontSize: "text-base",
+  fontWeight: "font-normal",
+  textAlign: "text-left",
+  textColor: "text-black",
+};
+
+const defaultAutoSize: TailwindSizeGroup = {
+  width: "w-auto",
+  height: "h-auto",
+};
+
+const defaultLayout: TailwindLayoutGroup[] = [
+  {
+    display: "block",
+    padding: "p-0",
+  },
+  {
+    display: "flex",
+    flexDirection: "flex-row",
+    justifyContent: "justify-start",
+    alignItems: "items-start",
+    gap: "gap-0",
+    padding: "p-0",
+  },
+  {
+    display: "grid",
+    gridTemplateColumns: "grid-cols-1",
+    gridTemplateRows: "grid-rows-1",
+    gap: "gap-0",
+    padding: "p-0",
+  },
+  {
+    display: "hidden",
+  },
+];
 
 export const Registry: TGenericComponentRegistry = {
   Root: {
@@ -51,33 +98,8 @@ export const Registry: TGenericComponentRegistry = {
         width: "w-full",
         height: "h-auto",
       },
-      style: {
-        backgroundColor: "bg-transparent",
-      },
-      layout: [
-        {
-          display: "block",
-          padding: "p-0",
-        },
-        {
-          display: "flex",
-          flexDirection: "flex-row",
-          justifyContent: "justify-start",
-          alignItems: "items-start",
-          gap: "gap-0",
-          padding: "p-0",
-        },
-        {
-          display: "grid",
-          gridTemplateColumns: "grid-cols-1",
-          gridTemplateRows: "grid-rows-1",
-          gap: "gap-0",
-          padding: "p-0",
-        },
-        {
-          display: "hidden",
-        },
-      ],
+      style: defaultStyle,
+      layout: defaultLayout,
     },
   },
   h1: {
@@ -90,19 +112,12 @@ export const Registry: TGenericComponentRegistry = {
     droppable: false,
     editable: true,
     classNameGroupsdefaults: {
-      size: {
-        width: "w-auto",
-        height: "h-auto",
-      },
+      size: defaultAutoSize,
       text: {
+        ...defaultText,
         fontSize: "text-4xl",
-        fontWeight: "font-bold",
-        textAlign: "text-left",
-        textColor: "text-black",
       },
-      style: {
-        backgroundColor: "bg-transparent",
-      },
+      style: defaultStyle,
     },
   },
   h2: {
@@ -115,19 +130,12 @@ export const Registry: TGenericComponentRegistry = {
     droppable: false,
     editable: true,
     classNameGroupsdefaults: {
-      size: {
-        width: "w-auto",
-        height: "h-auto",
-      },
+      size: defaultAutoSize,
       text: {
+        ...defaultText,
         fontSize: "text-3xl",
-        fontWeight: "font-bold",
-        textAlign: "text-left",
-        textColor: "text-black",
       },
-      style: {
-        backgroundColor: "bg-transparent",
-      },
+      style: defaultStyle,
     },
   },
   h3: {
@@ -140,19 +148,12 @@ export const Registry: TGenericComponentRegistry = {
     droppable: false,
     editable: true,
     classNameGroupsdefaults: {
-      size: {
-        width: "w-auto",
-        height: "h-auto",
-      },
+      size: defaultAutoSize,
       text: {
+        ...defaultText,
         fontSize: "text-2xl",
-        fontWeight: "font-bold",
-        textAlign: "text-left",
-        textColor: "text-black",
       },
-      style: {
-        backgroundColor: "bg-transparent",
-      },
+      style: defaultStyle,
     },
   },
   h4: {
@@ -165,19 +166,12 @@ export const Registry: TGenericComponentRegistry = {
     droppable: false,
     editable: true,
     classNameGroupsdefaults: {
-      size: {
-        width: "w-auto",
-        height: "h-auto",
-      },
+      size: defaultAutoSize,
       text: {
+        ...defaultText,
         fontSize: "text-xl",
-        fontWeight: "font-bold",
-        textAlign: "text-left",
-        textColor: "text-black",
       },
-      style: {
-        backgroundColor: "bg-transparent",
-      },
+      style: defaultStyle,
     },
   },
   h5: {
@@ -190,19 +184,12 @@ export const Registry: TGenericComponentRegistry = {
     droppable: false,
     editable: true,
     classNameGroupsdefaults: {
-      size: {
-        width: "w-auto",
-        height: "h-auto",
-      },
+      size: defaultAutoSize,
       text: {
+        ...defaultText,
         fontSize: "text-lg",
-        fontWeight: "font-bold",
-        textAlign: "text-left",
-        textColor: "text-black",
       },
-      style: {
-        backgroundColor: "bg-transparent",
-      },
+      style: defaultStyle,
     },
   },
   h6: {
@@ -215,19 +202,12 @@ export const Registry: TGenericComponentRegistry = {
     droppable: false,
     editable: true,
     classNameGroupsdefaults: {
-      size: {
-        width: "w-auto",
-        height: "h-auto",
-      },
+      size: defaultAutoSize,
       text: {
+        ...defaultText,
         fontSize: "text-base",
-        fontWeight: "font-normal",
-        textAlign: "text-left",
-        textColor: "text-black",
       },
-      style: {
-        backgroundColor: "bg-transparent",
-      },
+      style: defaultStyle,
     },
   },
   p: {
@@ -239,19 +219,9 @@ export const Registry: TGenericComponentRegistry = {
     droppable: false,
     editable: true,
     classNameGroupsdefaults: {
-      size: {
-        width: "w-auto",
-        height: "h-auto",
-      },
-      text: {
-        fontSize: "text-base",
-        fontWeight: "font-normal",
-        textAlign: "text-left",
-        textColor: "text-black",
-      },
-      style: {
-        backgroundColor: "bg-transparent",
-      },
+      size: defaultAutoSize,
+      text: defaultText,
+      style: defaultStyle,
     },
   },
   Card: {
@@ -263,10 +233,9 @@ export const Registry: TGenericComponentRegistry = {
     droppable: true,
     editable: false,
     classNameGroupsdefaults: {
-      size: {
-        width: "w-auto",
-        height: "h-auto",
-      },
+      size: defaultAutoSize,
+      layout: defaultLayout,
+      style: defaultStyle,
     },
   },
   CardContent: {
@@ -277,7 +246,11 @@ export const Registry: TGenericComponentRegistry = {
     draggable: true,
     droppable: true,
     editable: false,
-    classNameGroupsdefaults: {},
+    classNameGroupsdefaults: {
+      /* size: defaultAutoSize,
+      layout: defaultLayout,
+      style: defaultStyle, */
+    },
   },
   CardHeader: {
     type: "CardHeader",
@@ -287,7 +260,11 @@ export const Registry: TGenericComponentRegistry = {
     draggable: true,
     droppable: true,
     editable: false,
-    classNameGroupsdefaults: {},
+    classNameGroupsdefaults: {
+      /* size: defaultAutoSize,
+      layout: defaultLayout,
+      style: defaultStyle, */
+    },
   },
   CardFooter: {
     type: "CardFooter",
@@ -297,7 +274,11 @@ export const Registry: TGenericComponentRegistry = {
     draggable: true,
     droppable: true,
     editable: false,
-    classNameGroupsdefaults: {},
+    classNameGroupsdefaults: {
+      /* size: defaultAutoSize,
+      layout: defaultLayout,
+      style: defaultStyle, */
+    },
   },
   CardTitle: {
     type: "CardTitle",
@@ -308,16 +289,12 @@ export const Registry: TGenericComponentRegistry = {
     droppable: false,
     editable: true,
     classNameGroupsdefaults: {
-      size: {
-        width: "w-auto",
-        height: "h-auto",
-      },
+      size: defaultAutoSize,
       text: {
+        ...defaultText,
         fontSize: "text-2xl",
-        fontWeight: "font-bold",
-        textAlign: "text-left",
-        textColor: "text-black",
       },
+      style: defaultStyle,
     },
   },
   CardDescription: {
@@ -329,16 +306,12 @@ export const Registry: TGenericComponentRegistry = {
     droppable: false,
     editable: true,
     classNameGroupsdefaults: {
-      size: {
-        width: "w-auto",
-        height: "h-auto",
-      },
+      size: defaultAutoSize,
       text: {
+        ...defaultText,
         fontSize: "text-base",
-        fontWeight: "font-normal",
-        textAlign: "text-left",
-        textColor: "text-black",
       },
+      style: defaultStyle,
     },
   },
   Button: {
