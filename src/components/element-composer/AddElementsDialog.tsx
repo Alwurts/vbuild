@@ -1,4 +1,4 @@
-import { cloneElement, isValidElement } from "react";
+import { cloneElement, Fragment, isValidElement } from "react";
 import {
   CommandDialog,
   CommandEmpty,
@@ -17,7 +17,9 @@ export function AddElementsDialog() {
   const setChildrenMenuKey = useComposerStore(
     (state) => state.setChildrenMenuKey
   );
-  const addElementAsChild = useComposerStore((state) => state.addElementAsChild);
+  const addElementAsChild = useComposerStore(
+    (state) => state.addElementAsChild
+  );
 
   const availableComponents: {
     [key: string]: GenericComponentName[];
@@ -51,8 +53,8 @@ export function AddElementsDialog() {
       <CommandList>
         <CommandEmpty>No results found.</CommandEmpty>
         {Object.entries(availableComponents).map(([category, components]) => (
-          <>
-            <CommandGroup key={category} heading={category}>
+          <Fragment key={category}>
+            <CommandGroup heading={category}>
               {components.map((component) => {
                 const componentConfig = Registry[component];
                 const nodeIcon = componentConfig.icon;
@@ -71,8 +73,8 @@ export function AddElementsDialog() {
                 );
               })}
             </CommandGroup>
-            <CommandSeparator key={`${category}-separator`} />
-          </>
+            <CommandSeparator />
+          </Fragment>
         ))}
       </CommandList>
     </CommandDialog>
