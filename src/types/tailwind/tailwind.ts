@@ -109,26 +109,14 @@ export const schemaPaddingGroup = z.union([
 
 export type TailwindPaddingGroup = z.infer<typeof schemaPaddingGroup>;
 
-const tailwindClassNameGroupsSchema = z.object({
-	size: schemaSizeGroup.optional(),
-	layout: schemaLayoutGroup.optional(),
-	text: schemaTextGroup.optional(),
-	style: schemaStyleGroup.optional(),
-	padding: schemaPaddingGroup.optional(),
+export const tailwindClassNameGroupsSchema = z.object({
+  size: schemaSizeGroup.optional(),
+  layout: schemaLayoutGroup.optional(),
+  text: schemaTextGroup.optional(),
+  style: schemaStyleGroup.optional(),
+  padding: schemaPaddingGroup.optional(),
 });
 
 export type TailwindClassNamesGroups = z.infer<
-	typeof tailwindClassNameGroupsSchema
->;
-
-const tailwindClassNameGroupsDefaultSchema = z.object({
-	size: schemaSizeGroup.optional(),
-	layout: schemaLayoutGroup.array().optional(),
-	text: schemaTextGroup.optional(),
-	style: schemaStyleGroup.optional(),
-	padding: schemaPaddingGroup.array().optional(),
-});
-
-export type TailwindClassNamesGroupsDefault = z.infer<
-	typeof tailwindClassNameGroupsDefaultSchema
+  typeof tailwindClassNameGroupsSchema
 >;

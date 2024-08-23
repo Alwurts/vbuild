@@ -1,4 +1,7 @@
-import type { TailwindClassNamesGroups } from "@/types/tailwind/tailwind";
+import type {
+	TailwindClassNamesGroups,
+	TailwindLayoutGroup,
+} from "@/types/tailwind/tailwind";
 
 export const parseClassNameGroupsIntoString = (
 	className: TailwindClassNamesGroups,
@@ -10,6 +13,31 @@ export const parseClassNameGroupsIntoString = (
 		}
 	}
 	return classNameString;
+};
+
+export const defaultLayoutGroups: Record<
+	TailwindLayoutGroup["display"],
+	TailwindLayoutGroup
+> = {
+	block: {
+		display: "block",
+	},
+	flex: {
+		display: "flex",
+		flexDirection: "flex-row",
+		justifyContent: "justify-start",
+		alignItems: "items-start",
+		gap: "gap-0",
+	},
+	grid: {
+		display: "grid",
+		gridTemplateColumns: "grid-cols-1",
+		gridTemplateRows: "grid-rows-1",
+		gap: "gap-0",
+	},
+	hidden: {
+		display: "hidden",
+	},
 };
 
 /* export const parseTailwindClassNameIntoGroups = (

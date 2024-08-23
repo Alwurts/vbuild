@@ -64,16 +64,7 @@ const defaultLayout: TailwindLayoutGroup[] = [
 	},
 ];
 
-const defaultPadding: TailwindPaddingGroup[] = [
-	{ padding: "p-0" },
-	{ paddingX: "px-0", paddingY: "py-0" },
-	{
-		paddingLeft: "pl-0",
-		paddingRight: "pr-0",
-		paddingTop: "pt-0",
-		paddingBottom: "pb-0",
-	},
-];
+const defaultPadding: TailwindPaddingGroup = { padding: "p-0" };
 
 export const Registry: TGenericComponentRegistry = {
 	Root: {
@@ -108,7 +99,9 @@ export const Registry: TGenericComponentRegistry = {
 				height: "h-auto",
 			},
 			style: defaultStyle,
-			layout: defaultLayout,
+			layout: {
+				display: "block",
+			},
 			padding: defaultPadding,
 		},
 	},
@@ -244,7 +237,6 @@ export const Registry: TGenericComponentRegistry = {
 		editable: false,
 		classNameGroupsdefaults: {
 			size: defaultAutoSize,
-			layout: defaultLayout,
 			style: defaultStyle,
 		},
 	},

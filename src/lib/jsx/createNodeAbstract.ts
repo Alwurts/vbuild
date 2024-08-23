@@ -11,8 +11,8 @@ import type {
 	TailwindStylePropertyName,
 	TailwindPaddingGroup,
 	TailwindLayoutGroup,
-	TailwindClassNamesGroupsDefault,
 } from "@/types/tailwind/tailwind";
+import { defaultLayoutGroups } from "@/lib/tailwind/tailwind";
 
 export function createNodeAbstract(
 	key: string,
@@ -60,7 +60,7 @@ export function createNodeAbstract(
 }
 
 function processGroups(
-	classNameGroupsdefaults: TailwindClassNamesGroupsDefault,
+	classNameGroupsdefaults: TailwindClassNamesGroups,
 	classNameSeparated: string[],
 ): TailwindClassNamesGroups {
 	const result: TailwindClassNamesGroups = {};
@@ -68,18 +68,16 @@ function processGroups(
 	for (const [groupKey, group] of Object.entries(classNameGroupsdefaults)) {
 		const groupName = groupKey as TailwindGroupName;
 
-		if (Array.isArray(group)) {
-			if (groupName === "layout") {
-				result[groupName] = processLayoutGroup(
-					group as TailwindLayoutGroup[],
-					classNameSeparated,
-				);
-			} else if (groupName === "padding") {
-				result[groupName] = processPaddingGroup(
-					group as TailwindPaddingGroup[],
-					classNameSeparated,
-				);
-			}
+		if (groupName === "layout") {
+			result[groupName] = processLayoutGroup(
+				group as TailwindLayoutGroup,
+				classNameSeparated,
+			);
+		} else if (groupName === "padding") {
+			result[groupName] = processPaddingGroup(
+				group as TailwindPaddingGroup,
+				classNameSeparated,
+			);
 		} else if (group) {
 			// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 			result[groupName] = processSimpleGroup(group, classNameSeparated) as any;
@@ -90,31 +88,27 @@ function processGroups(
 }
 
 function processLayoutGroup(
-	layoutGroups: TailwindLayoutGroup[],
+	layoutGroup: TailwindLayoutGroup,
 	classNameSeparated: string[],
 ): TailwindLayoutGroup {
 	const displayOptions = PROPERTIES_CLASSNAMES.display;
 	const displayMatch =
 		classNameSeparated.find((className) =>
 			displayOptions.includes(className),
-		) ?? "block";
+		) ?? layoutGroup.display;
 
-	const layoutGroup = layoutGroups.find(
-		(layout) => layout.display === displayMatch,
-	);
-
-	if (!layoutGroup) {
-		return layoutGroups[0]; // Default to first layout if no match found
-	}
+	const defaultLayoutGroup =
+		defaultLayoutGroups[displayMatch as keyof typeof defaultLayoutGroups];
 
 	return processSimpleGroup(
-		layoutGroup,
+		// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+		{ ...defaultLayoutGroup, ...layoutGroup, display: displayMatch as any },
 		classNameSeparated,
 	) as TailwindLayoutGroup;
 }
 
 function processPaddingGroup(
-	paddingGroups: TailwindPaddingGroup[],
+	paddingGroup: TailwindPaddingGroup,
 	classNameSeparated: string[],
 ): TailwindPaddingGroup {
 	const paddingMatch = classNameSeparated.find((className) =>
@@ -157,7 +151,10 @@ function processPaddingGroup(
 		};
 	}
 
-	return paddingGroups[0]; // Default to first default padding group if no match found
+	return processSimpleGroup(
+		paddingGroup,
+		classNameSeparated,
+	) as TailwindPaddingGroup;
 }
 
 function processSimpleGroup(
