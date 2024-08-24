@@ -5,7 +5,8 @@ import {
 	PopoverTrigger,
 } from "@/components/ui-editor/popover";
 import { Button } from "@/components/ui-editor/button";
-import { BACKGROUND_COLOR_CLASSNAMES_SWATCHES } from "@/lib/tailwind/tailwindClasses/index";
+import { BACKGROUND_COLOR_CLASSNAMES } from "@/lib/tailwind/tailwindClasses/background";
+import { TEXT_COLOR_CLASSNAMES } from "@/lib/tailwind/tailwindClasses/text";
 import { Separator } from "@/components/ui-editor/separator";
 import { cn } from "@/lib/utils";
 import {
@@ -15,20 +16,6 @@ import {
 	AccordionTrigger,
 } from "../ui-editor/accordion";
 import { ScrollArea } from "../ui-editor/scroll-area";
-
-const THEME_COLORS = [
-	{ name: "Primary", class: "bg-primary" },
-	{ name: "Secondary", class: "bg-secondary" },
-	{ name: "Accent", class: "bg-accent" },
-	{ name: "Background", class: "bg-background" },
-	{ name: "Foreground", class: "bg-foreground" },
-	{ name: "Muted", class: "bg-muted" },
-	{ name: "Card", class: "bg-card" },
-	{ name: "Popover", class: "bg-popover" },
-	{ name: "Border", class: "bg-border" },
-	{ name: "Input", class: "bg-input" },
-	{ name: "Ring", class: "bg-ring" },
-];
 
 export const ColorPicker = ({
 	id,
@@ -53,28 +40,23 @@ export const ColorPicker = ({
 			? "text"
 			: "bg";
 
-	let bgParsedValue = value;
-
-	if (type === "text") {
-		bgParsedValue = value.replace("text-", "bg-");
-	} else if (type === "border") {
-		bgParsedValue = value.replace("border-", "bg-");
-	}
-
-	const bgToType = (color: string) => {
+	const getDisplayColor = (color: string) => {
 		if (type === "text") {
-			return color.replace("bg-", "text-");
+			return color.replace("text-", "bg-");
 		}
 		if (type === "border") {
-			return color.replace("bg-", "border-");
+			return color.replace("border-", "bg-");
 		}
 		return color;
 	};
 
 	const handleColorChange = (color: string) => {
-		onChange(bgToType(color));
+		onChange(color);
 		setIsOpen(false);
 	};
+
+	const colorClassnames =
+		type === "text" ? TEXT_COLOR_CLASSNAMES : BACKGROUND_COLOR_CLASSNAMES;
 
 	return (
 		<Popover open={isOpen} onOpenChange={setIsOpen}>
@@ -90,7 +72,7 @@ export const ColorPicker = ({
 				>
 					<span className="text-sm font-normal truncate">{value}</span>
 					<div
-						className={`w-6 h-6 flex-shrink-0 rounded-md border ${bgParsedValue}`}
+						className={`w-6 h-6 flex-shrink-0 rounded-md border ${getDisplayColor(value)}`}
 					/>
 				</Button>
 			</PopoverTrigger>
@@ -101,7 +83,7 @@ export const ColorPicker = ({
 					</p>
 					<Separator className="mt-3" />
 					<Accordion
-						defaultValue={["theme-colors", "tailwind-colors"]}
+						defaultValue={["tailwind-colors"]}
 						type="multiple"
 						className="w-full text-sm"
 					>
@@ -109,22 +91,23 @@ export const ColorPicker = ({
 							<AccordionTrigger>Theme Colors</AccordionTrigger>
 							<AccordionContent>
 								<div className="grid grid-cols-2 gap-x-2">
-									{THEME_COLORS.map((color) => (
+									{colorClassnames.themeVariables.map((color) => (
 										<Button
-											key={color.name}
+											key={color}
 											variant="ghost"
 											size="sm"
 											className={cn(
 												"flex gap-2 justify-start h-8 px-2",
-												value === color.class &&
-													"border-2 border-primary-editor",
+												value === color && "border-2 border-primary-editor",
 											)}
-											onClick={() => handleColorChange(color.class)}
+											onClick={() => handleColorChange(color)}
 										>
 											<div
-												className={`w-5 h-5 rounded shrink-0 border border-stone-300 ${color.class}`}
+												className={`w-5 h-5 rounded shrink-0 border border-stone-300 ${getDisplayColor(color)}`}
 											/>
-											<span className="text-xs">{color.name}</span>
+											<span title={color} className="text-xs truncate">
+												{color.split("-").slice(1).join("-")}
+											</span>
 										</Button>
 									))}
 								</div>
@@ -134,25 +117,22 @@ export const ColorPicker = ({
 							<AccordionTrigger>Tailwind Colors</AccordionTrigger>
 							<AccordionContent>
 								<div className="flex flex-col gap-1 ">
-									{BACKGROUND_COLOR_CLASSNAMES_SWATCHES.slice(1).map(
-										(colorGroup, index) => (
-											<div key={colorGroup[0]} className="flex flex-row gap-1">
-												{colorGroup.map((color) => (
-													<button
-														type="button"
-														title={bgToType(color)}
-														key={color}
-														className={cn(
-															`w-4 h-4 rounded-sm ${color} border border-stone-300`,
-															value === color &&
-																"border-2 border-primary-editor",
-														)}
-														onClick={() => handleColorChange(color)}
-													/>
-												))}
-											</div>
-										),
-									)}
+									{colorClassnames.swatches.map((colorGroup) => (
+										<div key={colorGroup[0]} className="flex flex-row gap-1">
+											{colorGroup.map((color) => (
+												<button
+													type="button"
+													title={color}
+													key={color}
+													className={cn(
+														`w-4 h-4 rounded-sm ${getDisplayColor(color)} border border-stone-300`,
+														value === color && "border-2 border-primary-editor",
+													)}
+													onClick={() => handleColorChange(color)}
+												/>
+											))}
+										</div>
+									))}
 								</div>
 							</AccordionContent>
 						</AccordionItem>
