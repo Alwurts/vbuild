@@ -1,5 +1,5 @@
 import type { TGenericComponentRegistry } from "@/types/elements/elements";
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
 import {
 	PanelsTopLeft,
 	Square,
@@ -16,7 +16,7 @@ import {
 	CardFooter,
 	CardHeader,
 	CardTitle,
-} from "../ui/card";
+} from "@/components/ui/card";
 import Root from "./Root";
 import type {
 	TailwindLayoutGroup,
@@ -195,8 +195,15 @@ export const Registry: TGenericComponentRegistry = {
 			style: {
 				backgroundColor: "bg-card",
 				borderRadius: "rounded-lg",
+				/* borderWidth: "border",
+				boxShadow: "shadow-sm", */
 			},
-			...defaultLayoutAndPadding,
+			/* text: {
+				...defaultText,
+				textColor: "text-card-foreground",
+			}, */
+			layout: defaultLayout,
+			padding: defaultPadding,
 		},
 	},
 	CardContent: {
@@ -235,7 +242,7 @@ export const Registry: TGenericComponentRegistry = {
 				flexDirection: "flex-col",
 				justifyContent: "justify-start",
 				alignItems: "items-start",
-				gap: "gap-0",
+				gap: "gap-1.5",
 			},
 			padding: {
 				padding: "p-6",
@@ -276,6 +283,7 @@ export const Registry: TGenericComponentRegistry = {
 				...defaultText,
 				fontSize: "text-2xl",
 				fontWeight: "font-semibold",
+				textColor: "text-card-foreground",
 			},
 			style: defaultStyle,
 		},
@@ -293,6 +301,7 @@ export const Registry: TGenericComponentRegistry = {
 			text: {
 				...defaultText,
 				fontSize: "text-sm",
+				textColor: "text-muted-foreground",
 			},
 			style: defaultStyle,
 		},
@@ -312,14 +321,21 @@ export const Registry: TGenericComponentRegistry = {
 			},
 			style: {
 				backgroundColor: "bg-primary",
+				borderRadius: "rounded-md",
 			},
 			text: {
 				textColor: "text-primary-foreground",
 				fontSize: "text-sm",
 				fontWeight: "font-medium",
 				textAlign: "text-center",
+				/* whiteSpace: "whitespace-nowrap", */
 			},
 			layout: defaultLayout,
+			/* layout: {
+				display: "inline-flex",
+				alignItems: "items-center",
+				justifyContent: "justify-center",
+			}, */
 			padding: {
 				paddingX: "px-4",
 				paddingY: "py-2",
