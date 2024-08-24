@@ -10,6 +10,8 @@ import { createRef } from "react";
 import { create } from "zustand";
 import { createNodeAbstract } from "@/lib/jsx/createNodeAbstract";
 import { Registry } from "@/components/elements/Registry";
+import type { CSSVariableNames } from "@/types/style";
+import { INITIAL_CSS_VARIABLES } from "@/lib/initialCSSVariables";
 
 export const useComposerStore = create<ComposerStore>((set, get) => ({
 	iframeRef: createRef(),
@@ -401,6 +403,7 @@ export const useComposerStore = create<ComposerStore>((set, get) => ({
 			headNodeKey,
 			canvasHighlight,
 			selectedNode,
+			cssVariables,
 			sendMessageToCanvas,
 		} = get();
 		sendMessageToCanvas({
@@ -410,6 +413,7 @@ export const useComposerStore = create<ComposerStore>((set, get) => ({
 				headNodeKey,
 				canvasHighlight,
 				selectedNode,
+				cssVariables,
 			},
 		});
 	},
@@ -456,4 +460,21 @@ export const useComposerStore = create<ComposerStore>((set, get) => ({
 		set((state) => ({
 			openNodes: { ...state.openNodes, ...updates },
 		})),
+	cssVariables: INITIAL_CSS_VARIABLES,
+	updateCSSVariable: (name, value) => {
+		set((state) => ({
+			cssVariables: {
+				...state.cssVariables,
+				[name]: value,
+			},
+		}));
+
+		// Send the update to the shadow composer
+		get().sendMessageToCanvas({
+			type: "UPDATE_SHADOW_STATE",
+			update: {
+				cssVariables: { [name]: value } as { [K in CSSVariableNames]: string },
+			},
+		});
+	},
 }));

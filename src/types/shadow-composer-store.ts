@@ -1,4 +1,5 @@
 import type { ComposerStore } from "./composer-store";
+import type { CSSVariableNames } from "./style";
 
 export type UpdateShadowStateMessage = {
 	type: "UPDATE_SHADOW_STATE";
@@ -59,7 +60,11 @@ type TSetChildrenMenuKey = InferComposerFunctionCall<
 export type UpdateShadowState = Partial<
 	Pick<
 		ShadowComposerStore,
-		"nodes" | "headNodeKey" | "canvasHighlight" | "selectedNode"
+		| "nodes"
+		| "headNodeKey"
+		| "canvasHighlight"
+		| "selectedNode"
+		| "cssVariables"
 	>
 >;
 export interface ShadowComposerStore {
@@ -68,6 +73,7 @@ export interface ShadowComposerStore {
 	headNodeKey: ComposerStore["headNodeKey"] | null;
 	canvasHighlight: ComposerStore["canvasHighlight"] | null;
 	selectedNode: ComposerStore["selectedNode"] | null;
+	cssVariables: ComposerStore["cssVariables"] | null;
 	// RPC
 	setCanvasHighlight: (...args: TSetCanvasHighlight["args"]) => void;
 	setSelectedNode: (...args: TSetSelectedNode["args"]) => void;

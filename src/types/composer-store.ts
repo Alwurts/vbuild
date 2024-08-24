@@ -8,6 +8,7 @@ import type {
 	CanvasMessageEvent,
 } from "./shadow-composer-store";
 import type { GenericComponentName } from "./elements/elements";
+import type { CSSVariableNames } from "./style";
 
 export interface ComposerStore {
 	iframeRef: React.MutableRefObject<HTMLIFrameElement | null>;
@@ -82,4 +83,6 @@ export interface ComposerStore {
 	) => void;
 	openNodes: Record<string, boolean>;
 	setMultipleNodesOpen: (updates: Record<string, boolean>) => void;
+	cssVariables: { [K in CSSVariableNames]: string };
+	updateCSSVariable: (name: CSSVariableNames, value: string) => void;
 }
