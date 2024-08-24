@@ -21,7 +21,16 @@ import type {
 	TH6Component,
 	TPComponent,
 } from "@/types/elements/text";
-import type { TBadgeComponent } from "@/types/elements/badge"; // Add this import
+import type { TBadgeComponent } from "@/types/elements/badge";
+import type {
+  TBreadcrumbComponent,
+  TBreadcrumbListComponent,
+  TBreadcrumbItemComponent,
+  TBreadcrumbLinkComponent,
+  TBreadcrumbPageComponent,
+  TBreadcrumbSeparatorComponent,
+  TBreadcrumbEllipsisComponent,
+} from "@/types/elements/breadcrumb"; // Add this import
 import type { TailwindClassNamesGroups } from "../tailwind/tailwind";
 
 export type TGenericComponentInfer<T> = {
@@ -47,7 +56,14 @@ const GenericComponentsNames = {
 	CardFooter: "CardFooter",
 	CardTitle: "CardTitle",
 	CardDescription: "CardDescription",
-	Badge: "Badge", // Add this line
+	Badge: "Badge",
+  Breadcrumb: "Breadcrumb",
+  BreadcrumbList: "BreadcrumbList",
+  BreadcrumbItem: "BreadcrumbItem",
+  BreadcrumbLink: "BreadcrumbLink",
+  BreadcrumbPage: "BreadcrumbPage",
+  BreadcrumbSeparator: "BreadcrumbSeparator",
+  BreadcrumbEllipsis: "BreadcrumbEllipsis",
 } as const;
 
 export type GenericComponentName =
@@ -68,7 +84,14 @@ export type TGenericComponentsWithoutRoot =
 	| TCardFooterComponent
 	| TCardTitleComponent
 	| TCardDescriptionComponent
-	| TBadgeComponent; // Add this line
+	| TBadgeComponent
+	| TBreadcrumbComponent
+	| TBreadcrumbListComponent
+	| TBreadcrumbItemComponent
+	| TBreadcrumbLinkComponent
+	| TBreadcrumbPageComponent
+	| TBreadcrumbSeparatorComponent
+	| TBreadcrumbEllipsisComponent;
 
 export type TGenericComponents = TRootComponent | TGenericComponentsWithoutRoot;
 

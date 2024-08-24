@@ -36,6 +36,15 @@ export function AddElementsDialog() {
 			"CardDescription",
 		],
 		Badge: ["Badge"],
+		Navigation: [
+			"Breadcrumb",
+			"BreadcrumbList",
+			"BreadcrumbItem",
+			"BreadcrumbLink",
+			"BreadcrumbPage",
+			"BreadcrumbSeparator",
+			"BreadcrumbEllipsis",
+		],
 	};
 
 	const handleAddElement = (component: GenericComponentName) => {
