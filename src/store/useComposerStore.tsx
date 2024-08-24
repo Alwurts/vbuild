@@ -1,6 +1,6 @@
 import {
-  ROOT_COMPONENT_ABSTRACT_DEFAULT,
-  ROOT_COMPONENT_ABSTRACT_DEFAULT_HEAD_KEY,
+	ROOT_COMPONENT_ABSTRACT_DEFAULT,
+	ROOT_COMPONENT_ABSTRACT_DEFAULT_HEAD_KEY,
 } from "@/components/element-composer/defaultJSX";
 import type { ComposerStore } from "@/types/composer-store";
 import type { TNodeAbstract } from "@/types/elements/jsx";
@@ -12,426 +12,448 @@ import { createNodeAbstract } from "@/lib/jsx/createNodeAbstract";
 import { Registry } from "@/components/elements/Registry";
 
 export const useComposerStore = create<ComposerStore>((set, get) => ({
-  iframeRef: createRef(),
-  nodes: ROOT_COMPONENT_ABSTRACT_DEFAULT,
-  headNodeKey: ROOT_COMPONENT_ABSTRACT_DEFAULT_HEAD_KEY,
-  selectedNode: null,
-  setSelectedNode: (node) => {
-    const { sendMessageToCanvas } = get();
-    sendMessageToCanvas({
-      type: "UPDATE_SHADOW_STATE",
-      update: {
-        selectedNode: node,
-      },
-    });
-    return set({ selectedNode: node });
-  },
-  canvasHighlight: null,
-  setCanvasHighlight: (highlight) => {
-    set({ canvasHighlight: highlight });
-    const { sendMessageToCanvas } = get();
-    sendMessageToCanvas({
-      type: "UPDATE_SHADOW_STATE",
-      update: {
-        canvasHighlight: highlight,
-      },
-    });
-  },
-  history: [ROOT_COMPONENT_ABSTRACT_DEFAULT],
-  historyIndex: 0,
+	iframeRef: createRef(),
+	nodes: ROOT_COMPONENT_ABSTRACT_DEFAULT,
+	headNodeKey: ROOT_COMPONENT_ABSTRACT_DEFAULT_HEAD_KEY,
+	selectedNode: null,
+	setSelectedNode: (node) => {
+		const { sendMessageToCanvas, nodes, setMultipleNodesOpen } = get();
+		sendMessageToCanvas({
+			type: "UPDATE_SHADOW_STATE",
+			update: {
+				selectedNode: node,
+			},
+		});
 
-  updateNodes: (newNodes) => {
-    const { history, historyIndex } = get();
-    const newHistory = [...history.slice(0, historyIndex + 1), newNodes].slice(-5);
-    const newHistoryIndex = newHistory.length - 1;
+		// Open all parent nodes when a node is selected
+		if (node) {
+			const nodesToOpen: Record<string, boolean> = {};
+			let currentNode = nodes[node.nodeKey];
+			while (currentNode) {
+				if (typeof currentNode !== "object") break;
+				nodesToOpen[currentNode.key] = true;
+				if (!("parent" in currentNode)) break;
+				currentNode = nodes[currentNode.parent];
+			}
+			setMultipleNodesOpen(nodesToOpen);
+		}
 
-    set({
-      nodes: newNodes,
-      history: newHistory,
-      historyIndex: newHistoryIndex,
-    });
+		return set({ selectedNode: node });
+	},
+	canvasHighlight: null,
+	setCanvasHighlight: (highlight) => {
+		set({ canvasHighlight: highlight });
+		const { sendMessageToCanvas } = get();
+		sendMessageToCanvas({
+			type: "UPDATE_SHADOW_STATE",
+			update: {
+				canvasHighlight: highlight,
+			},
+		});
+	},
+	history: [ROOT_COMPONENT_ABSTRACT_DEFAULT],
+	historyIndex: 0,
 
-    get().sendMessageToCanvas({
-      type: "UPDATE_SHADOW_STATE",
-      update: {
-        nodes: newNodes,
-      },
-    });
-  },
+	updateNodes: (newNodes) => {
+		const { history, historyIndex } = get();
+		const newHistory = [...history.slice(0, historyIndex + 1), newNodes].slice(
+			-5,
+		);
+		const newHistoryIndex = newHistory.length - 1;
 
-  undo: () => {
-    const { history, historyIndex } = get();
-    if (historyIndex > 0) {
-      const newIndex = historyIndex - 1;
-      const previousNodes = history[newIndex];
-      set({
-        nodes: previousNodes,
-        historyIndex: newIndex,
-      });
-      get().sendMessageToCanvas({
-        type: "UPDATE_SHADOW_STATE",
-        update: {
-          nodes: previousNodes,
-        },
-      });
-    }
-  },
+		set({
+			nodes: newNodes,
+			history: newHistory,
+			historyIndex: newHistoryIndex,
+		});
 
-  redo: () => {
-    const { history, historyIndex } = get();
-    if (historyIndex < history.length - 1) {
-      const newIndex = historyIndex + 1;
-      const nextNodes = history[newIndex];
-      set({
-        nodes: nextNodes,
-        historyIndex: newIndex,
-      });
-      get().sendMessageToCanvas({
-        type: "UPDATE_SHADOW_STATE",
-        update: {
-          nodes: nextNodes,
-        },
-      });
-    }
-  },
+		get().sendMessageToCanvas({
+			type: "UPDATE_SHADOW_STATE",
+			update: {
+				nodes: newNodes,
+			},
+		});
+	},
 
-  setClassNameGroup: (nodeKey, group, value) => {
-    const { nodes } = get();
-    const newNodes = { ...nodes };
-    const node = newNodes[nodeKey];
-    if (!node || typeof node !== "object") return;
-    const newNode = {
-      ...node,
-      className: {
-        ...node.className,
-        [group]: value,
-      },
-    };
-    newNodes[nodeKey] = newNode;
-    get().updateNodes(newNodes);
-  },
+	undo: () => {
+		const { history, historyIndex } = get();
+		if (historyIndex > 0) {
+			const newIndex = historyIndex - 1;
+			const previousNodes = history[newIndex];
+			set({
+				nodes: previousNodes,
+				historyIndex: newIndex,
+			});
+			get().sendMessageToCanvas({
+				type: "UPDATE_SHADOW_STATE",
+				update: {
+					nodes: previousNodes,
+				},
+			});
+		}
+	},
 
-  deleteNode: (nodeKey) => {
-    const { nodes } = get();
-    const newNodes = { ...nodes };
-    const nodeToDelete = newNodes[nodeKey];
-    if (!nodeToDelete) return;
+	redo: () => {
+		const { history, historyIndex } = get();
+		if (historyIndex < history.length - 1) {
+			const newIndex = historyIndex + 1;
+			const nextNodes = history[newIndex];
+			set({
+				nodes: nextNodes,
+				historyIndex: newIndex,
+			});
+			get().sendMessageToCanvas({
+				type: "UPDATE_SHADOW_STATE",
+				update: {
+					nodes: nextNodes,
+				},
+			});
+		}
+	},
 
-    if (typeof nodeToDelete !== "object") {
-      throw Error("Cannot delete non object node");
-    }
+	setClassNameGroup: (nodeKey, group, value) => {
+		const { nodes } = get();
+		const newNodes = { ...nodes };
+		const node = newNodes[nodeKey];
+		if (!node || typeof node !== "object") return;
+		const newNode = {
+			...node,
+			className: {
+				...node.className,
+				[group]: value,
+			},
+		};
+		newNodes[nodeKey] = newNode;
+		get().updateNodes(newNodes);
+	},
 
-    if (nodeToDelete.type === "Root") {
-      throw Error("Cannot delete root node");
-    }
+	deleteNode: (nodeKey) => {
+		const { nodes } = get();
+		const newNodes = { ...nodes };
+		const nodeToDelete = newNodes[nodeKey];
+		if (!nodeToDelete) return;
 
-    const parentKey = nodeToDelete.parent;
-    const parent = newNodes[parentKey];
-    if (!parent) return;
+		if (typeof nodeToDelete !== "object") {
+			throw Error("Cannot delete non object node");
+		}
 
-    if (typeof parent !== "object" || !parent.children) {
-      throw Error("Parent node not found or children null");
-    }
+		if (nodeToDelete.type === "Root") {
+			throw Error("Cannot delete root node");
+		}
 
-    // Remove the node from its parent's children
-    parent.children = parent.children.filter(
-      (childKey) => childKey !== nodeKey
-    );
+		const parentKey = nodeToDelete.parent;
+		const parent = newNodes[parentKey];
+		if (!parent) return;
 
-    // Delete the node and its descendants
-    const deleteRecursively = (key: string) => {
-      const node = newNodes[key];
+		if (typeof parent !== "object" || !parent.children) {
+			throw Error("Parent node not found or children null");
+		}
 
-      if (typeof node !== "object") {
-        delete newNodes[key];
-        return;
-      }
+		// Remove the node from its parent's children
+		parent.children = parent.children.filter(
+			(childKey) => childKey !== nodeKey,
+		);
 
-      if (node.children) {
-        node.children.forEach(deleteRecursively);
-      }
+		// Delete the node and its descendants
+		const deleteRecursively = (key: string) => {
+			const node = newNodes[key];
 
-      delete newNodes[key];
-    };
-    deleteRecursively(nodeKey);
+			if (typeof node !== "object") {
+				delete newNodes[key];
+				return;
+			}
 
-    get().updateNodes(newNodes);
-  },
+			if (node.children) {
+				node.children.forEach(deleteRecursively);
+			}
 
-  childrenMenuKey: null,
-  setChildrenMenuKey: (nodeKey) => set({ childrenMenuKey: nodeKey }),
-  copyNodeKey: null,
-  setCopyNodeKey: (nodeKey) => set({ copyNodeKey: nodeKey }),
-  copyNode: (
-    nodeToCopyKey,
-    newParentKey,
-    newParentIndex,
-    indexBeforeOrAfter
-  ) => {
-    const { nodes } = get();
-    const newNodes = { ...nodes };
-    const nodeToCopy = newNodes[nodeToCopyKey];
+			delete newNodes[key];
+		};
+		deleteRecursively(nodeKey);
 
-    if (!nodeToCopy) {
-      throw Error("Node to copy not found");
-    }
-    if (typeof nodeToCopy !== "object") {
-      throw Error("Cannot copy non object node");
-    }
-    if (nodeToCopy.type === "Root") {
-      throw Error("Cannot copy root node");
-    }
+		get().updateNodes(newNodes);
+	},
 
-    const newParent = newNodes[newParentKey];
-    if (!newParent || typeof newParent !== "object" || !newParent.children) {
-      throw Error("New parent node not found or children null");
-    }
+	childrenMenuKey: null,
+	setChildrenMenuKey: (nodeKey) => set({ childrenMenuKey: nodeKey }),
+	copyNodeKey: null,
+	setCopyNodeKey: (nodeKey) => set({ copyNodeKey: nodeKey }),
+	copyNode: (
+		nodeToCopyKey,
+		newParentKey,
+		newParentIndex,
+		indexBeforeOrAfter,
+	) => {
+		const { nodes } = get();
+		const newNodes = { ...nodes };
+		const nodeToCopy = newNodes[nodeToCopyKey];
 
-    // Helper function to deep copy a node and its children
-    const deepCopyNode = (
-      node: TNodeAbstract,
-      copiedNodeNewParentKey: string
-    ): { copiedNode: TNodeAbstract; newKey: string } => {
-      const newKey = uuidv4();
-      if (typeof node !== "object") {
-        newNodes[newKey] = node;
-        return { copiedNode: node, newKey };
-      }
-      const copiedNode = {
-        ...node,
-        key: newKey,
-        parent: copiedNodeNewParentKey,
-      };
+		if (!nodeToCopy) {
+			throw Error("Node to copy not found");
+		}
+		if (typeof nodeToCopy !== "object") {
+			throw Error("Cannot copy non object node");
+		}
+		if (nodeToCopy.type === "Root") {
+			throw Error("Cannot copy root node");
+		}
 
-      if (copiedNode.children) {
-        copiedNode.children = copiedNode.children.map((childKey) => {
-          const childCopy = deepCopyNode(newNodes[childKey], newKey);
-          newNodes[childCopy.newKey] = childCopy.copiedNode;
-          return childCopy.newKey;
-        });
-      }
+		const newParent = newNodes[newParentKey];
+		if (!newParent || typeof newParent !== "object" || !newParent.children) {
+			throw Error("New parent node not found or children null");
+		}
 
-      newNodes[newKey] = copiedNode;
+		// Helper function to deep copy a node and its children
+		const deepCopyNode = (
+			node: TNodeAbstract,
+			copiedNodeNewParentKey: string,
+		): { copiedNode: TNodeAbstract; newKey: string } => {
+			const newKey = uuidv4();
+			if (typeof node !== "object") {
+				newNodes[newKey] = node;
+				return { copiedNode: node, newKey };
+			}
+			const copiedNode = {
+				...node,
+				key: newKey,
+				parent: copiedNodeNewParentKey,
+			};
 
-      return { copiedNode, newKey };
-    };
+			if (copiedNode.children) {
+				copiedNode.children = copiedNode.children.map((childKey) => {
+					const childCopy = deepCopyNode(newNodes[childKey], newKey);
+					newNodes[childCopy.newKey] = childCopy.copiedNode;
+					return childCopy.newKey;
+				});
+			}
 
-    const { newKey } = deepCopyNode(nodeToCopy, newParentKey);
+			newNodes[newKey] = copiedNode;
 
-    // Insert the copied node into the new parent's children
-    const insertIndex =
-      indexBeforeOrAfter === "before" ? newParentIndex : newParentIndex + 1;
-    newParent.children.splice(insertIndex, 0, newKey);
+			return { copiedNode, newKey };
+		};
 
-    get().updateNodes(newNodes);
-    set({ copyNodeKey: null });
-  },
+		const { newKey } = deepCopyNode(nodeToCopy, newParentKey);
 
-  moveNode: (
-    nodeToMoveKey,
-    newParentKey,
-    newParentIndex,
-    indexBeforOrAfter
-  ) => {
-    const { nodes } = get();
-    const newNodes = { ...nodes };
-    let nodeToMove = newNodes[nodeToMoveKey];
+		// Insert the copied node into the new parent's children
+		const insertIndex =
+			indexBeforeOrAfter === "before" ? newParentIndex : newParentIndex + 1;
+		newParent.children.splice(insertIndex, 0, newKey);
 
-    if (typeof nodeToMove !== "object") {
-      throw Error("Cannot move non object node");
-    }
+		get().updateNodes(newNodes);
+		set({ copyNodeKey: null });
+	},
 
-    if (nodeToMove.type === "Root") {
-      throw Error("Cannot move root node");
-    }
+	moveNode: (
+		nodeToMoveKey,
+		newParentKey,
+		newParentIndex,
+		indexBeforOrAfter,
+	) => {
+		const { nodes } = get();
+		const newNodes = { ...nodes };
+		let nodeToMove = newNodes[nodeToMoveKey];
 
-    const oldParentKey = nodeToMove.parent;
-    let oldParent = newNodes[oldParentKey];
+		if (typeof nodeToMove !== "object") {
+			throw Error("Cannot move non object node");
+		}
 
-    if (!oldParent || typeof oldParent !== "object" || !oldParent.children) {
-      throw Error("Parent node not found or children null");
-    }
+		if (nodeToMove.type === "Root") {
+			throw Error("Cannot move root node");
+		}
 
-    if (oldParentKey === newParentKey) {
-      // Just moving the node within the same parent
-      const currentIndex = oldParent.children.indexOf(nodeToMoveKey);
-      let newIndex =
-        indexBeforOrAfter === "before" ? newParentIndex : newParentIndex + 1;
+		const oldParentKey = nodeToMove.parent;
+		let oldParent = newNodes[oldParentKey];
 
-      // Adjust the new index if we're moving the node forward
-      if (currentIndex < newIndex) {
-        newIndex--;
-      }
+		if (!oldParent || typeof oldParent !== "object" || !oldParent.children) {
+			throw Error("Parent node not found or children null");
+		}
 
-      const newChildren = [...oldParent.children];
-      newChildren.splice(currentIndex, 1);
-      newChildren.splice(newIndex, 0, nodeToMoveKey);
+		if (oldParentKey === newParentKey) {
+			// Just moving the node within the same parent
+			const currentIndex = oldParent.children.indexOf(nodeToMoveKey);
+			let newIndex =
+				indexBeforOrAfter === "before" ? newParentIndex : newParentIndex + 1;
 
-      newNodes[oldParent.key] = {
-        ...oldParent,
-        children: newChildren,
-      };
-    } else {
-      oldParent = {
-        ...oldParent,
-        children: oldParent.children.filter((key) => key !== nodeToMoveKey),
-      };
+			// Adjust the new index if we're moving the node forward
+			if (currentIndex < newIndex) {
+				newIndex--;
+			}
 
-      let newParent = newNodes[newParentKey];
+			const newChildren = [...oldParent.children];
+			newChildren.splice(currentIndex, 1);
+			newChildren.splice(newIndex, 0, nodeToMoveKey);
 
-      if (!newParent || typeof newParent !== "object") {
-        throw Error("Drop zone node not found or not an object");
-      }
+			newNodes[oldParent.key] = {
+				...oldParent,
+				children: newChildren,
+			};
+		} else {
+			oldParent = {
+				...oldParent,
+				children: oldParent.children.filter((key) => key !== nodeToMoveKey),
+			};
 
-      const parsedIndex =
-        indexBeforOrAfter === "before" ? newParentIndex : newParentIndex + 1;
+			let newParent = newNodes[newParentKey];
 
-      newParent = {
-        ...newParent,
-        children: newParent.children
-          ? [
-              ...newParent.children.slice(0, parsedIndex),
-              nodeToMoveKey,
-              ...newParent.children.slice(parsedIndex),
-            ]
-          : [nodeToMoveKey],
-      };
+			if (!newParent || typeof newParent !== "object") {
+				throw Error("Drop zone node not found or not an object");
+			}
 
-      nodeToMove = {
-        ...nodeToMove,
-        parent: newParent.key,
-      };
+			const parsedIndex =
+				indexBeforOrAfter === "before" ? newParentIndex : newParentIndex + 1;
 
-      newNodes[oldParent.key] = oldParent;
-      newNodes[nodeToMove.key] = nodeToMove;
-      newNodes[newParent.key] = newParent;
-    }
+			newParent = {
+				...newParent,
+				children: newParent.children
+					? [
+							...newParent.children.slice(0, parsedIndex),
+							nodeToMoveKey,
+							...newParent.children.slice(parsedIndex),
+						]
+					: [nodeToMoveKey],
+			};
 
-    get().updateNodes(newNodes);
-  },
+			nodeToMove = {
+				...nodeToMove,
+				parent: newParent.key,
+			};
 
-  setContentEditable: (nodeKey, content) => {
-    const { nodes } = get();
-    const newNodes = { ...nodes };
-    const node = newNodes?.[nodeKey];
+			newNodes[oldParent.key] = oldParent;
+			newNodes[nodeToMove.key] = nodeToMove;
+			newNodes[newParent.key] = newParent;
+		}
 
-    if (typeof node !== "object") return;
+		get().updateNodes(newNodes);
+	},
 
-    const childNodeKey = node?.children?.[0];
+	setContentEditable: (nodeKey, content) => {
+		const { nodes } = get();
+		const newNodes = { ...nodes };
+		const node = newNodes?.[nodeKey];
 
-    if (!childNodeKey) return;
-    if (typeof newNodes[childNodeKey] === "object") return;
+		if (typeof node !== "object") return;
 
-    newNodes[childNodeKey] = content;
+		const childNodeKey = node?.children?.[0];
 
-    console.log("contentEditable", newNodes[childNodeKey]);
+		if (!childNodeKey) return;
+		if (typeof newNodes[childNodeKey] === "object") return;
 
-    get().updateNodes(newNodes);
-  },
+		newNodes[childNodeKey] = content;
 
-  // Drag and Drop Tree Node
-  dragAndDropTreeNode: null,
-  resetDragAndDropTreeNode: () => set({ dragAndDropTreeNode: null }),
-  setDraggingTreeNode: (dropItem) =>
-    set({
-      dragAndDropTreeNode: {
-        startedOn: "TreeView",
-        draggingItem: dropItem,
-        dropZone: null,
-      },
-    }),
-  setTreeNodeDropZone: (dropZone) =>
-    set((state) => {
-      if (!state.dragAndDropTreeNode) {
-        return state;
-      }
-      return {
-        dragAndDropTreeNode: {
-          ...state.dragAndDropTreeNode,
-          dropZone,
-        },
-      };
-    }),
+		console.log("contentEditable", newNodes[childNodeKey]);
 
-  // Shadow Composer stuff
-  handleMessageFromCanvas: (messageEvent) => {
-    if (messageEvent.origin !== window.location.origin) {
-      return;
-    }
-    switch (messageEvent.data.type) {
-      case "CANVAS_READY":
-        get().sendUpdateOfWholeStateToCanvas();
-        break;
-      case "FUNCTION_CALL": {
-        const { function: fn } = messageEvent.data;
-        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-        (get()[fn.name] as (...args: any[]) => void)(...fn.args);
-        break;
-      }
-    }
-  },
+		get().updateNodes(newNodes);
+	},
 
-  sendMessageToCanvas: (message) => {
-    const { iframeRef } = get();
-    if (iframeRef.current?.contentWindow) {
-      const targetOrigin = window.location.origin;
-      iframeRef.current.contentWindow.postMessage(message, targetOrigin);
-    }
-  },
+	// Drag and Drop Tree Node
+	dragAndDropTreeNode: null,
+	resetDragAndDropTreeNode: () => set({ dragAndDropTreeNode: null }),
+	setDraggingTreeNode: (dropItem) =>
+		set({
+			dragAndDropTreeNode: {
+				startedOn: "TreeView",
+				draggingItem: dropItem,
+				dropZone: null,
+			},
+		}),
+	setTreeNodeDropZone: (dropZone) =>
+		set((state) => {
+			if (!state.dragAndDropTreeNode) {
+				return state;
+			}
+			return {
+				dragAndDropTreeNode: {
+					...state.dragAndDropTreeNode,
+					dropZone,
+				},
+			};
+		}),
 
-  sendUpdateOfWholeStateToCanvas: () => {
-    const {
-      nodes,
-      headNodeKey,
-      canvasHighlight,
-      selectedNode,
-      sendMessageToCanvas,
-    } = get();
-    sendMessageToCanvas({
-      type: "UPDATE_SHADOW_STATE",
-      update: {
-        nodes,
-        headNodeKey,
-        canvasHighlight,
-        selectedNode,
-      },
-    });
-  },
+	// Shadow Composer stuff
+	handleMessageFromCanvas: (messageEvent) => {
+		if (messageEvent.origin !== window.location.origin) {
+			return;
+		}
+		switch (messageEvent.data.type) {
+			case "CANVAS_READY":
+				get().sendUpdateOfWholeStateToCanvas();
+				break;
+			case "FUNCTION_CALL": {
+				const { function: fn } = messageEvent.data;
+				// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+				(get()[fn.name] as (...args: any[]) => void)(...fn.args);
+				break;
+			}
+		}
+	},
 
-  addElementAsChild: (parentKey, elementType) => {
-    const { nodes } = get();
-    const newNodes = { ...nodes };
-    const parentNode = newNodes[parentKey];
+	sendMessageToCanvas: (message) => {
+		const { iframeRef } = get();
+		if (iframeRef.current?.contentWindow) {
+			const targetOrigin = window.location.origin;
+			iframeRef.current.contentWindow.postMessage(message, targetOrigin);
+		}
+	},
 
-    if (!parentNode || typeof parentNode !== "object") {
-      throw Error("Parent node not found or not droppable");
-    }
+	sendUpdateOfWholeStateToCanvas: () => {
+		const {
+			nodes,
+			headNodeKey,
+			canvasHighlight,
+			selectedNode,
+			sendMessageToCanvas,
+		} = get();
+		sendMessageToCanvas({
+			type: "UPDATE_SHADOW_STATE",
+			update: {
+				nodes,
+				headNodeKey,
+				canvasHighlight,
+				selectedNode,
+			},
+		});
+	},
 
-    const { editable } = Registry[elementType];
+	addElementAsChild: (parentKey, elementType) => {
+		const { nodes } = get();
+		const newNodes = { ...nodes };
+		const parentNode = newNodes[parentKey];
 
-    const childrenKeys: string[] = [];
-    if (editable) {
-      const contentKey = uuidv4();
-      childrenKeys.push(contentKey);
-      newNodes[contentKey] = "Lorem ipsum";
-    }
+		if (!parentNode || typeof parentNode !== "object") {
+			throw Error("Parent node not found or not droppable");
+		}
 
-    const newKey = uuidv4();
-    const newNode = createNodeAbstract(
-      newKey,
-      elementType,
-      {},
-      childrenKeys,
-      undefined,
-      parentKey
-    );
+		const { editable } = Registry[elementType];
 
-    newNodes[newKey] = newNode;
-    if (!parentNode.children) {
-      parentNode.children = [];
-    }
-    parentNode.children.push(newKey);
+		const childrenKeys: string[] = [];
+		if (editable) {
+			const contentKey = uuidv4();
+			childrenKeys.push(contentKey);
+			newNodes[contentKey] = "Lorem ipsum";
+		}
 
-    get().updateNodes(newNodes);
-  },
+		const newKey = uuidv4();
+		const newNode = createNodeAbstract(
+			newKey,
+			elementType,
+			{},
+			childrenKeys,
+			undefined,
+			parentKey,
+		);
+
+		newNodes[newKey] = newNode;
+		if (!parentNode.children) {
+			parentNode.children = [];
+		}
+		parentNode.children.push(newKey);
+
+		get().updateNodes(newNodes);
+	},
+
+	openNodes: {},
+	setMultipleNodesOpen: (updates: Record<string, boolean>) =>
+		set((state) => ({
+			openNodes: { ...state.openNodes, ...updates },
+		})),
 }));
