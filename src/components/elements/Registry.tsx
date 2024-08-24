@@ -2,6 +2,7 @@ import type { TGenericComponentRegistry } from "@/types/elements/elements";
 import { Button } from "@/components/ui/button";
 import {
 	BadgeCheck,
+	Navigation,
 	PanelsTopLeft,
 	Square,
 	SquareGanttChartIcon,
@@ -388,7 +389,7 @@ export const Registry: TGenericComponentRegistry = {
 	},
 	Breadcrumb: {
 		type: "Breadcrumb",
-		icon: <Sandwich />,
+		icon: <Navigation />,
 		component: <Breadcrumb />,
 		dependencies: ["@/components/ui/breadcrumb"],
 		draggable: true,
@@ -403,7 +404,7 @@ export const Registry: TGenericComponentRegistry = {
 	},
 	BreadcrumbList: {
 		type: "BreadcrumbList",
-		icon: <Sandwich />,
+		icon: <Navigation />,
 		component: <BreadcrumbList />,
 		dependencies: ["@/components/ui/breadcrumb"],
 		draggable: true,
@@ -429,7 +430,7 @@ export const Registry: TGenericComponentRegistry = {
 	},
 	BreadcrumbItem: {
 		type: "BreadcrumbItem",
-		icon: <Sandwich />,
+		icon: <Navigation />,
 		component: <BreadcrumbItem />,
 		dependencies: ["@/components/ui/breadcrumb"],
 		draggable: true,
@@ -450,7 +451,7 @@ export const Registry: TGenericComponentRegistry = {
 	},
 	BreadcrumbLink: {
 		type: "BreadcrumbLink",
-		icon: <Sandwich />,
+		icon: <Navigation />,
 		component: <BreadcrumbLink />,
 		dependencies: ["@/components/ui/breadcrumb"],
 		draggable: true,
@@ -469,7 +470,7 @@ export const Registry: TGenericComponentRegistry = {
 	},
 	BreadcrumbPage: {
 		type: "BreadcrumbPage",
-		icon: <Sandwich />,
+		icon: <Navigation />,
 		component: <BreadcrumbPage />,
 		dependencies: ["@/components/ui/breadcrumb"],
 		draggable: true,
@@ -489,7 +490,7 @@ export const Registry: TGenericComponentRegistry = {
 	},
 	BreadcrumbSeparator: {
 		type: "BreadcrumbSeparator",
-		icon: <Sandwich />,
+		icon: <Navigation />,
 		component: <BreadcrumbSeparator />,
 		dependencies: ["@/components/ui/breadcrumb"],
 		draggable: true,
@@ -504,7 +505,7 @@ export const Registry: TGenericComponentRegistry = {
 	},
 	BreadcrumbEllipsis: {
 		type: "BreadcrumbEllipsis",
-		icon: <Sandwich />,
+		icon: <Navigation />,
 		component: <BreadcrumbEllipsis />,
 		dependencies: ["@/components/ui/breadcrumb"],
 		draggable: true,
