@@ -21,6 +21,7 @@ import type {
 	TH6Component,
 	TPComponent,
 } from "@/types/elements/text";
+import type { TBadgeComponent } from "@/types/elements/badge"; // Add this import
 import type { TailwindClassNamesGroups } from "../tailwind/tailwind";
 
 export type TGenericComponentInfer<T> = {
@@ -46,6 +47,7 @@ const GenericComponentsNames = {
 	CardFooter: "CardFooter",
 	CardTitle: "CardTitle",
 	CardDescription: "CardDescription",
+	Badge: "Badge", // Add this line
 } as const;
 
 export type GenericComponentName =
@@ -65,7 +67,8 @@ export type TGenericComponentsWithoutRoot =
 	| TCardContentComponent
 	| TCardFooterComponent
 	| TCardTitleComponent
-	| TCardDescriptionComponent;
+	| TCardDescriptionComponent
+	| TBadgeComponent; // Add this line
 
 export type TGenericComponents = TRootComponent | TGenericComponentsWithoutRoot;
 

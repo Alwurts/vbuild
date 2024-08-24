@@ -1,6 +1,7 @@
 import type { TGenericComponentRegistry } from "@/types/elements/elements";
 import { Button } from "@/components/ui/button";
 import {
+	BadgeCheck,
 	PanelsTopLeft,
 	Square,
 	SquareGanttChartIcon,
@@ -25,6 +26,7 @@ import type {
 	TailwindTextGroup,
 	TailwindPaddingGroup,
 } from "@/types/tailwind/tailwind";
+import { Badge } from "@/components/ui/badge";
 
 const defaultStyle: TailwindStyleGroup = {
 	backgroundColor: "bg-transparent",
@@ -339,6 +341,38 @@ export const Registry: TGenericComponentRegistry = {
 			padding: {
 				paddingX: "px-4",
 				paddingY: "py-2",
+			},
+		},
+	},
+	Badge: {
+		type: "Badge",
+		icon: <BadgeCheck />,
+		component: <Badge />,
+		dependencies: ["@/components/ui/badge"],
+		draggable: true,
+		droppable: false,
+		editable: true,
+		classNameGroupsdefaults: {
+			size: {
+				width: "w-auto",
+				height: "h-auto",
+			},
+			style: {
+				backgroundColor: "bg-primary",
+				borderRadius: "rounded-full",
+				/* borderWidth: "border",
+				borderColor: "border-transparent", */
+			},
+			text: {
+				...defaultText,
+				textColor: "text-primary-foreground",
+				fontSize: "text-xs",
+				fontWeight: "font-semibold",
+			},
+			layout: defaultLayout,
+			padding: {
+				paddingX: "px-2.5",
+				paddingY: "py-0.5",
 			},
 		},
 	},

@@ -35,6 +35,7 @@ export function AddElementsDialog() {
 			"CardTitle",
 			"CardDescription",
 		],
+		Badge: ["Badge"],
 	};
 
 	const handleAddElement = (component: GenericComponentName) => {
