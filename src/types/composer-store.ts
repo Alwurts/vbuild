@@ -14,9 +14,15 @@ export interface ComposerStore {
 	iframeRef: React.MutableRefObject<HTMLIFrameElement | null>;
 	nodes: TNodesAbstract;
 	headNodeKey: string;
-	history: TNodesAbstract[];
+	history: Array<{
+		nodes: TNodesAbstract;
+		cssVariables: { [K in CSSVariableNames]: string };
+	}>;
 	historyIndex: number;
-	updateNodes: (newNodes: TNodesAbstract) => void;
+	updateState: (
+		newNodes?: TNodesAbstract,
+		newCssVariables?: Partial<{ [K in CSSVariableNames]: string }>
+	) => void;
 	undo: () => void;
 	redo: () => void;
 	setContentEditable: (nodeKey: string, content: string) => void;

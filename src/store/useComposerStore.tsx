@@ -3,7 +3,7 @@ import {
 	ROOT_COMPONENT_ABSTRACT_DEFAULT_HEAD_KEY,
 } from "@/components/element-composer/defaultJSX";
 import type { ComposerStore } from "@/types/composer-store";
-import type { TNodeAbstract } from "@/types/elements/jsx";
+import type { TNodeAbstract, TNodesAbstract } from "@/types/elements/jsx";
 import { v4 as uuidv4 } from "uuid";
 
 import { createRef } from "react";
@@ -53,27 +53,37 @@ export const useComposerStore = create<ComposerStore>((set, get) => ({
 			},
 		});
 	},
-	history: [ROOT_COMPONENT_ABSTRACT_DEFAULT],
+	history: [
+		{
+			nodes: ROOT_COMPONENT_ABSTRACT_DEFAULT,
+			cssVariables: INITIAL_CSS_VARIABLES,
+		},
+	],
 	historyIndex: 0,
 
-	updateNodes: (newNodes) => {
-		const { history, historyIndex } = get();
-		const newHistory = [...history.slice(0, historyIndex + 1), newNodes].slice(
-			-5,
-		);
+	updateState: (newNodes, newCssVariables) => {
+		const { history, historyIndex, nodes, cssVariables } = get();
+		const currentState = {
+			nodes: newNodes || nodes,
+			cssVariables: { ...cssVariables, ...newCssVariables },
+		};
+
+		const newHistory = [
+			...history.slice(0, historyIndex + 1),
+			currentState,
+		].slice(-5);
 		const newHistoryIndex = newHistory.length - 1;
 
 		set({
-			nodes: newNodes,
+			nodes: currentState.nodes,
+			cssVariables: currentState.cssVariables,
 			history: newHistory,
 			historyIndex: newHistoryIndex,
 		});
 
 		get().sendMessageToCanvas({
 			type: "UPDATE_SHADOW_STATE",
-			update: {
-				nodes: newNodes,
-			},
+			update: currentState,
 		});
 	},
 
@@ -81,16 +91,15 @@ export const useComposerStore = create<ComposerStore>((set, get) => ({
 		const { history, historyIndex } = get();
 		if (historyIndex > 0) {
 			const newIndex = historyIndex - 1;
-			const previousNodes = history[newIndex];
+			const previousState = history[newIndex];
 			set({
-				nodes: previousNodes,
+				nodes: previousState.nodes,
+				cssVariables: previousState.cssVariables,
 				historyIndex: newIndex,
 			});
 			get().sendMessageToCanvas({
 				type: "UPDATE_SHADOW_STATE",
-				update: {
-					nodes: previousNodes,
-				},
+				update: previousState,
 			});
 		}
 	},
@@ -99,20 +108,18 @@ export const useComposerStore = create<ComposerStore>((set, get) => ({
 		const { history, historyIndex } = get();
 		if (historyIndex < history.length - 1) {
 			const newIndex = historyIndex + 1;
-			const nextNodes = history[newIndex];
+			const nextState = history[newIndex];
 			set({
-				nodes: nextNodes,
+				nodes: nextState.nodes,
+				cssVariables: nextState.cssVariables,
 				historyIndex: newIndex,
 			});
 			get().sendMessageToCanvas({
 				type: "UPDATE_SHADOW_STATE",
-				update: {
-					nodes: nextNodes,
-				},
+				update: nextState,
 			});
 		}
 	},
-
 	setClassNameGroup: (nodeKey, group, value) => {
 		const { nodes } = get();
 		const newNodes = { ...nodes };
@@ -126,7 +133,7 @@ export const useComposerStore = create<ComposerStore>((set, get) => ({
 			},
 		};
 		newNodes[nodeKey] = newNode;
-		get().updateNodes(newNodes);
+		get().updateState(newNodes);
 	},
 
 	deleteNode: (nodeKey) => {
@@ -173,7 +180,7 @@ export const useComposerStore = create<ComposerStore>((set, get) => ({
 		};
 		deleteRecursively(nodeKey);
 
-		get().updateNodes(newNodes);
+		get().updateState(newNodes);
 	},
 
 	childrenMenuKey: null,
@@ -241,7 +248,7 @@ export const useComposerStore = create<ComposerStore>((set, get) => ({
 			indexBeforeOrAfter === "before" ? newParentIndex : newParentIndex + 1;
 		newParent.children.splice(insertIndex, 0, newKey);
 
-		get().updateNodes(newNodes);
+		get().updateState(newNodes);
 		set({ copyNodeKey: null });
 	},
 
@@ -325,7 +332,7 @@ export const useComposerStore = create<ComposerStore>((set, get) => ({
 			newNodes[newParent.key] = newParent;
 		}
 
-		get().updateNodes(newNodes);
+		get().updateState(newNodes);
 	},
 
 	setContentEditable: (nodeKey, content) => {
@@ -342,9 +349,7 @@ export const useComposerStore = create<ComposerStore>((set, get) => ({
 
 		newNodes[childNodeKey] = content;
 
-		console.log("contentEditable", newNodes[childNodeKey]);
-
-		get().updateNodes(newNodes);
+		get().updateState(newNodes);
 	},
 
 	// Drag and Drop Tree Node
@@ -452,7 +457,7 @@ export const useComposerStore = create<ComposerStore>((set, get) => ({
 		}
 		parentNode.children.push(newKey);
 
-		get().updateNodes(newNodes);
+		get().updateState(newNodes);
 	},
 
 	openNodes: {},
@@ -462,19 +467,6 @@ export const useComposerStore = create<ComposerStore>((set, get) => ({
 		})),
 	cssVariables: INITIAL_CSS_VARIABLES,
 	updateCSSVariable: (name, value) => {
-		set((state) => ({
-			cssVariables: {
-				...state.cssVariables,
-				[name]: value,
-			},
-		}));
-
-		// Send the update to the shadow composer
-		get().sendMessageToCanvas({
-			type: "UPDATE_SHADOW_STATE",
-			update: {
-				cssVariables: { [name]: value } as { [K in CSSVariableNames]: string },
-			},
-		});
+		get().updateState(undefined, { [name]: value });
 	},
 }));
