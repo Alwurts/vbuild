@@ -82,6 +82,8 @@ const jsxNodesToNodesAbstract = (
 		throw new Error("Head node abstract key is null");
 	}
 
+	console.log(newNodesAbstract);
+
 	return [newNodesAbstract, headNodeAbstractKey];
 };
 

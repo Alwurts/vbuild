@@ -2,6 +2,8 @@ import type { TGenericComponentRegistry } from "@/types/elements/elements";
 import { Button } from "@/components/ui/button";
 import {
 	BadgeCheck,
+	CopyIcon,
+	LinkIcon,
 	Navigation,
 	PanelsTopLeft,
 	Square,
@@ -10,6 +12,7 @@ import {
 	SquareSlash,
 	Text,
 	Type,
+	UnlinkIcon,
 } from "lucide-react";
 import {
 	Card,
@@ -29,15 +32,17 @@ import type {
 } from "@/types/tailwind/tailwind";
 import { Badge } from "@/components/ui/badge";
 import {
-  Breadcrumb,
-  BreadcrumbList,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-  BreadcrumbEllipsis,
+	Breadcrumb,
+	BreadcrumbList,
+	BreadcrumbItem,
+	BreadcrumbLink,
+	BreadcrumbPage,
+	BreadcrumbSeparator,
+	BreadcrumbEllipsis,
 } from "@/components/ui/breadcrumb";
 import { Sandwich } from "lucide-react";
+import { Label } from "../ui/label";
+import { Input } from "../ui/input";
 
 const defaultStyle: TailwindStyleGroup = {
 	backgroundColor: "bg-transparent",
@@ -107,6 +112,20 @@ export const Registry: TGenericComponentRegistry = {
 				borderRadius: "rounded-none",
 			},
 			...defaultLayoutAndPadding,
+		},
+	},
+	a: {
+		type: "a",
+		icon: <LinkIcon />,
+		// biome-ignore lint/a11y/useValidAnchor: <explanation>
+		// biome-ignore lint/a11y/useAnchorContent: <explanation>
+		component: <a />,
+		dependencies: [],
+		draggable: true,
+		droppable: false,
+		editable: true,
+		classNameGroupsdefaults: {
+			size: defaultAutoSize,
 		},
 	},
 	h1: {
@@ -332,7 +351,7 @@ export const Registry: TGenericComponentRegistry = {
 				width: "w-auto",
 				height: "h-10",
 			},
-			style: {
+			/* style: {
 				backgroundColor: "bg-primary",
 				borderRadius: "rounded-md",
 			},
@@ -341,8 +360,7 @@ export const Registry: TGenericComponentRegistry = {
 				fontSize: "text-sm",
 				fontWeight: "font-medium",
 				textAlign: "text-center",
-				/* whiteSpace: "whitespace-nowrap", */
-			},
+			}, */
 			layout: defaultLayout,
 			/* layout: {
 				display: "inline-flex",
@@ -525,6 +543,30 @@ export const Registry: TGenericComponentRegistry = {
 				gap: "gap-0",
 			},
 			padding: defaultPadding,
+		},
+	},
+	Label: {
+		type: "Label",
+		icon: <CopyIcon />,
+		component: <Label />,
+		dependencies: ["@/components/ui/label"],
+		draggable: true,
+		droppable: false,
+		editable: true,
+		classNameGroupsdefaults: {
+			size: defaultAutoSize,
+		},
+	},
+	Input: {
+		type: "Input",
+		icon: <UnlinkIcon />,
+		component: <Input />,
+		dependencies: ["@/components/ui/input"],
+		draggable: true,
+		droppable: false,
+		editable: false,
+		classNameGroupsdefaults: {
+			size: defaultAutoSize,
 		},
 	},
 } as const;

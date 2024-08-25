@@ -87,7 +87,10 @@ function CanvasNode({ nodeKey }: { nodeKey: string }) {
 					className: nodeClassName,
 					draggable: draggable,
 					ref: nodeRef,
-					children: nodeChildren,
+					children:
+						node.children && node.children.length > 0
+							? nodeChildren
+							: undefined,
 					contentEditable: isEditable,
 					onBlur: isEditable
 						? (e: React.FocusEvent<HTMLElement>) => {
