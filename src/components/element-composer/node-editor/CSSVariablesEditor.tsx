@@ -5,6 +5,14 @@ import { Input } from "@/components/ui-editor/input";
 import { ScrollArea } from "@/components/ui-editor/scroll-area";
 import { useComposerStore } from "@/store/useComposerStore";
 import { cn } from "@/lib/utils";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui-editor/select";
+import { THEMES } from "@/lib/themes";
 
 function hexToHSL(originalHex: string): string {
 	// Remove the hash if it exists
@@ -94,9 +102,37 @@ export const CSSVariablesEditor = () => {
 		updateCSSVariable(name, hslColor);
 	};
 
+	const handleThemeChange = (themeId: string) => {
+		const selectedTheme = THEMES.find((theme) => theme.name === themeId);
+		if (selectedTheme) {
+			for (const [name, value] of Object.entries(selectedTheme.colors)) {
+				updateCSSVariable(name as CSSVariableNames, value);
+			}
+		}
+	};
+
 	return (
 		<ScrollArea className="px-4 h-[calc(100vh-100px)]">
 			<div className="flex flex-col gap-y-2 py-2">
+				<SettingLabelContainer
+					label="Theme"
+					htmlFor="theme-selector"
+					className="grid-cols-1 mx-1"
+				>
+					<Select onValueChange={handleThemeChange}>
+						<SelectTrigger id="theme-selector">
+							<SelectValue placeholder="Select a theme" />
+						</SelectTrigger>
+						<SelectContent>
+							{THEMES.map((theme) => (
+								<SelectItem key={theme.name} value={theme.name}>
+									{theme.name}
+								</SelectItem>
+							))}
+						</SelectContent>
+					</Select>
+				</SettingLabelContainer>
+
 				{Object.entries(cssVariables).map(([name, value]) => (
 					<SettingLabelContainer
 						key={name}
