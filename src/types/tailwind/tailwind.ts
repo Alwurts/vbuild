@@ -30,7 +30,7 @@ const tailwindStylePropertyNames = [
 	"marginRight",
 	"marginTop",
 	"marginBottom",
-	"borderRadius", // Added this line
+	"borderRadius",
 ] as const;
 
 export type TailwindStylePropertyName =
@@ -51,6 +51,7 @@ const tailwindGroupName = [
 	"text",
 	"style",
 	"padding",
+	"other",
 ] as const;
 
 export type TailwindGroupName = (typeof tailwindGroupName)[number];
@@ -105,7 +106,7 @@ export type TailwindTextGroup = z.infer<typeof schemaTextGroup>;
 
 export const schemaStyleGroup = z.object({
 	backgroundColor: z.string(),
-	borderRadius: z.string().optional(), // Changed this line
+	borderRadius: z.string().optional(),
 });
 
 export type TailwindStyleGroup = z.infer<typeof schemaStyleGroup>;
@@ -123,12 +124,20 @@ export const schemaPaddingGroup = z.union([
 
 export type TailwindPaddingGroup = z.infer<typeof schemaPaddingGroup>;
 
+// Update the schema for the 'other' group
+export const schemaOtherGroup = z.object({
+  other: z.string()
+});
+
+export type TailwindOtherGroup = z.infer<typeof schemaOtherGroup>;
+
 export const tailwindClassNameGroupsSchema = z.object({
 	size: schemaSizeGroup.optional(),
 	layout: schemaLayoutGroup.optional(),
 	text: schemaTextGroup.optional(),
 	style: schemaStyleGroup.optional(),
 	padding: schemaPaddingGroup.optional(),
+	other: schemaOtherGroup.optional(),
 });
 
 export type TailwindClassNamesGroups = z.infer<

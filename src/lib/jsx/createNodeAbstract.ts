@@ -61,6 +61,7 @@ function processGroups(
 	classNameSeparated: string[],
 ): TailwindClassNamesGroups {
 	const result: TailwindClassNamesGroups = {};
+	const processedClassNames = new Set<string>();
 
 	for (const [groupKey, group] of Object.entries(classNameGroupsdefaults)) {
 		const groupName = groupKey as TailwindGroupName;
@@ -79,6 +80,24 @@ function processGroups(
 			// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 			result[groupName] = processSimpleGroup(group, classNameSeparated) as any;
 		}
+
+		// Add processed classNames to the set
+		for (const className of Object.values(result[groupName] || {})) {
+			if (typeof className === 'string') {
+				processedClassNames.add(className);
+			}
+		}
+	}
+
+	// Process unmatched classNames
+	const unmatchedClassNames = classNameSeparated.filter(
+		className => !processedClassNames.has(className)
+	);
+
+	if (unmatchedClassNames.length > 0) {
+		result.other = {
+			other: unmatchedClassNames.join(' ')
+		};
 	}
 
 	return result;
